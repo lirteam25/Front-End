@@ -1,0 +1,23 @@
+.vh_discover {
+    min-height: 100vh;
+    padding: 0.5px;
+}
+
+.discover {
+    width: 95%;
+    margin: calc(60px + 2.5%) auto;
+}
+
+@media screen and (max-width: 480px) {
+    .discover {
+        width: 90%;
+        margin: calc(60px + 5%) auto 90px auto;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .discover {
+        width: 95%;
+        margin: calc(60px + 2.5%) auto 90px auto;
+    }
+}

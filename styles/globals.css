@@ -1,0 +1,240 @@
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url("./../font/SpaceGrotesk/SpaceGrotesk-Regular.woff2") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space mono';
+  src: url("./../font/SpaceMono/SpaceMono-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background-dark-color: rgb(17, 17, 17);
+  --main-color: rgb(214, 11, 82);
+  --background-grey: rgb(48, 48, 48);
+  --background-grey2: rgb(27, 27, 27);
+  --background-grey3: rgb(118, 118, 118);
+  --grey: rgb(180, 180, 180);
+  --grey2: rgb(60, 60, 60);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-feature-settings: "ss04" 1;
+  letter-spacing: -0.025ch;
+  background-color: var(--background-dark-color);
+  color: white;
+  font-size: 18px;
+  font-weight: 400;
+  scroll-padding-top: 60px;
+  scroll-behavior: smooth
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 400;
+}
+
+.font-huge {
+  font-size: 3rem;
+}
+
+.font-large {
+  font-size: 1.8rem;
+}
+
+.font-medium {
+  font-size: 1.2rem;
+}
+
+.font-normal {
+  font-size: 1rem;
+}
+
+.font-small {
+  font-size: 0.8rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+textarea {
+  width: 100%;
+  background-color: var(--background-grey);
+  border: none;
+  color: white;
+  border: 1px solid var(--background-grey);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.4rem;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+input {
+  width: 100%;
+  background-color: var(--background-grey);
+  border: none;
+  color: white;
+  border-bottom: 1px solid white;
+  font-size: 0.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+textarea::placeholder,
+input::placeholder {
+  font-size: 0.8rem;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+  color: white;
+  font-size: 0.8rem;
+}
+
+textarea.visited,
+input.visited {
+  outline: none;
+  color: white;
+  font-size: 0.8rem;
+}
+
+textarea:-webkit-autofill,
+input:-webkit-autofill {
+  -webkit-appearance: none;
+  font-size: 0.8rem;
+  color: white;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: none;
+}
+
+::selection {
+  color: white;
+  background: var(--background-grey);
+}
+
+::-webkit-scrollbar {
+  width: 0.3rem;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2rem;
+  background: var(--background-grey);
+  width: .5rem;
+}
+
+.custom-popup {
+  border-radius: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.custom-title {
+  margin: 0;
+  padding: 0px;
+  /* Adjust as needed */
+}
+
+/* Custom CSS class for htmlContainer (the container for the text) */
+.custom-html-container {
+  margin: 0;
+  padding: 0;
+  /* Adjust as needed */
+}
+
+
+@media screen and (max-width: 480px) {
+  .font-huge {
+    font-size: 1.5rem;
+  }
+
+  .font-large {
+    font-size: 1.2rem;
+  }
+
+  .font-medium {
+    font-size: 0.96rem;
+  }
+
+  .font-normal {
+    font-size: 0.8rem;
+  }
+
+  .font-small {
+    font-size: 0.64rem;
+  }
+
+  textarea,
+  textarea::placeholder,
+  textarea:focus,
+  textarea.visited,
+  textarea:-webkit-autofill,
+  input,
+  input::placeholder,
+  input:focus,
+  input.visited,
+  input:-webkit-autofill {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+
+  .font-huge {
+    font-size: 2.5rem;
+  }
+
+  .font-large {
+    font-size: 1.62rem;
+  }
+
+  .font-medium {
+    font-size: 1.08rem;
+  }
+
+  .font-normal {
+    font-size: 0.9rem;
+  }
+
+  .font-small {
+    font-size: 0.8rem;
+  }
+
+  textarea,
+  textarea::placeholder,
+  textarea:focus,
+  textarea.visited,
+  textarea:-webkit-autofill,
+  input,
+  input::placeholder,
+  input:focus,
+  input.visited,
+  input:-webkit-autofill {
+    font-size: 0.8rem;
+  }
+}

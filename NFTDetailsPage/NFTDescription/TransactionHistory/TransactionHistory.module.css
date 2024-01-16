@@ -1,0 +1,56 @@
+.TransactionHistory {
+    background-color: var(--background-grey2);
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
+}
+
+.TransactionHistory_title {
+    display: grid;
+    padding: 0.5rem 0.5rem;
+    grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr;
+    gap: 10px;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.TransactionHistory_content {
+    font-family: "Space mono", sans-serif;
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid var(--background-grey);
+    display: grid;
+    grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.TransactionHistory_content:hover {
+    background-color: var(--background-grey);
+}
+
+.TransactionHistory p,
+.TransactionHistory h4 {
+    padding: 0;
+    margin: 0;
+}
+
+.TransactionHistory_content_url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    color: var(--main-color);
+    margin-right: 1rem;
+}
+
+@media screen and (max-width: 480px) {
+
+    .TransactionHistory_content,
+    .TransactionHistory_title {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .TransactionHistory_content_url,
+    .TransactionHistory_title_hash {
+        display: none;
+    }
+}

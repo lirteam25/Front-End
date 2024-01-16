@@ -1,0 +1,99 @@
+.borders {
+    border-style: solid;
+    margin-top: 5rem;
+    border-width: 1px;
+    border-left: 0;
+    border-right: 0;
+    border-image: linear-gradient(to right, transparent, var(--main-color), transparent) 10;
+}
+
+
+.TopCollectors {
+    width: 95%;
+    margin: 1.5rem auto;
+}
+
+.TopCollectors_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: top;
+    gap: 2rem;
+}
+
+.TopCollectors_grid_right {
+    grid-column: 2;
+    color: var(--main-color);
+}
+
+.TopCollectors_grid_left {
+    color: var(--background-grey);
+}
+
+.TopCollectors_grid_right_title {
+    display: grid;
+    grid-template-columns: 1fr 5fr 5fr;
+    align-items: center;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-image: linear-gradient(to right, var(--background-grey), transparent) 1;
+    color: var(--background-grey);
+}
+
+.TopCollectors_grid_right_content {
+    display: grid;
+    grid-template-columns: 1fr 5fr 5fr;
+    align-items: center;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-image: linear-gradient(to right, var(--background-grey), transparent) 1;
+    font-family: "Space Mono", sans-serif;
+}
+
+@media screen and (max-width:480px) {
+    .borders {
+        margin-top: 0rem;
+    }
+
+    .TopCollectors {
+        width: 90%;
+        margin: 1.5rem auto 2rem auto;
+    }
+
+    .TopCollectors_grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .TopCollectors_grid_right,
+    .TopCollectors_grid_left {
+        grid-column: unset;
+    }
+}
+
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .borders {
+        margin-top: 0rem;
+    }
+
+    .TopCollectors {
+        width: 95%;
+        margin: 2.5rem auto 3rem auto;
+    }
+
+    .TopCollectors_grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .TopCollectors_grid_right,
+    .TopCollectors_grid_left {
+        grid-column: unset;
+    }
+}

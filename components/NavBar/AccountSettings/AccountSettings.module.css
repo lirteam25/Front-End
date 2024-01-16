@@ -1,0 +1,67 @@
+.ArtistSettings textarea {
+    background-color: transparent;
+    margin-top: 1rem;
+}
+
+.ArtistSettings input {
+    background-color: transparent;
+    border: 1px solid var(--background-grey);
+}
+
+.ArtistSettings input::placeholder,
+.ArtistSettings textarea::placeholder {
+    color: var(--background-grey3);
+}
+
+
+.ArtistSettings_top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistSettings_top_title {
+    text-transform: uppercase;
+}
+
+.ArtistSettings_top_x {
+    cursor: pointer;
+}
+
+.ArtistSettings_bottom_title {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--background-grey);
+    cursor: pointer;
+}
+
+.red {
+    color: var(--main-color);
+    transition: all 0.2s;
+}
+
+.ArtistSettings_bottom_title_95 {
+    width: 95%;
+    margin: auto;
+}
+
+.ArtistSettings_bottom_title_95_active {
+    padding: 0.5rem 0;
+    animation: fadeIn 0.3s ease-in-out;
+    transform: translateY(0);
+    z-index: -1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,10 @@
+.NFTDetailsPage {
+    width: 100%;
+    margin: calc(60px + 2.5%) auto;
+}
+
+@media screen and (max-width: 480px) {
+    .NFTDetailsPage {
+        margin: calc(60px + 5%) auto 90px auto;
+    }
+}

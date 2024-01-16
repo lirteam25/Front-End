@@ -1,0 +1,225 @@
+.display_title {
+    padding: 0.8rem;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 0.10fr 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr;
+    gap: 2rem;
+    font-weight: 400;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--background-grey2);
+}
+
+.display_title_download {
+    padding: 0.8rem;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 0.10fr 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.1fr;
+    gap: 2rem;
+    font-weight: 400;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--background-grey2);
+}
+
+.display_title_item_num {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.display_song_noSong {
+    text-align: center;
+    margin-top: 4rem;
+    color: var(--grey);
+}
+
+.display_song_noSong_discover {
+    color: var(--main-color);
+}
+
+.display_song_noSong_discover:hover {
+    text-decoration: underline;
+}
+
+.display_song_box {
+    height: 60px;
+    display: grid;
+    padding: 0 0.8rem;
+    grid-template-columns: 0.10fr 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr;
+    align-items: center;
+    gap: 2rem;
+}
+
+.display_song_box_download {
+    height: 60px;
+    display: grid;
+    padding: 0 0.8rem;
+    grid-template-columns: 0.10fr 1.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.1fr;
+    align-items: center;
+    gap: 2rem;
+}
+
+.background_grey {
+    background-color: var(--background-grey);
+}
+
+.display_song_box_download:hover,
+.display_song_box:hover {
+    background-color: var(--background-grey);
+}
+
+.display_song_num {
+    margin: auto;
+}
+
+.display_song_box_download:hover .display_song_num_num,
+.display_song_num_play {
+    display: none;
+}
+
+.display_song_box_download:hover .display_song_num_play {
+    display: inline;
+}
+
+.display_song_box:hover .display_song_num_num,
+.display_song_num_play {
+    display: none;
+}
+
+.display_song_box:hover .display_song_num_play {
+    display: inline;
+}
+
+.display_song_title {
+    grid-template-columns: 50px calc(100% - 50px);
+    display: flex;
+    gap: 2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile {
+    display: none;
+}
+
+.display_song_price_symbol {
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.display_song_title_img {
+    box-sizing: content-box;
+    min-width: 50px;
+    width: 50px;
+    height: 50px;
+    position: relative;
+    align-self: center;
+}
+
+.display_song_title_info {
+    align-items: left;
+    align-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.display_song_title_info_artist {
+    color: var(--main-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.display_song_title_info_name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.display_song_title_info_name:hover,
+.display_song_title_info_artist:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.display_song_supply,
+.display_song_time,
+.display_song_price,
+.display_song_version,
+.display_song_owned {
+    font-family: "Space Mono", sans-serif;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.display_song_download {
+    text-align: center;
+}
+
+.icon {
+    transition: color 0.5s;
+}
+
+.icon:hover {
+    color: var(--main-color);
+}
+
+@media screen and (max-width: 480px) {
+
+    .mobile {
+        display: block;
+    }
+
+    .pc {
+        display: none;
+    }
+
+
+    .display_title_download,
+    .display_title {
+        grid-template-columns: 9fr 0.5fr 3fr;
+        padding-left: 0;
+        padding-top: 0.8rem;
+    }
+
+    .display_song_box_download,
+    .display_song_box {
+        grid-template-columns: 9fr 2fr 2fr;
+        padding: 0 0.2rem;
+    }
+
+    .display_song_title {
+        gap: 0.5rem;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .display_song_title_info_name:hover,
+    .display_song_title_info_artist:hover {
+        text-decoration: none;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+
+    .display_title_download,
+    .display_title {
+        grid-template-columns: 9fr 2fr 2fr;
+        padding-left: 0;
+        padding-top: 0.8rem;
+    }
+
+    .display_song_box_download,
+    .display_song_box {
+        grid-template-columns: 9fr 2fr 2fr;
+        padding: 0 0.3rem;
+    }
+
+    .display_song_title {
+        gap: 1rem;
+    }
+
+    .hide {
+        display: none;
+    }
+}

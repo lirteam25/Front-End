@@ -1,0 +1,67 @@
+.upload {
+    margin-top: 2rem;
+}
+
+.upload label {
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+.upload select,
+.upload textarea,
+.upload input {
+    background-color: var(--background-grey2);
+    border: 1px solid var(--background-grey);
+    color: var(--background-grey);
+    font-family: "Space Grotesk", sans-serif;
+    padding: 0.5rem 0.5rem;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    width: 100%;
+}
+
+.upload select,
+.upload textarea:focus,
+.upload input:focus {
+    outline: none;
+    border: 1px solid var(--main-color);
+    color: white;
+}
+
+.upload select,
+.upload textarea:not(:placeholder-shown),
+.upload input:not(:placeholder-shown) {
+    color: white;
+}
+
+.upload_songAndVersion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+}
+
+.upload_description {
+    margin-top: 2rem;
+}
+
+.upload_box_btn {
+    text-align: center;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.upload_box_btn_style {
+    background-color: black;
+}
+
+.yesOrNo2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.selectContainer2 {
+    width: 150px;
+}

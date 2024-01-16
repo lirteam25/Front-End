@@ -1,0 +1,125 @@
+.login_container_top {
+    width: 100%;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.login_container_top_login {
+    text-transform: uppercase;
+}
+
+.login_container_top_x {
+    cursor: pointer;
+}
+
+.login_container_bottom {
+    padding: 1rem 0rem;
+    width: 90%;
+    margin: auto;
+}
+
+.user_box_or {
+    padding: 0.7rem 0rem;
+    text-align: center;
+}
+
+.user_box_input {
+    padding-bottom: 0.5rem;
+}
+
+.user_box_input input {
+    background-color: transparent;
+    color: black;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.user_box_input input::placeholder {
+    color: black;
+}
+
+.user_box_input_input {
+    margin-bottom: 0.8rem;
+}
+
+.user_box_input_forgot {
+    text-align: right;
+    text-decoration: underline;
+}
+
+.login_box_para {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem 0rem;
+}
+
+.login_box_para a {
+    text-align: right;
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+.incorrectEmail {
+    text-align: center;
+    font-size: 0.8rem;
+    color: red;
+    padding-bottom: 1rem;
+    animation: shake 0.5s ease-in-out;
+}
+
+.login_container_bottom_policy {
+    padding: 0.5rem 0rem;
+    display: flex;
+    align-items: center;
+}
+
+.login_container_bottom_policy_checkbox {
+    padding: 0;
+    margin: 0;
+    border: 1px solid black;
+}
+
+.login_box_button {
+    padding-bottom: 0.5rem;
+}
+
+.login_box_para_action {
+    color: var(--main-color);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login_container_bottom_policy_links {
+    text-decoration: underline;
+}
+
+.form_paragraph {
+    padding: 0 0 1rem 0;
+    margin: 0;
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}

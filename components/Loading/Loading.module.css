@@ -1,0 +1,67 @@
+.Error {
+    backdrop-filter: blur(8px);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1111111;
+    top: 0;
+}
+
+.Error_box {
+    top: 20%;
+    left: 35%;
+    position: absolute;
+
+    padding: 1rem 0rem;
+    text-align: center;
+    width: 30%;
+}
+
+.Error_box_info {
+    padding: 2rem 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    15% {
+        transform: rotate(15deg);
+    }
+
+    35% {
+        transform: rotate(165deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    65% {
+        transform: rotate(195deg);
+    }
+
+    85% {
+        transform: rotate(345deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.image {
+    margin-bottom: 2rem;
+    animation: spin 3s linear infinite;
+}
+
+@media screen and (max-width: 480px) {
+    .Error_box {
+        top: 5%;
+        left: 5%;
+        width: 90%;
+        height: 90%;
+        padding: 2rem;
+    }
+}

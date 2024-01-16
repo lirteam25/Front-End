@@ -1,0 +1,43 @@
+.NFTDetails_box {
+    display: grid;
+    grid-template-columns: 3fr 4fr;
+    background-color: var(--background-grey2);
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
+    align-items: center;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.NFTDetails_box_title {
+    padding: 0.5rem 0.5rem;
+    text-transform: uppercase;
+}
+
+.NFTDetails_box_content {
+    font-family: "Space mono", sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.3rem 0.5rem;
+}
+
+.NFTDetails h4 {
+    margin: 0;
+    padding: 0;
+}
+
+.NFTDetails p {
+    margin: 0;
+    padding: 0;
+}
+
+/* .NFTDetails_url {
+    text-decoration: underline;
+} */
+
+@media screen and (max-width: 480px) {
+    .NFTDetails_box {
+        grid-template-columns: 1.2fr 1.5fr
+    }
+}

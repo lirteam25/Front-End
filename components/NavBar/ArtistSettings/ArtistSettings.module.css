@@ -1,0 +1,195 @@
+.ArtistSettings textarea {
+    background-color: transparent;
+    margin-top: 1rem;
+}
+
+.ArtistSettings input {
+    background-color: transparent;
+    border: 1px solid var(--background-grey);
+}
+
+.ArtistSettings input::placeholder,
+.ArtistSettings textarea::placeholder {
+    color: var(--background-grey3);
+}
+
+
+.ArtistSettings_top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistSettings_top_title {
+    text-transform: uppercase;
+}
+
+.ArtistSettings_top_x {
+    cursor: pointer;
+}
+
+.ArtistSettings_bottom {
+    padding: 1rem 0rem;
+}
+
+.ArtistSettings_bottom_cover {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.login_container_bottom_links {
+    padding-bottom: 1rem;
+}
+
+.artist_background_image {
+    aspect-ratio: 5;
+    width: 95%;
+    background-size: cover;
+    background-position: center center;
+    margin: 0 auto;
+    padding: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: relative;
+    cursor: pointer;
+}
+
+.artist_background_image_loading {
+    text-align: center;
+    display: flex;
+    padding-top: 2rem;
+    justify-content: center;
+    color: var(--main-color);
+}
+
+.artist_background_image_loading_box {
+    background-color: var(--background-grey2);
+    padding: 0.5rem 1.5rem;
+    border: 1px solid var(--background-grey);
+}
+
+.artist_background_image_button {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+.artist_background_image_button_button {
+    background-color: var(--main-color);
+    padding: 0.3rem 1.3rem;
+    font-size: 0.9rem;
+    border: 1px solid white;
+}
+
+.artist_background_image_loading_box_circular {
+    margin-top: 1rem;
+}
+
+.ArtistSettings_bottom_info {
+    padding-top: 1rem;
+}
+
+.ArtistSettings_bottom_link {
+    padding: 0.5rem 0;
+
+}
+
+.ArtistSettings_bottom_info_description {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.login_container_bottom_about_links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.login_container_bottom_title {
+    padding-bottom: 1rem;
+}
+
+.user_box_input_forgot {
+    text-align: right;
+    text-decoration: underline;
+}
+
+.login_box_para {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem 0rem;
+}
+
+.login_box_para a {
+    text-align: right;
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+.incorrectEmail {
+    text-align: center;
+    font-size: 0.8rem;
+    color: red;
+    padding-bottom: 1rem;
+    animation: shake 0.5s ease-in-out;
+}
+
+.login_container_bottom_policy {
+    padding: 0.5rem 0rem;
+    display: flex;
+    align-items: center;
+}
+
+.login_container_bottom_policy_checkbox {
+    padding: 0;
+    margin: 0;
+    border: 1px solid black;
+}
+
+.login_box_button {
+    margin: 0 auto;
+    width: 95%;
+}
+
+.login_box_para_action {
+    color: var(--main-color);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login_container_bottom_policy_links {
+    text-decoration: underline;
+}
+
+.form_paragraph {
+    padding: 0 0 1rem 0;
+    margin: 0;
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}

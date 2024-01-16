@@ -1,0 +1,100 @@
+.NFTDescription {
+    width: 95%;
+    margin: 2.5% auto;
+}
+
+.NFTDescription_first {
+    display: grid;
+    grid-template-columns: 5fr 1fr 6fr;
+    align-items: baseline;
+}
+
+.NFTDescription_box_tokenDetails,
+.NFTDescription_box_description,
+.NFTDescription_box_transactions,
+.NFTDescription_box_itemsListed {
+    margin-bottom: 1rem;
+}
+
+.NFTDescription_box_itemsListed,
+.NFTDescription_box_description {
+    grid-column: 3;
+}
+
+.NFTDescription_box_title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 0rem;
+    border-bottom: 1px solid var(--background-grey);
+    margin-bottom: 1rem;
+}
+
+.NFTDescription_box_content {
+    margin-bottom: 1rem;
+}
+
+.active {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid white !important;
+}
+
+.NFTDescription_second {
+    display: grid;
+    grid-template-columns: 9fr 1fr 2fr;
+    align-items: baseline;
+}
+
+@media screen and (max-width: 480px) {
+    .NFTDescription {
+        width: 90%;
+        margin: 5% auto;
+    }
+
+    .NFTDescription_first,
+    .NFTDescription_second {
+        grid-template-columns: 1fr;
+    }
+
+    .NFTDescription_box_tokenDetails,
+    .NFTDescription_box_description,
+    .NFTDescription_box_itemsListed {
+        margin-bottom: 1rem;
+    }
+
+    .NFTDescription_box_transactions {
+        margin-bottom: 0rem;
+    }
+
+    .NFTDescription_box_itemsListed,
+    .NFTDescription_box_description {
+        grid-column: unset;
+        grid-row: 1;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .NFTDescription {
+        width: 95%;
+        margin: 2.5% auto;
+    }
+
+    .NFTDescription_first,
+    .NFTDescription_second {
+        grid-template-columns: 1fr;
+    }
+
+    .NFTDescription_box_tokenDetails,
+    .NFTDescription_box_description,
+    .NFTDescription_box_transactions,
+    .NFTDescription_box_itemsListed {
+        margin-bottom: 0;
+    }
+
+    .NFTDescription_box_itemsListed,
+    .NFTDescription_box_description {
+        grid-column: unset;
+        grid-row: 1;
+    }
+}

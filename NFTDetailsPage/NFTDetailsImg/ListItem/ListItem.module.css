@@ -1,0 +1,22 @@
+.ListItem {
+    background-color: var(--background-grey2);
+    padding: 0.8rem 0.8rem 0.8rem 0.8rem;
+    border-bottom: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
+}
+
+.ListItem_input {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.ListItem_input input {
+    background-color: var(--background-grey2);
+}
+
+
+.ListItem_button {
+    margin-top: 1rem;
+}

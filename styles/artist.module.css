@@ -1,0 +1,25 @@
+.Vh_artist {
+    min-height: 100vh;
+    padding: 0.5px;
+}
+
+.artist {
+    margin-top: 60px;
+}
+
+.artist_bottom {
+    width: 95%;
+    margin: 0 auto 90px auto;
+}
+
+@media screen and (max-width: 480px) {
+    .artist_bottom {
+        width: 90%;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .artist_bottom {
+        width: 95%;
+    }
+}

@@ -1,0 +1,14 @@
+.cointainer {
+    width: 340px;
+}
+
+.cointainer_image {
+    width: 100%;
+    height: auto;
+}
+
+@media screen and (max-width: 480px) {
+    .cointainer {
+        width: 250px;
+    }
+}

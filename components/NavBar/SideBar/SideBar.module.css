@@ -1,0 +1,91 @@
+.navbar_sidebar_icon {
+    color: var(--main-color);
+}
+
+.sidebar_center {
+    width: 90%;
+    margin: auto;
+}
+
+.sidebar_center_userIn {
+    padding: 1rem 0rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.sidebar_center_userIn_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 1rem 0rem;
+}
+
+.sidebar_center_userIn_top_left {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.sidebar_center_userIn_update {
+    background-color: var(--background-grey2);
+    border: 1px solid var(--background-grey);
+}
+
+.sidebar_center_userIn_update input {
+    background-color: var(--background-grey2);
+}
+
+.sidebar_center_userIn_update_box {
+    padding: 0.7rem 0.6rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.sidebar_center_userIn_update_box_title {
+    padding: 0.3rem 0rem;
+}
+
+.sidebar_center_login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 1.5rem 0rem;
+    align-items: center;
+    border-bottom: 1px solid var(--background-grey);
+    text-transform: uppercase;
+}
+
+.sidebar_center_login_login {
+    text-align: center;
+    padding: 0.2rem;
+    border-top: 0.8px solid white;
+    border-bottom: 0.8px solid white;
+    border-left: 0.8px solid white;
+}
+
+.sidebar_center_register {
+    background-color: var(--main-color);
+    text-align: center;
+    padding: 0.2rem;
+    border: 0.8px solid white;
+    text-transform: uppercase;
+}
+
+.sidebar_center_element {
+    padding: 1rem 0.3rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.sidebar_center_bottom {
+    position: absolute;
+    padding: 3rem 0rem;
+    bottom: 0;
+    width: 100%;
+    left: 5%;
+    background-color: var(--background-dark-color);
+    z-index: 6;
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .sidebar_center {
+        width: 95%;
+    }
+}

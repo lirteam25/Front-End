@@ -1,0 +1,21 @@
+.author {
+    min-height: 100vh;
+    padding: 0.5px;
+}
+
+.author_song {
+    width: 95%;
+    margin: auto;
+}
+
+@media screen and (max-width: 480px) {
+    .author_song {
+        width: 90%;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .author_song {
+        width: 95%;
+    }
+}

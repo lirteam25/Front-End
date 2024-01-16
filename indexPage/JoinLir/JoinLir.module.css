@@ -1,0 +1,85 @@
+.JoinLir {
+    width: 95%;
+    margin: auto;
+}
+
+.JoinLir_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.JoinLir_grid_left_button {
+    width: 20%;
+    margin-top: 1.5rem;
+}
+
+.JoinLir_grid_right_secondButton {
+    width: 20%;
+}
+
+.JoinLir_grid_right_buttons {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+@media screen and (max-width:480px) {
+    .JoinLir {
+        width: 90%;
+        margin: 2rem auto;
+    }
+
+    .JoinLir h2 {
+        margin: 0.5rem 0;
+    }
+
+    .JoinLir h3 {
+        margin: 0rem 0;
+    }
+
+    .JoinLir_grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .JoinLir_grid_right_secondButton {
+        width: 30%;
+        margin: 0.5rem 0;
+    }
+
+    .JoinLir_grid_left_button {
+        width: 30%;
+        margin: 0;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .JoinLir {
+        width: 95%;
+        margin: 2rem auto 3rem auto;
+    }
+
+    .JoinLir h2 {
+        margin: 0.5rem 0;
+    }
+
+    .JoinLir h3 {
+        margin: 0rem 0;
+    }
+
+    .JoinLir_grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .JoinLir_grid_right_secondButton {
+        width: 20%;
+        margin: 0.5rem 0;
+    }
+
+    .JoinLir_grid_left_button {
+        width: 20%;
+        margin: 0;
+    }
+}

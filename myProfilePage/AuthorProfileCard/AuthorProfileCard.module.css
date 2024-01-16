@@ -1,0 +1,118 @@
+.AuthorProfileCard {
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.AuthorProfileCard h1 {
+    padding: 0;
+    margin: 0;
+}
+
+.AuthorProfileCard_box {
+    width: 95%;
+    margin: calc(60px + 2.5%) auto 2.5% auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.AuthorProfileCard_box_right {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.AuthorProfileCard_box_right_button {
+    width: 270px;
+}
+
+.AuthorProfileCard_box_left {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.AuthorProfileCard_box_left_icon {
+    cursor: pointer;
+}
+
+.AuthorProfileCard_box_left_box {
+    align-items: center;
+    font-family: "Space mono", sans-serif;
+}
+
+.AuthorProfileCard_box_dots_window_box {
+    position: absolute;
+    border: 1px solid var(--background-grey);
+    background-color: var(--background-grey2);
+    color: white;
+    width: 400px;
+    top: 130px;
+    right: 2.5%;
+    text-align: left;
+    z-index: 2;
+    animation: fadeIn 0.3s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.AuthorProfileCard_box_dots_window_title {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--background-grey);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: uppercase;
+    color: var(--main-color);
+}
+
+.AuthorProfileCard_box_dots_window_box_elements {
+    padding: 0.5rem 0.8rem;
+    align-items: center;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.AuthorProfileCard_box_dots_window_box_active {
+    padding: 0.5rem 0rem;
+    align-items: center;
+    background-color: transparent;
+    animation: fadeIn 0.3s ease-in-out;
+    transform: translateY(0);
+    z-index: -1;
+}
+
+.AuthorProfileCard_box_dots_window_box_active input {
+    background-color: var(--background-grey2);
+}
+
+@keyframes fadeIn {
+    from {
+        transform: translateY(-20px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .AuthorProfileCard_box {
+        width: 90%;
+        margin: calc(60px + 5%) auto 5% auto;
+    }
+
+    .hide {
+        display: none;
+    }
+}
+
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .AuthorProfileCard_box {
+        width: 95%;
+        margin: calc(60px + 2.5%) auto 2.5% auto;
+    }
+
+    .hide {
+        display: none;
+    }
+}

@@ -1,0 +1,66 @@
+.Vh_aboutUs {
+    min-height: 100vh;
+    padding: 0.5px;
+}
+
+
+.aboutUs {
+    width: 95%;
+    margin: calc(60px + 2.5%) auto;
+    display: grid;
+    grid-template-columns: 6fr 1fr 5fr;
+}
+
+.aboutUs_3 {
+    grid-column: 3;
+    justify-content: center;
+}
+
+.aboutUs h1 {
+    margin: 0;
+    padding: 0;
+}
+
+.aboutUs h2 {
+    line-height: 1.2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.aboutUs h3 {
+    line-height: 1.2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.aboutUs p {
+    line-height: 1.2rem;
+    margin: 0;
+    padding: 0;
+}
+
+@media screen and (max-width: 480px) {
+    .aboutUs {
+        width: 90%;
+        grid-template-columns: 1fr;
+        margin: calc(60px + 5%) auto 30px auto;
+    }
+
+    .aboutUs_3 {
+        grid-column: unset;
+        padding-top: 2rem;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .aboutUs {
+        width: 95%;
+        grid-template-columns: 1fr;
+        margin: calc(60px + 2.5%) auto;
+    }
+
+    .aboutUs_3 {
+        grid-column: unset;
+        padding-top: 2rem;
+    }
+}

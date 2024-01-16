@@ -1,0 +1,23 @@
+.introduction_bottom {
+    padding-bottom: 1rem;
+}
+
+.introduction_bottom_card {
+    padding-top: 1rem;
+}
+
+.introduction_bottom_card h2 {
+    color: var(--main-color);
+}
+
+@media screen and (max-width: 480px) {
+    .introduction_bottom {
+        padding-bottom: 0.5rem;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .introduction_bottom {
+        padding-bottom: 1rem;
+    }
+}

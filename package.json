@@ -1,0 +1,45 @@
+{
+  "name": "unique-music",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "i18nexus pull && next dev",
+    "build": "i18nexus pull && next build",
+    "start": "i18nexus pull && next start"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@firebase/auth": "^1.4.0",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
+    "@mui/material": "^5.14.12",
+    "@tanstack/react-query": "5.4.3",
+    "@types/node": "20.8.9",
+    "@types/react": "18.2.33",
+    "@types/react-dom": "18.2.14",
+    "axios": "^1.2.1",
+    "dompurify": "^3.0.8",
+    "dotenv": "^16.0.3",
+    "dropzone": "^6.0.0-beta.2",
+    "ethers": "^6.8.0",
+    "firebase": "^10.5.2",
+    "form-data": "^4.0.0",
+    "i18next": "23.6.0",
+    "next": "14.0.0",
+    "next-i18next": "14.0.3",
+    "next-seo": "^6.0.0",
+    "nextjs-google-analytics": "^2.3.3",
+    "react": "18.2.0",
+    "react-device-detect": "^2.2.3",
+    "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-icons": "^4.7.1",
+    "react-native": "0.72.6",
+    "react-switch-selector": "^2.2.1",
+    "swiper": "^11.0.5",
+    "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "i18nexus-cli": "^3.1.0"
+  }
+}
