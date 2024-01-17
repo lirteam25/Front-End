@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import { CiSettings } from "react-icons/ci";
+import { CiSettings, CiLogout } from "react-icons/ci";
 import { MdFileUpload } from "react-icons/md";
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -188,8 +188,8 @@ const NavBar = () => {
                                             <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
                                                 <CiSettings size={16} /> Settings
                                             </div>
-                                            <div className={Style.profile_tab_logout}>
-                                                <ActionButton action={disconnectUser} text="log out" fontSize="0.9rem" />
+                                            <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
+                                                <CiLogout size={16} /> log out
                                             </div>
                                         </div>
                                     </div>}

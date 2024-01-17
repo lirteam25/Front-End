@@ -923,17 +923,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         });
     };
 
-    const updateUserInformations = async (artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo, accessToken) => {
+    const updateUserInformations = async (artist_name, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo, accessToken) => {
         const dataObject = {
+            artist_name,
             artist_description,
             artist_instagram,
             artist_spotify,
             artist_soundcloud,
             artist_photo,
         };
-
-        // Remove properties with null values
-        Object.keys(dataObject).forEach(key => dataObject[key] == null && delete dataObject[key]);
 
         const data = JSON.stringify(dataObject);
         console.log(data);
@@ -947,12 +945,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenArtistSettings(false);
                 setUserAndCheckWallet();
             });
-    }
-
-    const updateArtistImage = async (file, accessToken) => {
-        const response = await cloudinaryUploadImage(file, user.artist_name);
-        console.log(response);
-        updateUserInformations({ artist_photo: response }, { accessToken: accessToken });
     }
 
     const updateUserPassword = async (currentPassword, newPassword, confirmNewPassword) => {
@@ -1167,7 +1159,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 forgotPassword,
                 updateUserDisplayName,
                 updateUserInformations,
-                updateArtistImage,
                 updateUserPassword,
                 deleteUsersEmailPsw,
                 unlinkWalletEmailPsw,

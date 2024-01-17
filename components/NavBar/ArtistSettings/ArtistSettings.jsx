@@ -6,12 +6,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { FaInstagram, FaSpotify, FaSoundcloud } from "react-icons/fa";
 
 import Style from "./ArtistSettings.module.css";
-import { ActionButton, InfoButton, LinkButton } from '../../../components/componentsIndex';
+import { ActionButton, InfoButton } from '../../../components/componentsIndex';
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
 const ArtistSettings = ({ closeArtistSettings }) => {
     const { user, updateUserInformations, openErrorAuth, cloudinaryUploadImage } = useContext(NFTMarketplaceContext);
 
+    const [artistName, setArtistName] = useState();
+    const [image, setImage] = useState();
     const [imgLoading, setImgLoading] = useState(false);
     const [description, setDescription] = useState();
     const [instagram, setInstagram] = useState();
@@ -20,12 +22,11 @@ const ArtistSettings = ({ closeArtistSettings }) => {
 
     const onDropImage = useCallback(async (file) => {
         setImgLoading(true);
-        const response = await cloudinaryUploadImage(file, user.artist_name);
+        const response = await cloudinaryUploadImage(file, user._id);
         console.log(response);
         const path = response.secure_url.replace(process.env.CLOUDINARY_URL, "");
         console.log("Image URL CLOUDINARY", path);
-        const response2 = await updateUserInformations(null, null, null, null, path, user.accessToken);
-        console.log(response2);
+        setImage(path);
         setImgLoading(false);
     });
 
@@ -42,7 +43,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
     };
 
     const updateInformation = async () => {
-        await updateUserInformations(description, instagram, spotify, soundCloud, null, user.accessToken);
+        await updateUserInformations(artistName, description, instagram, spotify, soundCloud, image, user.accessToken);
     }
 
     const decodeHtmlEntities = (html) => {
@@ -56,15 +57,30 @@ const ArtistSettings = ({ closeArtistSettings }) => {
         <div className={Style.ArtistSettings}>
             <div className={`${Style.ArtistSettings_top} font-normal`}>
                 <div className={Style.ArtistSettings_top_title}>
-                    Edit your profile
+                    {user.artist_photo && user.artist_description ? "Edit your profile" : "Create your profile"}
                 </div>
                 <AiOutlineClose className={Style.ArtistSettings_top_x} onClick={closeArtistSettings} />
             </div>
             <div className={Style.ArtistSettings_bottom}>
+                {!user.artist_name &&
+                    <div className={Style.ArtistSettings_bottom_ArtistName}>
+                        <div className={Style.ArtistSettings_bottom_ArtistName_95}>
+                            <div className='font-normal'>
+                                Insert Your Artist Name
+                            </div>
+                            <input
+                                className={Style.user_box_input_input}
+                                style={{ margin: "0.5rem 0rem" }}
+                                type="name"
+                                placeholder={"Carefull! Your artist name once saved cannot be changed"}
+                                onChange={(e) => setArtistName(e.target.value)}
+                            />
+                        </div>
+                    </div>}
                 <div className={Style.ArtistSettings_bottom_cover}>
                     <div
                         className={`${Style.artist_background_image} font-normal`}
-                        style={user.artist_photo && { backgroundImage: `url(${user.artist_photo})` }}
+                        style={image ? { backgroundImage: `url(${image})` } : (user.artist_photo ? { backgroundImage: `url(${user.artist_photo})` } : { backgroundColor: "var(--background-grey)" })}
                         {...getRootImageProps()}>
                         <input {...getInputImageProps()} id="audio" />
                         {imgLoading ? (
@@ -78,7 +94,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                             </div>
                         ) : (<div className={Style.artist_background_image_button}>
                             <div className={Style.artist_background_image_button_button}>
-                                DROP A NEW PROFILE PICTURE
+                                {user.artist_photo ? "UPLOAD A NEW PROFILE PICTURE" : "UPLOAD A PROFILE PICTURE"}
                             </div>
                         </div>)}
                     </div>
@@ -90,7 +106,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                             id="description"
                             cols="30"
                             rows="3"
-                            placeholder={decodeHtmlEntities(user.artist_description)}
+                            placeholder={user.artist_description ? decodeHtmlEntities(user.artist_description) : "Let fans know about your artistic journey"}
                             onChange={handleDescriptionChange}
                         />
                     </div>
@@ -104,7 +120,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                                 className={Style.user_box_input_input}
                                 style={{ margin: "0.5rem 0rem" }}
                                 type="name"
-                                placeholder={user.artist_instagram}
+                                placeholder={user.artist_instagram ? user.artist_instagram : "Insert the link to your Instagram"}
                                 onChange={(e) => setInstagram(e.target.value)}
                             />
                         </div>
@@ -114,7 +130,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                                 className={Style.user_box_input_input}
                                 style={{ margin: "0.5rem 0rem" }}
                                 type="name"
-                                placeholder={user.artist_spotify}
+                                placeholder={user.artist_spotify ? user.artist_spotify : "Insert the link to your Spotify"}
                                 onChange={(e) => setSpotify(e.target.value)}
                             />
                         </div>
@@ -124,7 +140,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                                 className={Style.user_box_input_input}
                                 style={{ margin: "0.5rem 0rem" }}
                                 type="name"
-                                placeholder={user.artist_soundcloud}
+                                placeholder={user.artist_soundcloud ? user.artist_soundcloud : "Insert the link to your SoundCloud"}
                                 onChange={(e) => setSoundCloud(e.target.value)}
                             />
                         </div>
@@ -137,9 +153,15 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                     </div>
                 }
                 <div className={Style.login_box_button}>
-                    {description || instagram || spotify || soundCloud ?
-                        <ActionButton action={updateInformation} text="UPDATE INFORMATION" fontSize="0.9rem" /> :
-                        <InfoButton text="Fill to save" fontSize="0.9rem" />}
+                    {user.artist_photo && user.artist_description ? <div>
+                        {image || description || instagram || spotify || soundCloud ?
+                            <ActionButton action={updateInformation} text="UPDATE INFORMATION" fontSize="0.9rem" /> :
+                            <InfoButton text="UPDATE INFORMATION" fontSize="0.9rem" />}</div> : <div>
+                        {artistName && description && image ?
+                            <ActionButton action={updateInformation} text="CREATE PROFILE" fontSize="0.9rem" /> :
+                            <InfoButton text="artist name, picture and description are required" fontSize="0.9rem" />}
+                    </div>}
+
                 </div>
             </div>
         </div >

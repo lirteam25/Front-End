@@ -35,6 +35,16 @@
     padding: 1rem 0rem;
 }
 
+.ArtistSettings_bottom_ArtistName {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistSettings_bottom_ArtistName_95 {
+    width: 95%;
+    margin: auto;
+}
+
 .ArtistSettings_bottom_cover {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--background-grey);

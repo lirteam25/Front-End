@@ -48,7 +48,7 @@ const AuthorProfileCard = ({ user, userWallet, joiningDate }) => {
             <div className={Style.AuthorProfileCard_box} >
                 <div className={Style.AuthorProfileCard_box_right}>
                     <h1 className="font-large">{user ? user.displayName : ("----")}</h1>
-                    {user && user.role == "artist" && !user.artist_minting_contract &&
+                    {user && user.role == "artist" && !user.artist_name && !user.artist_description && !user.artist_photo &&
                         <div className={Style.AuthorProfileCard_box_right_button}>
                             <ActionButton text="Create your artist profile" action={openCreateArtistProfile} fontSize="0.9rem" />
                         </div>
