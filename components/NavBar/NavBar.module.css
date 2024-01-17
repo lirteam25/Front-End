@@ -234,7 +234,9 @@ body.overlay-open {
 .profile_tab {
     position: absolute;
     background-color: var(--background-dark-color);
-    border: 1px solid var(--background-grey);
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
     right: 0%;
     top: 59px;
     animation: fadeIn 0.3s ease-in-out;
@@ -247,6 +249,10 @@ body.overlay-open {
     align-items: center;
     gap: 15px;
     border-bottom: 1px solid var(--background-grey);
+}
+
+.profile_tab_element:hover {
+    background-color: var(--background-grey2);
 }
 
 .profile_tab_logout {

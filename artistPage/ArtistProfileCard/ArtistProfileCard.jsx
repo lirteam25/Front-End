@@ -105,9 +105,9 @@ const ArtistProfileCard = ({ artist, lastRelease, myArtistProfile, setOpenArtist
                                     </div>
                                 </div>
                                 <div className={Style.ArtistProfileCard_top_content_colums_social}>
-                                    <a href={`${artist.artist_instagram}`} target="_blank"><FaInstagram /></a>
-                                    <a href={`${artist.artist_spotify}`} target="_blank"><FaSpotify /></a>
-                                    <a href={`${artist.artist_soundcloud}`} target="_blank"><FaSoundcloud /></a>
+                                    {artist.artist_instagram && <a href={`${artist.artist_instagram}`} target="_blank"><FaInstagram /></a>}
+                                    {artist.artist_spotify && <a href={`${artist.artist_spotify}`} target="_blank"><FaSpotify /></a>}
+                                    {artist.artist_soundcloud && <a href={`${artist.artist_soundcloud}`} target="_blank"><FaSoundcloud /></a>}
                                 </div>
                             </div>
                         </div>
