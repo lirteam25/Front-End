@@ -2,15 +2,14 @@ import React, { useContext } from "react";
 import Image from "next/image";
 
 //INTERNAL IMPORT
-import Style from "./AuthorProfileCard.module.css";
-import { ActionButton } from "../../components/componentsIndex";
+import Style from "./UserProfileCard.module.css";
 import img from "../../img/index";
 import { NFTMarketplaceContext } from '../../Context/NFTMarketplaceContext';
 
-const AuthorProfileCard = ({ user, userWallet, joiningDate }) => {
+const UserProfileCard = ({ user, userWallet, joiningDate }) => {
 
 
-    const { setOpenToast, setToast, setOpenArtistSettings } = useContext(NFTMarketplaceContext);
+    const { setOpenToast, setToast } = useContext(NFTMarketplaceContext);
 
 
     function copyToClipboard(text) {
@@ -39,20 +38,11 @@ const AuthorProfileCard = ({ user, userWallet, joiningDate }) => {
         copyToClipboard(user.wallet);
     };
 
-    const openCreateArtistProfile = () => {
-        setOpenArtistSettings(true);
-    }
-
     return (
         <div className={Style.AuthorProfileCard}>
             <div className={Style.AuthorProfileCard_box} >
                 <div className={Style.AuthorProfileCard_box_right}>
                     <h1 className="font-large">{user ? user.displayName : ("----")}</h1>
-                    {user && user.role == "artist" && !user.artist_name && !user.artist_description && !user.artist_photo &&
-                        <div className={Style.AuthorProfileCard_box_right_button}>
-                            <ActionButton text="Create your artist profile" action={openCreateArtistProfile} fontSize="0.9rem" />
-                        </div>
-                    }
                 </div>
                 <div className={Style.AuthorProfileCard_box_left}>
                     <div className={`${Style.AuthorProfileCard_box_left_box} font-small`} onClick={handleCopyClick}>{userWallet ? (<div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}><Image alt="copy" src={img.copy} height={13} width={13} /> <div>{userWallet}<span style={{ fontFamily: "Space Grotesk" }}>...</span></div></div>) : "----"}</div>
@@ -63,4 +53,4 @@ const AuthorProfileCard = ({ user, userWallet, joiningDate }) => {
     );
 };
 
-export default AuthorProfileCard;
+export default UserProfileCard;

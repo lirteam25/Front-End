@@ -1,21 +1,43 @@
 .DropZone {
-    width: 100%;
-    margin-top: 2rem;
+    margin: 0rem 0;
+}
+
+.DropZone_titleWithTutorial {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.DropZone_titleWithTutorial_icon_appear {
+    display: none;
+    position: absolute;
+    max-width: 50%;
+    background-color: var(--background-grey2);
+    padding: 0rem 0.5rem;
+    border: 1px solid var(--background-grey)
+}
+
+.DropZone_titleWithTutorial_icon_icon {
+    display: flex;
+    align-items: center;
+}
+
+.DropZone_titleWithTutorial_icon:hover .DropZone_titleWithTutorial_icon_appear {
+    display: block;
 }
 
 .DropZone_box_done,
 .DropZone_box {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     border: 1px solid var(--background-grey);
     border-radius: 0.1rem;
     background-color: var(--background-grey2);
-    color: grey;
+    color: var(--background-grey3);
     text-align: center;
-    padding: 3rem 2rem;
+    padding: 1rem 0rem;
     cursor: pointer;
-    font-size: 1.1rem;
     font-family: "Space mono", sans-serif;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .DropZone_box_done {
@@ -25,10 +47,6 @@
 .DropZone_box_done_loading {
     margin-top: 1rem;
     color: var(--main-color);
-}
-
-.DropZone_box_icon {
-    font-size: 2rem;
 }
 
 .DropZone_box_aside {

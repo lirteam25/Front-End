@@ -13,7 +13,7 @@ export async function getStaticProps({ locale }) {
 
 //INTERNAL IMPORT
 import { NFTDescription, NFTDetailsImg } from "../NFTDetailsPage/NFTDetailsPageIndex";
-import Style from "../styles/NFTdetails.module.css";
+import Style from "../styles/tokenDetails.module.css";
 
 
 //import smart contract

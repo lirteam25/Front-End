@@ -2,6 +2,7 @@
 .Button_text,
 .InfoButton {
     text-transform: Uppercase;
+    font-size: 0.9rem;
 }
 
 .ActionButton,

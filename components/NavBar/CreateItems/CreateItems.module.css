@@ -1,0 +1,74 @@
+.CreateItems textarea,
+.CreateItems input {
+    background-color: transparent;
+    margin-top: 0.5rem;
+    border: 1px solid var(--background-grey);
+}
+
+.CreateItems input::placeholder,
+.CreateItems textarea::placeholder {
+    color: var(--background-grey3);
+}
+
+
+.CreateItems_top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.CreateItems_top_title {
+    text-transform: uppercase;
+}
+
+.CreateItems_top_x {
+    cursor: pointer;
+}
+
+.CreateItems_bottom {
+    width: 95%;
+    margin: auto;
+    padding: 0.5rem 0;
+}
+
+.CreateItems_bottom_element {
+    padding: 0.5rem 0;
+}
+
+.CreateItems_bottom_yesOrNo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.CreateItems_bottom_btn {
+    padding: 1rem 0;
+}
+
+.CreateItems_bottom_element_titleWithTutorial {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.CreateItems_bottom_element_titleWithTutorial_icon_appear {
+    display: none;
+    position: absolute;
+    max-width: 50%;
+    background-color: var(--background-grey2);
+    padding: 0rem 0.5rem;
+    border: 1px solid var(--background-grey)
+}
+
+.CreateItems_bottom_element_titleWithTutorial_icon_icon {
+    display: flex;
+    align-items: center;
+}
+
+.CreateItems_bottom_element_titleWithTutorial_icon:hover .CreateItems_bottom_element_titleWithTutorial_icon_appear {
+    display: block;
+}

@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 // Internal Imports
 import Style from "./NavBar.module.css";
 import images from "../../img";
-import { Error, Loading, FooterAudioPlayer, Notification, Toast, ActionButton } from "../componentsIndex";
+import { Error, Loading, FooterAudioPlayer, Notification, Toast } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
@@ -18,6 +18,7 @@ import ForgotPassword from "./ForgotPassword/ForgotPassword";
 import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
+import CreateItem from "./CreateItems/CreateItems";
 
 //Context import
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
@@ -41,12 +42,10 @@ const NavBar = () => {
         renderString,
         openNotification,
         openToast,
-        openArtistForm,
-        setOpenArtistForm,
-        openAccountSetting,
-        setOpenAccountSetting,
-        openArtistSettings,
-        setOpenArtistSettings,
+        openArtistForm, setOpenArtistForm,
+        openAccountSetting, setOpenAccountSetting,
+        openArtistSettings, setOpenArtistSettings,
+        openCreateItem, setOpenCreateItem,
         disconnectUser
     } = useContext(NFTMarketplaceContext);
     const { t } = useTranslation();
@@ -86,6 +85,11 @@ const NavBar = () => {
 
     const closeArtistSettings = () => {
         setOpenArtistSettings(false);
+        setOpenErrorAuth(false);
+    }
+
+    const closeCreateItems = () => {
+        setOpenCreateItem(false);
         setOpenErrorAuth(false);
     }
 
@@ -182,6 +186,9 @@ const NavBar = () => {
                                             <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
                                                 <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
                                             </Link>
+                                            {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
+                                                <MdFileUpload size={16} /> Create artist profile
+                                            </div>}
                                             {user.role == "artist" && user.artist_minting_contract && <Link href="./create" className={Style.profile_tab_element} onClick={() => closeProfileTab()}>
                                                 <MdFileUpload size={16} /> Create a new digital collectible
                                             </Link>}
@@ -206,52 +213,74 @@ const NavBar = () => {
                 </span>
             </div>
 
-            {openSideBar && (
-                <div className={Style.overlay_sidebar}>
-                    <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
-                        <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+            {
+                openSideBar && (
+                    <div className={Style.overlay_sidebar}>
+                        <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
+                            <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
 
-            {openLogin &&
+            {
+                openLogin &&
                 <div className={Style.overlay} onMouseDown={() => closeLogin()}>
                     <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
                         <Login closeLogin={closeLogin} setOpenRegister={setOpenRegister} setForgotPassword={setForgotPassword} />
                     </div>
-                </div>}
+                </div>
+            }
 
-            {openRegister &&
+            {
+                openRegister &&
                 <div className={Style.overlay} onMouseDown={() => closeRegister()}>
                     <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
                         <Register setOpenLogin={setOpenLogin} closeRegister={closeRegister} />
                     </div>
-                </div>}
+                </div>
+            }
 
-            {forgotPassword &&
+            {
+                forgotPassword &&
                 <div className={Style.overlay} onMouseDown={() => closeForgot()}>
                     <div className={Style.navbar_ForgotPassword} onMouseDown={(e) => e.stopPropagation()}>
                         <ForgotPassword closeForgot={closeForgot} />
                     </div>
-                </div>}
-            {openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
-                <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
-                    <ArtistForm closeArtistForm={closeArtistForm} />
                 </div>
-            </div>}
+            }
+            {
+                openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
+                    <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
+                        <ArtistForm closeArtistForm={closeArtistForm} />
+                    </div>
+                </div>
+            }
 
-            {openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>
-                <div className={Style.navbar_AccountSetting} onMouseDown={(e) => e.stopPropagation()}>
-                    <AccountSettings closeArtistSettings={closeAccountSettings} />
+            {
+                openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>
+                    <div className={Style.navbar_AccountSetting} onMouseDown={(e) => e.stopPropagation()}>
+                        <AccountSettings closeArtistSettings={closeAccountSettings} />
+                    </div>
                 </div>
-            </div>}
+            }
 
-            {openArtistSettings && <div className={Style.overlay} onMouseDown={() => closeArtistSettings()}>
-                <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
-                    <ArtistSettings closeArtistSettings={closeArtistSettings} />
+            {
+                openArtistSettings && <div className={Style.overlay} onMouseDown={() => closeArtistSettings()}>
+                    <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
+                        <ArtistSettings closeArtistSettings={closeArtistSettings} />
+                    </div>
                 </div>
-            </div>}
+            }
+
+            {
+                openCreateItem && <div className={Style.overlay} onMouseDown={() => closeCreateItems()}>
+                    <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
+                        <CreateItem closeCreateItems={closeCreateItems} />
+                    </div>
+                </div>
+            }
 
             {openError && <Error />}
             {openLoading && <Loading />}
@@ -259,7 +288,7 @@ const NavBar = () => {
             {openNotification && <Notification />}
             {openToast && <Toast />}
 
-        </div>
+        </div >
     );
 }
 

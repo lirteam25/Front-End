@@ -331,7 +331,9 @@ body.overlay-open {
     position: absolute;
     background-color: var(--background-grey2);
     color: white;
-    border: 1px solid var(--background-grey);
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
     transform: translate(-50%, -50%);
     z-index: 1000;
     width: 50%;
@@ -468,6 +470,12 @@ body.overlay-open {
     }
 
     .navbar_ArtistForm {
+        top: 45%;
+        left: 50%;
+        width: 90%;
+    }
+
+    .navbar_ArtistSettings {
         top: 45%;
         left: 50%;
         width: 90%;

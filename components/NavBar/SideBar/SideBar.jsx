@@ -7,10 +7,10 @@ import Image from 'next/image';
 //INRTERNAL IMPORTS
 import Style from "./SideBar.module.css";
 import img from "./../../../img/index";
-import UpdateAccount from "./../../../myProfilePage/AuthorProfileCard/UpdateAccount/UpdateAccount";
-import UpdatePassword from "./../../../myProfilePage/AuthorProfileCard/UpdatePassword/UpdatePassword";
-import UnlinkWallet from "./../../../myProfilePage/AuthorProfileCard/UnlinkCryptoWallet/UnlinkCryptoWallet";
-import DeleteAccount from "./../../../myProfilePage/AuthorProfileCard/DeleteAccount/DeleteAccount";
+import UpdateUsername from "../AccountSettings/UpdateUsername/UpdateUsername";
+import UpdatePassword from "../AccountSettings/UpdatePassword/UpdatePassword";
+import UnlinkWallet from "../AccountSettings/UnlinkCryptoWallet/UnlinkCryptoWallet";
+import DeleteAccount from "../AccountSettings/DeleteAccount/DeleteAccount";
 
 
 
@@ -66,7 +66,7 @@ const SideBar = ({ setOpenSideBar, user, setOpenRegister, setOpenLogin }) => {
                                     </div>
                                     {updateAccount &&
                                         <div className={Style.sidebar_center_userIn_update_box_content}>
-                                            <UpdateAccount setUpdateAccount={setUpdateAccount} />
+                                            <UpdateUsername />
                                         </div>
                                     }
                                 </div>
@@ -77,7 +77,7 @@ const SideBar = ({ setOpenSideBar, user, setOpenRegister, setOpenLogin }) => {
                                         </div>
                                         {updatePassword &&
                                             <div className={Style.sidebar_center_userIn_update_box_content}>
-                                                <UpdatePassword setUpdatePassword={setUpdatePassword} />
+                                                <UpdatePassword />
                                             </div>
 
                                         }
@@ -89,7 +89,7 @@ const SideBar = ({ setOpenSideBar, user, setOpenRegister, setOpenLogin }) => {
                                     </div>
                                     {unlinkCryptoWallet &&
                                         <div className={Style.sidebar_center_userIn_update_box_content}>
-                                            <UnlinkWallet userProviderData={user.providerData} setUnlinkCryptoWallet={setUnlinkCryptoWallet} />
+                                            <UnlinkWallet />
                                         </div>
                                     }
                                 </div>}
@@ -99,13 +99,17 @@ const SideBar = ({ setOpenSideBar, user, setOpenRegister, setOpenLogin }) => {
                                     </div>
                                     {deleteAccount &&
                                         <div className={Style.sidebar_center_userIn_update_box_content} onMouseDown={(e) => e.stopPropagation()}>
-                                            <DeleteAccount userProviderData={user.providerData} setDeleteAccount={setDeleteAccount} />
+                                            <DeleteAccount />
                                         </div>
                                     }
                                 </div>
+                                <div className={Style.sidebar_center_userIn_update_box}>
+                                    <div className={`${Style.sidebar_center_userIn_update_box_title} font-medium`} onClick={() => disconnectUser()}>
+                                        log out
+                                    </div>
+                                </div>
                             </div>
                         )}
-                        <div className={Style.sidebar_center_register} onClick={() => disconnectUser()}> log out </div>
                     </div>
                 ) : (
                     <div className={Style.sidebar_center_login}>

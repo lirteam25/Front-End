@@ -1,4 +1,4 @@
 import SongDisplay from "./SongDisplay/SongDisplay";
-import AuthorProfileCard from "./AuthorProfileCard/AuthorProfileCard";
+import UserProfileCard from "./UserProfileCard/UserProfileCard";
 
-export { SongDisplay, AuthorProfileCard };
+export { SongDisplay, UserProfileCard };

@@ -80,7 +80,7 @@ textarea {
   color: white;
   border: 1px solid var(--background-grey);
   font-size: 0.8rem;
-  padding: 0.4rem 0.4rem;
+  padding: 0.2rem 0.4rem;
   font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -89,6 +89,7 @@ input {
   background-color: var(--background-grey);
   border: none;
   color: white;
+  padding: 0.2rem 0.4rem;
   border-bottom: 1px solid white;
   font-size: 0.8rem;
   font-family: 'Space Grotesk', sans-serif;
@@ -97,7 +98,7 @@ input {
 textarea::placeholder,
 input::placeholder {
   font-size: 0.8rem;
-  color: white;
+  color: var(--background-grey3);
   font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -200,6 +201,7 @@ input:-webkit-autofill {
   input.visited,
   input:-webkit-autofill {
     font-size: 0.8rem;
+    padding: 0.2rem 0.1rem;
   }
 }
 

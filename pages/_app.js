@@ -13,15 +13,16 @@ import { GoogleAnalytics } from "nextjs-google-analytics";
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
-
   const location = useRouter();
 
   useEffect(() => {
-    window.gtag("event", "page_view", {
-      page_path: location.pathname + location.search + location.hash,
-      page_search: location.search,
-      page_hash: location.hash,
-    });
+    if (process.env.NODE_ENV == "production") {
+      window.gtag("event", "page_view", {
+        page_path: location.pathname + location.search + location.hash,
+        page_search: location.search,
+        page_hash: location.hash,
+      });
+    }
   }, [location]);
 
   const iubendaScript = `

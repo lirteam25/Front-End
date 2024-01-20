@@ -37,6 +37,10 @@
     cursor: pointer;
 }
 
+.hover:hover {
+    background-color: var(--background-grey);
+}
+
 .red {
     color: var(--main-color);
     transition: all 0.2s;
@@ -45,6 +49,13 @@
 .ArtistSettings_bottom_title_95 {
     width: 95%;
     margin: auto;
+}
+
+.ArtistSettings_bottom_title_95_delete {
+    width: 95%;
+    margin: auto;
+    padding: 0.1rem 0;
+    color: var(--main-color)
 }
 
 .ArtistSettings_bottom_title_95_active {
