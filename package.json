@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development i18nexus pull && next dev",
     "build": "NODE_ENV=production i18nexus pull && next build",
-    "start": "NODE_ENV=production pull && next start"
+    "start": "NODE_ENV=production i18nexus pull && next start"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
