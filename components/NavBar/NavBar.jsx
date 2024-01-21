@@ -189,9 +189,9 @@ const NavBar = () => {
                                             {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
                                                 <MdFileUpload size={16} /> Create artist profile
                                             </div>}
-                                            {user.role == "artist" && user.artist_minting_contract && <Link href="./create" className={Style.profile_tab_element} onClick={() => closeProfileTab()}>
+                                            {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
                                                 <MdFileUpload size={16} /> Create a new digital collectible
-                                            </Link>}
+                                            </div>}
                                             <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
                                                 <CiSettings size={16} /> Settings
                                             </div>

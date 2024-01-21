@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development i18nexus pull && next dev",
-    "build": "NODE_ENV=production i18nexus pull && next build",
-    "start": "NODE_ENV=production i18nexus pull && next start"
+    "prod": "NODE_ENV=production i18nexus pull && next dev",
+    "dev": "i18nexus pull && next dev",
+    "build": "i18nexus pull && next build",
+    "start": "i18nexus pull && next start"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -36,6 +37,7 @@
     "react-icons": "^4.7.1",
     "react-native": "0.72.6",
     "react-switch-selector": "^2.2.1",
+    "sharp": "^0.33.2",
     "swiper": "^11.0.5",
     "typescript": "5.2.2"
   },
