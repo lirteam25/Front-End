@@ -141,10 +141,8 @@ const FooterAudioPlayer = () => {
 
         <div className={Style.FooterAudioPlayer}>
             <audio ref={audioPlayer} src={`${process.env.CLOUDINARY_URL}${(nft[currentIndex].audioCloudinary) ? nft[currentIndex].audioCloudinary : nft[currentIndex].audioPreview}`} preload="auto"></audio>
-            <div className={Style.FooterAudioPlayer_progressBar}>
-                <div className={Style.audioPlayer_progressBar}>
-                    <input type="range" className={Style.progressBar} defaultValue={0} ref={progressBar} onChange={changeRange} step="1" />
-                </div>
+            <div className={Style.audioPlayer_progressBar}>
+                <input type="range" className={Style.progressBar} defaultValue={0} ref={progressBar} onChange={changeRange} step="1" />
             </div>
             <div className={Style.FooterAudioPlayer_colums}>
                 <div className={Style.FooterAudioPlayer_colums_left}>

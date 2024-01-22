@@ -21,8 +21,23 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
     return (
         <div className={Style.CreateSmartContract}>
             <div className={`${Style.CreateSmartContract_top} font-normal`}>
-                <div className={Style.CreateSmartContract_top_title}>
-                    create your smart contract
+                <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial}>
+                    <label className='font-normal' htmlFor='token name'> CREATE YOUR SMART CONTRACT</label>
+                    <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
+                        <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
+                        <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
+                            <p>
+                                <span style={{ color: "var(--main-color)" }}>CAREFUL!</span>...technical explanation...an artist might find this very boring!
+                            </p>
+                            <p>
+                                Smart contracts are digital agreements formed on the blockchain.
+                                They autonomously execute when predefined conditions are fulfilled.
+                                In this context, we will be generating a customized contract tailored to your needs.
+                                This contract serves as the foundation for creating tokens, representing access to your track.
+                                Through this contract, you gain the capability to distribute your music and monitor individuals who are accessing your exclusive content.
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <AiOutlineClose className={Style.CreateSmartContract_top_x} onClick={closeCreateSmartContract} />
             </div>

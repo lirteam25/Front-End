@@ -19,6 +19,8 @@
 
 .CreateSmartContract_top_title {
     text-transform: uppercase;
+    display: flex;
+
 }
 
 .CreateSmartContract_top_x {

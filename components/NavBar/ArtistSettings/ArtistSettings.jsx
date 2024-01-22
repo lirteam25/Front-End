@@ -57,7 +57,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
         <div className={Style.ArtistSettings}>
             <div className={`${Style.ArtistSettings_top} font-normal`}>
                 <div className={Style.ArtistSettings_top_title}>
-                    {user.artist_photo && user.artist_description ? "Edit your profile" : "Create your profile"}
+                    {user.artist_name && user.artist_photo && user.artist_description ? "Edit your profile" : "Create your profile"}
                 </div>
                 <AiOutlineClose className={Style.ArtistSettings_top_x} onClick={closeArtistSettings} />
             </div>

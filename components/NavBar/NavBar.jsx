@@ -178,7 +178,7 @@ const NavBar = () => {
                                 }
                             </div>
                             <div className={Style.navbar_container_right_yesUser_profile}>
-                                <Image src={images.user} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
+                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
                                 />
                                 {openProfileTab &&
                                     <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>

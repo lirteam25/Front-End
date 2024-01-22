@@ -45,7 +45,15 @@ const UserProfileCard = ({ user, userWallet, joiningDate }) => {
                     <h1 className="font-large">{user ? user.displayName : ("----")}</h1>
                 </div>
                 <div className={Style.AuthorProfileCard_box_left}>
-                    <div className={`${Style.AuthorProfileCard_box_left_box} font-small`} onClick={handleCopyClick}>{userWallet ? (<div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}><Image alt="copy" src={img.copy} height={13} width={13} /> <div>{userWallet}<span style={{ fontFamily: "Space Grotesk" }}>...</span></div></div>) : "----"}</div>
+                    {userWallet ? (<div className={`${Style.AuthorProfileCard_box_left_box} font-small`} onClick={handleCopyClick}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                            <Image alt="copy" src={img.copy} height={13} width={13} />
+                            <div>{userWallet}<span style={{ fontFamily: "Space Grotesk" }}>...</span></div>
+                        </div>
+                    </div>) :
+                        (<div className={`${Style.AuthorProfileCard_box_left_box} font-small`}>
+                            {"----"}
+                        </div>)}
                     <div className={`${Style.AuthorProfileCard_box_left_box} ${Style.hide} font-small`} >{joiningDate || "----"}</div>
                 </div>
             </div>
