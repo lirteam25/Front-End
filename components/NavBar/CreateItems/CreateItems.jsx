@@ -10,7 +10,7 @@ import { InfoButton, ActionButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, setOpenLoading, setLoading } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, connectWallet, currentAccount } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
     const [version, setVersion] = useState("-");
@@ -36,13 +36,14 @@ const CreateItem = ({ closeCreateItems }) => {
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-
             const combinedDate = new Date(year, month - 1, day);
             combinedDate.setHours(hours, minutes);
             combinedDateISOString = combinedDate.toISOString();
         } else {
             combinedDateISOString = false;
         }
+
+        closeCreateItems();
 
         createNFT(
             user.artist_minting_contract,
@@ -248,7 +249,7 @@ const CreateItem = ({ closeCreateItems }) => {
                 </div>
 
                 <div className={Style.CreateItems_bottom_yesOrNo}>
-                    <label>Would you like to schedule the drop of the version?</label>
+                    <div className='font-normal'>Would you like to schedule the drop of the version?</div>
                     <Switch style={switchStyle} color="default" onChange={() => { setSchedule(!schedule) }} />
                 </div>
 
@@ -276,14 +277,17 @@ const CreateItem = ({ closeCreateItems }) => {
                 )}
 
                 <div className={Style.CreateItems_bottom_btn}>
-                    {(song && version && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && royalties && supply && amount && user.artist_first_sale_fee && duration) ? (
-                        <div>
-                            {(amount > supply) ? (<InfoButton text="The amount is higher than the supply" />) : (
-                                <ActionButton action={mintNFT} text="Create tokens" />
-                            )
-                            }
-                        </div>
-                    ) : (<InfoButton text="Insert all data to mint tokens" />)}
+                    {currentAccount ? <div>
+                        {(song && version && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && royalties && supply && amount && user.artist_first_sale_fee && duration) ? (
+                            <div>
+                                {(amount > supply) ? (<InfoButton text="The amount is higher than the supply" />) : (
+                                    <ActionButton action={mintNFT} text="Create tokens" />
+                                )
+                                }
+                            </div>
+                        ) : (<InfoButton text="Insert all data to mint tokens" />)}</div> : <div>
+                        <ActionButton action={connectWallet} text="connect your wallet" />
+                    </div>}
                 </div>
             </div>
         </div>

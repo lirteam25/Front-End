@@ -95,7 +95,7 @@ const ArtistProfileCard = ({ artist, lastRelease, myArtistProfile, setOpenArtist
                                 <h1 className="font-large">{artist.artist_name ? artist.artist_name : "----"}</h1>
                                 {myArtistProfile &&
                                     <div className={Style.ArtistProfileCard_top_content_colums_1_actions}>
-                                        <FiEdit size={20} onClick={() => setOpenArtistSettings(true)} />
+                                        <Image src={img.edit} alt="profile user" width={20} height={20} onClick={() => setOpenArtistSettings(true)} />
                                     </div>}
                             </div>
                             <div className={Style.ArtistProfileCard_top_content_colums_2}>
@@ -131,7 +131,9 @@ const ArtistProfileCard = ({ artist, lastRelease, myArtistProfile, setOpenArtist
                                         <div className={`${Style.ArtistProfileCard_top_realease_colums_2_box_info_bottom} font-small`}>
                                             <div className={Style.ArtistProfileCard_top_realease_colums_2_box_info_bottom_price}>
                                                 <div>PRICE</div>
-                                                <div>{typeof lastRelease.floor_price !== 'undefined' ? (lastRelease.floor_price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.price} $`)) : "---- $"}</div>
+                                                <div>{typeof lastRelease.floor_price !== 'undefined' ?
+                                                    (lastRelease.floor_price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>)
+                                                        : (`${lastRelease.floor_price} $`)) : "---- $"}</div>
                                             </div>
                                             <div className={Style.ArtistProfileCard_top_realease_colums_2_box_info_bottom_supply}>
                                                 <div>SUPPLY</div>

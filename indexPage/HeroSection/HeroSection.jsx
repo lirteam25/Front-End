@@ -50,7 +50,7 @@ const HeroSection = () => {
     }, []);
     return (
         <div className={Style.heroSection}>
-            <video autoPlay muted loop className={Style.video} loading="lazy" poster={img.cover_video_mp4}>
+            <video autoPlay muted loop className={Style.video} loading="lazy" poster="/cover_video_mp4.png">
                 <source src={"/timetofirst2.mp4"} type="video/mp4" />
             </video>
             <Image src={img.background_iPhone} alt="backgroundIphone" className={Style.heroSection_box_mobile} />

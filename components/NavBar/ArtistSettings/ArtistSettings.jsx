@@ -78,25 +78,29 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                         </div>
                     </div>}
                 <div className={Style.ArtistSettings_bottom_cover}>
-                    <div
-                        className={`${Style.artist_background_image} font-normal`}
-                        style={image ? { backgroundImage: `url(${image})` } : (user.artist_photo ? { backgroundImage: `url(${user.artist_photo})` } : { backgroundColor: "var(--background-grey)" })}
-                        {...getRootImageProps()}>
-                        <input {...getInputImageProps()} id="audio" />
-                        {imgLoading ? (
-                            <div className={Style.artist_background_image_loading}>
-                                <div className={Style.artist_background_image_loading_box}>
-                                    <div>The image is being loaded</div>
-                                    <div className={Style.artist_background_image_loading_box_circular}>
-                                        <CircularProgress variant="indeterminate" color="inherit" />
+                    <div className={Style.ArtistSettings_bottom_cover_95}>
+                        <div
+                            className={`${Style.artist_background_image} font-normal`}
+                            style={image ? { backgroundImage: `url(${image})` } : (user.artist_photo ? { backgroundImage: `url(${user.artist_photo})` } : { backgroundColor: "var(--background-grey)" })}
+                            {...getRootImageProps()}>
+                            <input {...getInputImageProps()} id="audio" />
+                            {imgLoading ? (
+                                <div className={Style.artist_background_image_loading}>
+                                    <div className={Style.artist_background_image_loading_box}>
+                                        <div>The image is being loaded</div>
+                                        <div className={Style.artist_background_image_loading_box_circular}>
+                                            <CircularProgress variant="indeterminate" color="inherit" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (<div className={Style.artist_background_image_button}>
-                            <div className={Style.artist_background_image_button_button}>
-                                {user.artist_photo ? "UPLOAD A NEW PROFILE PICTURE" : "UPLOAD A PROFILE PICTURE"}
-                            </div>
-                        </div>)}
+                            ) : (<div className={Style.artist_background_image_button}>
+                                <div className={Style.artist_background_image_button_button}>
+                                    {user.artist_photo ? "UPLOAD A NEW PROFILE PICTURE" : "UPLOAD A PROFILE PICTURE"}
+                                </div>
+                            </div>)}
+                        </div>
+                        <div className='font-small' style={{ paddingTop: "0.5rem" }}>For best results on all devices, use an image with a resolution of at least 1920 x 384 pixels and whose size does not exceed 10 MB.
+                        </div>
                     </div>
                 </div>
                 <div className={Style.ArtistSettings_bottom_info}>

@@ -2,8 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import { CiSettings, CiLogout } from "react-icons/ci";
-import { MdFileUpload } from "react-icons/md";
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
@@ -128,6 +126,7 @@ const NavBar = () => {
                             alt="Lir logo"
                             height={30.5}
                             width="auto"
+                            priority
                         />
                     </Link>
                     <Link className={Style.navbar_container_left_discover} href={{ pathname: `collection` }}>
@@ -187,16 +186,16 @@ const NavBar = () => {
                                                 <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
                                             </Link>
                                             {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
-                                                <MdFileUpload size={16} /> Create artist profile
+                                                <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
                                             </div>}
                                             {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
-                                                <MdFileUpload size={16} /> Create a new digital collectible
+                                                <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
                                             </div>}
                                             <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
-                                                <CiSettings size={16} /> Settings
+                                                <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings
                                             </div>
                                             <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
-                                                <CiLogout size={16} /> log out
+                                                <Image src={images.logout} alt="logout" width={16} height={16} /> log out
                                             </div>
                                         </div>
                                     </div>}
@@ -276,7 +275,7 @@ const NavBar = () => {
 
             {
                 openCreateItem && <div className={Style.overlay} onMouseDown={() => closeCreateItems()}>
-                    <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
+                    <div className={Style.navbar_CreateItem} onMouseDown={(e) => e.stopPropagation()}>
                         <CreateItem closeCreateItems={closeCreateItems} />
                     </div>
                 </div>

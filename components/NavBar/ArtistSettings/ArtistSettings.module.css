@@ -50,16 +50,19 @@
     border-bottom: 1px solid var(--background-grey);
 }
 
+.ArtistSettings_bottom_cover_95 {
+    margin: auto;
+    width: 95%;
+}
+
 .login_container_bottom_links {
     padding-bottom: 1rem;
 }
 
 .artist_background_image {
     aspect-ratio: 5;
-    width: 95%;
     background-size: cover;
     background-position: center center;
-    margin: 0 auto;
     padding: 0;
     top: 0;
     left: 0;
@@ -211,6 +214,14 @@
         font-size: 0.7rem;
         border: 1px solid white;
     }
+
+    .artist_background_image {
+        aspect-ratio: 1.93;
+    }
 }
 
-@media screen and (min-width:481px) and (max-width: 1024px) {}
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .artist_background_image {
+        aspect-ratio: 3.97;
+    }
+}

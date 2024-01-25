@@ -31,28 +31,6 @@ const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
     }
 };
 
-const connectingwithSmartContract4FreeTransaction = async (artistName, ContractAddress, ContractABI) => {
-    try {
-        console.log(artistName);
-        const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
-        let privatKey
-        if (artistName == "Marlon") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_MARLON}`
-        } else if (artistName == "Toriuke") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_TORIUKE}`
-        } else if (artistName == "Troviero") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_TROVIERO}`
-        }
-        const signer = new ethers.Wallet(privatKey, provider);
-        const contract = fetchContract(ContractAddress, ContractABI, signer);
-        const gasPrice = (await provider.getFeeData()).gasPrice;
-        return [contract, gasPrice];
-    } catch (error) {
-        console.log(error);
-        handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
-    }
-};
-
 const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
     try {
         const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
@@ -709,13 +687,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         await withWalletAndBlockChainCheck(async () => {
             try {
                 setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
-                const data = Buffer.from("None", "utf-8");
-                const [NFTMint, gasPrice] = await connectingwithSmartContract4FreeTransaction(nft.artist, nft.token_address, NFTMintABI);
-                console.log(nft.author_address, currentAccount, nft.token_id);
-                const transaction = await NFTMint.safeTransferFrom(nft.author_address, currentAccount, nft.token_id, 1, data,
+
+                const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
+                console.log(NFTMarketplace, gasPrice);
+                const transaction = await NFTMarketplace.MarketSaleMaticGasFree(nft.token_id, nft.author_address, nft.owner_of, currentAccount,
                     {
                         gasPrice: gasPrice
                     });
+
                 console.log(transaction);
                 const trans = await transaction.wait();
                 console.log(trans);

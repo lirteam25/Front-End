@@ -31,6 +31,10 @@ import utente_7 from "./utente_7.svg";
 
 import settings from "./accounts_settings.svg";
 import copy from "./content_copy.svg";
+import logout from "./logout.svg";
+import manage_accounts from "./manage_accounts.svg";
+import upload from "./upload.svg";
+import edit from "./edit.svg";
 import schedule from "./schedule.svg";
 import trovieroCard from "./card_3.jpg";
 import marlonCard from "./card_2.jpg";
@@ -40,7 +44,6 @@ import cover_howToCreateAWallet from "./cover1.jpg";
 import cover_howToCollect from "./cover.jpg";
 import background_iPhone from "./timetofirst2_CUT.jpg";
 import cover_YT_mobile from "./cover_pc.jpg";
-import cover_video_mp4 from "./cover_video_mp4.png";
 
 export default {
     logo,
@@ -78,6 +81,11 @@ export default {
 
     copy,
     schedule,
+    logout,
+    manage_accounts,
+    edit,
+    upload,
+
     trovieroCard,
     marlonCard,
     toriukeCard,
@@ -85,6 +93,5 @@ export default {
     cover_howToCreateAWallet,
     cover_howToCollect,
     background_iPhone,
-    cover_YT_mobile,
-    cover_video_mp4,
+    cover_YT_mobile
 };

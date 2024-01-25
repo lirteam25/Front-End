@@ -72,3 +72,9 @@
 .CreateItems_bottom_element_titleWithTutorial_icon:hover .CreateItems_bottom_element_titleWithTutorial_icon_appear {
     display: block;
 }
+
+@media screen and (max-width: 480px) {
+    .CreateItems_bottom {
+        padding: 0;
+    }
+}

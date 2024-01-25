@@ -274,8 +274,7 @@ body.overlay-open {
 
 .navbar_Login,
 .navbar_Register,
-.navbar_ForgotPassword,
-.navbar_ArtistForm {
+.navbar_ForgotPassword {
     position: absolute;
     background-color: white;
     color: black;
@@ -311,6 +310,8 @@ body.overlay-open {
     animation: slideInOther 0.3s ease-in-out;
 }
 
+.navbar_ArtistForm,
+.navbar_CreateItem,
 .navbar_ArtistSettings {
     position: absolute;
     background-color: var(--background-grey2);
@@ -470,13 +471,19 @@ body.overlay-open {
     }
 
     .navbar_ArtistForm {
-        top: 45%;
+        top: 50%;
         left: 50%;
         width: 90%;
     }
 
     .navbar_ArtistSettings {
-        top: 45%;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+    }
+
+    .navbar_CreateItem {
+        top: 50%;
         left: 50%;
         width: 90%;
     }
