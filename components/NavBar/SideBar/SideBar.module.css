@@ -74,16 +74,6 @@
     border-bottom: 1px solid var(--background-grey);
 }
 
-.sidebar_center_bottom {
-    position: absolute;
-    padding: 3rem 0rem;
-    bottom: 0;
-    width: 100%;
-    left: 5%;
-    background-color: var(--background-dark-color);
-    z-index: 6;
-}
-
 @media screen and (min-width:481px) and (max-width: 1024px) {
     .sidebar_center {
         width: 95%;

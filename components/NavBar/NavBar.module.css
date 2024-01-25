@@ -476,6 +476,7 @@ body.overlay-open {
         width: 90%;
     }
 
+    .navbar_AccountSetting,
     .navbar_ArtistSettings {
         top: 50%;
         left: 50%;
