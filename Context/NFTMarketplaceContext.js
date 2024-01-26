@@ -690,7 +690,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
                 const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
                 console.log(NFTMarketplace, gasPrice);
-                const transaction = await NFTMarketplace.MarketSaleMaticGasFree(nft.token_id, nft.author_address, nft.owner_of, currentAccount,
+                console.log(nft.token_id, nft.token_address, nft.owner_of, currentAccount);
+                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, currentAccount,
                     {
                         gasPrice: gasPrice
                     });
