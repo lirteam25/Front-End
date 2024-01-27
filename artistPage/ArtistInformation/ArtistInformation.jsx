@@ -1,15 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import DOMPurify from 'dompurify';
 
 import Style from "./ArtistInformation.module.css";
 import { SongDisplay } from "./../../myProfilePage/myProfilePageIndex";
+import { NFTMarketplaceContext } from '../../Context/NFTMarketplaceContext';
+import { ActionButton, InfoButton } from "../../components/componentsIndex";
+import CreateSmartContract from './CreateSmartContract/CreateSmartContract';
 
 const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs }) => {
 
     const [openRelease, setOpenRelease] = useState(true);
     const [openAbout, setOpenAbout] = useState(false);
     const [openCollectedItems, setOpenCollectedItems] = useState(false);
+    const [openCreateSmartContract, setOpenCreateSmartContract] = useState(false);
+
+    const openSmartCnt = () => {
+        setOpenCreateSmartContract(true);
+    }
+
+    const closeSmartCnt = () => {
+        setOpenCreateSmartContract(false);
+    }
+
+    const { user, setOpenCreateItem, currentAccount, connectWallet, renderString } = useContext(NFTMarketplaceContext);
+
+    const openCrtItem = () => {
+        setOpenCreateItem(true);
+    }
 
     useEffect(() => {
         // Detect scroll event
@@ -67,7 +85,7 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
         <div className={`${Style.ArtistInformation} font-medium`}>
             <div className={Style.ArtistInformation_title}>
                 <div className={`${Style.ArtistInformation_title_release} ${openRelease && Style.ArtistInformation_title_active}`} onClick={() => { setOpenRelease(true); setOpenAbout(false); setOpenCollectedItems(false) }}>
-                    All releases
+                    Releases
                 </div>
                 <div className={`${Style.ArtistInformation_title_about} ${openAbout && Style.ArtistInformation_title_active}`} onClick={() => { setOpenAbout(true); setOpenRelease(false); setOpenCollectedItems(false) }}>
                     About
@@ -80,11 +98,16 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
             <div className={Style.ArtistInformation_bottom}>
                 {openRelease && <div>
                     {myArtistProfile && <div>
-                        <div className={Style.ArtistInformation_bottom_button}>
-                            <Link href="./create" className={Style.ArtistInformation_bottom_button_text}>
-                                create a new digital collectible
-                            </Link>
-                        </div>
+                        {currentAccount == "" ? <ActionButton text="connect your crypto wallet" action={connectWallet} fontSize="0.9rem" /> :
+                            <div>
+                                {currentAccount == user.wallet ?
+                                    <div>
+                                        {user.artist_minting_contract ?
+                                            <ActionButton text="create a new digital collectible" action={openCrtItem} fontSize="0.9rem" /> :
+                                            <ActionButton text="create your unique smart contract" action={openSmartCnt} fontSize="0.9rem" />}
+                                    </div> : <InfoButton text={`The wallet connected ${renderString(currentAccount, 5)}... is not the one connected to your account`} />}
+                            </div>
+                        }
                     </div>}
                     <SongDisplay myNFTs={tokenInfos} artist={true} />
                 </div>}
@@ -98,6 +121,12 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
                     <SongDisplay myNFTs={myNFTs} artist={false} />
                 }
             </div>
+
+            {openCreateSmartContract && <div className={Style.overlay} onMouseDown={() => setOpenCreateSmartContract(false)}>
+                <div className={Style.CreateSmartContract_box} onMouseDown={(e) => e.stopPropagation()}>
+                    <CreateSmartContract closeCreateSmartContract={closeSmartCnt} />
+                </div>
+            </div>}
         </div>
     )
 }

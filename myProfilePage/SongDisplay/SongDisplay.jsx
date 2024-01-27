@@ -11,7 +11,7 @@ import img from "./../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const SongDisplay = ({ myNFTs, artist }) => {
-    const { downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity } = useContext(NFTMarketplaceContext);
+    const { downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity, setOpenCreateItems } = useContext(NFTMarketplaceContext);
 
     const [isDownloading, setIsDownloading] = useState(false);
     const [indexDownload, setIndexDownload] = useState();
@@ -47,7 +47,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
     }
 
     async function downloadFile(el) {
-        const response = await fetch(`https://res.cloudinary.com/dihlirr2b/video/upload${el.audioCloudinary}`);
+        const response = await fetch(`https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload${el.audioCloudinary}`);
 
         if (!response.ok) {
             console.error(response.status, response.statusText);
@@ -93,7 +93,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                             <div>
                                 {myNFTs.length == 0 ? (
                                     <div className={`${Style.display_song_noSong} font-normal`}>
-                                        No exclusive musical content created.<br />Click on <Link href={"./create"} className={Style.display_song_noSong_discover}>here</Link> to start your digital music collecting journey.
+                                        No exclusive musical content created.
                                     </div>) : (
                                     myNFTs.map((el, i) => (
                                         <div className={`${Style.display_song_box} ${(currentIndex == 0 && JSON.stringify(nft) === JSON.stringify(myNFTs.slice(i, i + 1)) && !stopFooter && Style.background_grey)}`}

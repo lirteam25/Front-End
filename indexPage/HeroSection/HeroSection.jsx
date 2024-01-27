@@ -50,7 +50,7 @@ const HeroSection = () => {
     }, []);
     return (
         <div className={Style.heroSection}>
-            <video autoPlay muted loop className={Style.video} loading="lazy" poster={img.cover_video_mp4}>
+            <video autoPlay muted loop className={Style.video} loading="lazy" poster="/cover_video_mp4.png">
                 <source src={"/timetofirst2.mp4"} type="video/mp4" />
             </video>
             <Image src={img.background_iPhone} alt="backgroundIphone" className={Style.heroSection_box_mobile} />
@@ -63,7 +63,7 @@ const HeroSection = () => {
                             <LinkButton
                                 path="./token-details"
                                 queries="token_id=1&token_address=0x5cb1df94c795808e94db596461aa8b8e60755443&id=656a26c6471e8d0af9d93b1d"
-                                text="collect the full song for free"
+                                text="collect the full track for free"
                                 background="var(--main-color)" /> :
                             <div> <span className={`${Style.heroSection_box_colums_left_timer} font-normal`}>{timeRemaining}</span>
                             </div>}

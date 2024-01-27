@@ -123,3 +123,16 @@
         transform: translateX(0);
     }
 }
+
+.ArtistForm_box_input {
+    padding-bottom: 0.5rem;
+}
+
+.ArtistForm_box_input input {
+    background-color: transparent;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistForm_box_input input::placeholder {
+    color: var(--background-grey3);
+}

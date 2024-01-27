@@ -2,15 +2,13 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import { CiSettings } from "react-icons/ci";
-import { MdFileUpload } from "react-icons/md";
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
 // Internal Imports
 import Style from "./NavBar.module.css";
 import images from "../../img";
-import { Error, Loading, FooterAudioPlayer, Notification, Toast, ActionButton } from "../componentsIndex";
+import { Error, Loading, FooterAudioPlayer, Notification, Toast } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
@@ -18,6 +16,7 @@ import ForgotPassword from "./ForgotPassword/ForgotPassword";
 import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
+import CreateItem from "./CreateItems/CreateItems";
 
 //Context import
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
@@ -41,12 +40,10 @@ const NavBar = () => {
         renderString,
         openNotification,
         openToast,
-        openArtistForm,
-        setOpenArtistForm,
-        openAccountSetting,
-        setOpenAccountSetting,
-        openArtistSettings,
-        setOpenArtistSettings,
+        openArtistForm, setOpenArtistForm,
+        openAccountSetting, setOpenAccountSetting,
+        openArtistSettings, setOpenArtistSettings,
+        openCreateItem, setOpenCreateItem,
         disconnectUser
     } = useContext(NFTMarketplaceContext);
     const { t } = useTranslation();
@@ -89,6 +86,11 @@ const NavBar = () => {
         setOpenErrorAuth(false);
     }
 
+    const closeCreateItems = () => {
+        setOpenCreateItem(false);
+        setOpenErrorAuth(false);
+    }
+
     useEffect(() => {
         if (isIndexPage) {
             // Detect scroll event
@@ -124,6 +126,7 @@ const NavBar = () => {
                             alt="Lir logo"
                             height={30.5}
                             width="auto"
+                            priority
                         />
                     </Link>
                     <Link className={Style.navbar_container_left_discover} href={{ pathname: `collection` }}>
@@ -174,7 +177,7 @@ const NavBar = () => {
                                 }
                             </div>
                             <div className={Style.navbar_container_right_yesUser_profile}>
-                                <Image src={images.user} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
+                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
                                 />
                                 {openProfileTab &&
                                     <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
@@ -182,14 +185,17 @@ const NavBar = () => {
                                             <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
                                                 <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
                                             </Link>
-                                            {user.role == "artist" && user.artist_minting_contract && <Link href="./create" className={Style.profile_tab_element} onClick={() => closeProfileTab()}>
-                                                <MdFileUpload size={16} /> Create a new digital collectible
-                                            </Link>}
+                                            {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
+                                                <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
+                                            </div>}
+                                            {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
+                                                <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
+                                            </div>}
                                             <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
-                                                <CiSettings size={16} /> Settings
+                                                <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings
                                             </div>
-                                            <div className={Style.profile_tab_logout}>
-                                                <ActionButton action={disconnectUser} text="log out" fontSize="0.9rem" />
+                                            <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
+                                                <Image src={images.logout} alt="logout" width={16} height={16} /> log out
                                             </div>
                                         </div>
                                     </div>}
@@ -206,52 +212,74 @@ const NavBar = () => {
                 </span>
             </div>
 
-            {openSideBar && (
-                <div className={Style.overlay_sidebar}>
-                    <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
-                        <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+            {
+                openSideBar && (
+                    <div className={Style.overlay_sidebar}>
+                        <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
+                            <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
 
-            {openLogin &&
+            {
+                openLogin &&
                 <div className={Style.overlay} onMouseDown={() => closeLogin()}>
                     <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
                         <Login closeLogin={closeLogin} setOpenRegister={setOpenRegister} setForgotPassword={setForgotPassword} />
                     </div>
-                </div>}
+                </div>
+            }
 
-            {openRegister &&
+            {
+                openRegister &&
                 <div className={Style.overlay} onMouseDown={() => closeRegister()}>
                     <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
                         <Register setOpenLogin={setOpenLogin} closeRegister={closeRegister} />
                     </div>
-                </div>}
+                </div>
+            }
 
-            {forgotPassword &&
+            {
+                forgotPassword &&
                 <div className={Style.overlay} onMouseDown={() => closeForgot()}>
                     <div className={Style.navbar_ForgotPassword} onMouseDown={(e) => e.stopPropagation()}>
                         <ForgotPassword closeForgot={closeForgot} />
                     </div>
-                </div>}
-            {openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
-                <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
-                    <ArtistForm closeArtistForm={closeArtistForm} />
                 </div>
-            </div>}
+            }
+            {
+                openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
+                    <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
+                        <ArtistForm closeArtistForm={closeArtistForm} />
+                    </div>
+                </div>
+            }
 
-            {openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>
-                <div className={Style.navbar_AccountSetting} onMouseDown={(e) => e.stopPropagation()}>
-                    <AccountSettings closeArtistSettings={closeAccountSettings} />
+            {
+                openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>
+                    <div className={Style.navbar_AccountSetting} onMouseDown={(e) => e.stopPropagation()}>
+                        <AccountSettings closeArtistSettings={closeAccountSettings} />
+                    </div>
                 </div>
-            </div>}
+            }
 
-            {openArtistSettings && <div className={Style.overlay} onMouseDown={() => closeArtistSettings()}>
-                <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
-                    <ArtistSettings closeArtistSettings={closeArtistSettings} />
+            {
+                openArtistSettings && <div className={Style.overlay} onMouseDown={() => closeArtistSettings()}>
+                    <div className={Style.navbar_ArtistSettings} onMouseDown={(e) => e.stopPropagation()}>
+                        <ArtistSettings closeArtistSettings={closeArtistSettings} />
+                    </div>
                 </div>
-            </div>}
+            }
+
+            {
+                openCreateItem && <div className={Style.overlay} onMouseDown={() => closeCreateItems()}>
+                    <div className={Style.navbar_CreateItem} onMouseDown={(e) => e.stopPropagation()}>
+                        <CreateItem closeCreateItems={closeCreateItems} />
+                    </div>
+                </div>
+            }
 
             {openError && <Error />}
             {openLoading && <Loading />}
@@ -259,7 +287,7 @@ const NavBar = () => {
             {openNotification && <Notification />}
             {openToast && <Toast />}
 
-        </div>
+        </div >
     );
 }
 

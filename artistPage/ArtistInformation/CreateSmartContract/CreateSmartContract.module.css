@@ -1,0 +1,77 @@
+.CreateSmartContract input {
+    background-color: transparent;
+    border: 1px solid var(--background-grey);
+}
+
+.CreateSmartContract input::placeholder {
+    color: var(--background-grey3);
+}
+
+.CreateSmartContract_top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+
+.CreateSmartContract_top_title {
+    text-transform: uppercase;
+    display: flex;
+
+}
+
+.CreateSmartContract_top_x {
+    cursor: pointer;
+}
+
+.CreateSmartContract_bottom {
+    padding: 0.5rem 0rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.CreateSmartContract_bottom_title {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--background-grey);
+    cursor: pointer;
+}
+
+.CreateSmartContract_bottom_95 {
+    padding: 0.5rem 0;
+    width: 95%;
+    margin: auto;
+}
+
+.CreateSmartContract_bottom_95_titleWithTutorial {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear {
+    display: none;
+    position: absolute;
+    max-width: 70%;
+    background-color: var(--background-grey2);
+    padding: 0rem 0.5rem;
+    border: 1px solid var(--background-grey)
+}
+
+.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon {
+    display: flex;
+    align-items: center;
+}
+
+.CreateSmartContract_bottom_95_titleWithTutorial_icon:hover .CreateSmartContract_bottom_95_titleWithTutorial_icon_appear {
+    display: block;
+}
+
+@media screen and (max-width:480px) {
+    .CreateSmartContract_bottom_95_titleWithTutorial_icon {
+        display: none;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {}

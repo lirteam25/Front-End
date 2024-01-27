@@ -35,9 +35,24 @@
     padding: 1rem 0rem;
 }
 
+.ArtistSettings_bottom_ArtistName {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistSettings_bottom_ArtistName_95 {
+    width: 95%;
+    margin: auto;
+}
+
 .ArtistSettings_bottom_cover {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistSettings_bottom_cover_95 {
+    margin: auto;
+    width: 95%;
 }
 
 .login_container_bottom_links {
@@ -46,10 +61,8 @@
 
 .artist_background_image {
     aspect-ratio: 5;
-    width: 95%;
     background-size: cover;
     background-position: center center;
-    margin: 0 auto;
     padding: 0;
     top: 0;
     left: 0;
@@ -191,5 +204,24 @@
 
     100% {
         transform: translateX(0);
+    }
+}
+
+@media screen and (max-width:480px) {
+    .artist_background_image_button_button {
+        background-color: var(--main-color);
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+        border: 1px solid white;
+    }
+
+    .artist_background_image {
+        aspect-ratio: 1.93;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .artist_background_image {
+        aspect-ratio: 3.97;
     }
 }

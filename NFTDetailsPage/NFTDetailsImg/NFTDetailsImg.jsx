@@ -127,7 +127,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                         </div>
                         <div>
                             <div>PRICE</div>
-                            <div>{typeof shownNft.price !== 'undefined' ? (shownNft.sellingQuantity == 0 ? "No token listed" : (shownNft.price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.price} $`))) : "---- $"}</div>
+                            <div>{typeof shownNft.price !== 'undefined' ? (shownNft.sellingQuantity == 0 ? "Track not listed" : (shownNft.price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.price} $`))) : "---- $"}</div>
                         </div>
                         <div>
                             <div>SUPPLY</div>
@@ -139,11 +139,11 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                 <div className={Style.NFTDetailsImg_description_info_actions}>
                     {shownNft.price !== 'undefined' ? (
                         <div>{!user ? (
-                            <ActionButton action={openLogin} text="Login or signup to purchase a token" />
+                            <ActionButton action={openLogin} text="Login or signup to collect" />
                         ) : (
                             <div>
                                 {currentAccount === "" ? (
-                                    <ActionButton action={connectWallet} text="CONNECT WALLET" />
+                                    <ActionButton action={connectWallet} text="connect wallet" />
                                 ) : (
                                     <div>
                                         {user.wallet ? (<div>
@@ -155,13 +155,13 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                             {currentAccount == user.wallet ? (
                                                                 <div className={Style.NFTDetailsImg_description_info_button}>
                                                                     <div>
-                                                                        <ActionButton action={setNewPrice} text="CHANGE TOKEN PRICE" />
+                                                                        <ActionButton action={setNewPrice} text="CHANGE PRICE" />
                                                                         {openChangePrice &&
                                                                             <ChangePrice nft={shownNft} setOpenChangePrice={setOpenChangePrice} />
                                                                         }
                                                                     </div>
                                                                     <div>
-                                                                        <ActionButton action={setDelistItem} text="DELIST TOKEN" />
+                                                                        <ActionButton action={setDelistItem} text="DELIST" />
                                                                         {openDelistItem &&
                                                                             <DelistItem nft={shownNft} setOpenDelistItem={setOpenDelistItem} />
                                                                         }
@@ -177,20 +177,20 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                         <div>
                                                             {currentAccount == user.wallet ? (
                                                                 <div>
-                                                                    <ActionButton action={setListItem} text="LIST YOUR tokens ON THE MARKETPLACE" />
+                                                                    <ActionButton action={setListItem} text="LIST YOUR track" />
                                                                     {openListItem &&
                                                                         <ListItem nft={shownNft} setOpenListItem={setOpenListItem} />
                                                                     }
                                                                     {shownNft.sellingQuantity > 0 && (
                                                                         <div className={Style.NFTDetailsImg_description_info_button}>
                                                                             <div>
-                                                                                <ActionButton action={setNewPrice} text="CHANGE token PRICE" />
+                                                                                <ActionButton action={setNewPrice} text="CHANGE PRICE" />
                                                                                 {openChangePrice &&
                                                                                     <ChangePrice nft={shownNft} setOpenChangePrice={setOpenChangePrice} />
                                                                                 }
                                                                             </div>
                                                                             <div>
-                                                                                <ActionButton action={setDelistItem} text="DELIST token" />
+                                                                                <ActionButton action={setDelistItem} text="DELIST" />
                                                                                 {openDelistItem &&
                                                                                     <DelistItem nft={shownNft} setOpenDelistItem={setOpenDelistItem} />
                                                                                 }
@@ -200,7 +200,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                                 </div>
                                                             ) : (
                                                                 <div className={Style.NFTDetailsImg_description_info_button2}>
-                                                                    <InfoButton text={`Connect ${renderString(shownNft.owner_of, 5)} wallet to list your tokens`} />
+                                                                    <InfoButton text={`Connect ${renderString(shownNft.owner_of, 5)} wallet to list your trakcs`} />
                                                                 </div>
                                                             )}
                                                         </div>
@@ -214,7 +214,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                                 (<div>
                                                                     {userOwn.length != 0 ? (
                                                                         <div>
-                                                                            <InfoButton text={`You have already redeemed your token`} />
+                                                                            <InfoButton text={`You have already colleted this track`} />
                                                                             <div className={`${Style.link_to_your_NFTPage} font-normal`}>
                                                                                 You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
                                                                             </div>

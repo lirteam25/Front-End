@@ -13,7 +13,7 @@ export async function getStaticProps({ locale }) {
 
 //INTERNAL IMPORT
 import { NFTDescription, NFTDetailsImg } from "../NFTDetailsPage/NFTDetailsPageIndex";
-import Style from "../styles/NFTdetails.module.css";
+import Style from "../styles/tokenDetails.module.css";
 
 
 //import smart contract
@@ -58,15 +58,19 @@ const NFTDetails = () => {
     useEffect(() => {
         if (!router.isReady) return;
         const { token_id = "", token_address = "", } = router.query;
-        if (user && user.wallet && user.accessToken) {
-            fetchNFTOwners(token_id, token_address, user.accessToken).then((items) => {
-                console.log("I own:", items[0]);
-                if (items.length > 0 && items[0].amount > 0) {
-                    setUserOwn(items[0])
-                } else {
-                    setUserOwn([]);
-                }
-            })
+        if (user) {
+            if (user.wallet) {
+                fetchNFTOwners(token_id, token_address, user.accessToken).then((items) => {
+                    console.log("I own:", items[0]);
+                    if (items.length > 0 && items[0].amount > 0) {
+                        setUserOwn(items[0])
+                    } else {
+                        setUserOwn([]);
+                    }
+                })
+            } else {
+                setUserOwn([])
+            }
         };
     }, [user])
 

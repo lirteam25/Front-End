@@ -12,7 +12,7 @@ export async function getStaticProps({ locale }) {
 //INTERNAL IMPORT
 import Style from "../styles/myprofile.module.css";
 import Style2 from "../styles/artist.module.css";
-import { AuthorProfileCard, SongDisplay } from "../myProfilePage/myProfilePageIndex";
+import { UserProfileCard, SongDisplay } from "../myProfilePage/myProfilePageIndex";
 import { ArtistProfileCard, ArtistInformation } from "../artistPage/artistPageIndex";
 
 //Import smart contract
@@ -29,7 +29,7 @@ const MyProfile = () => {
     const [joiningDate, setJoiningDate] = useState(null);
     const [isArtist, setIsArtist] = useState(false);
     const [mintingContract, setMintingContract] = useState(false);
-    const [artistLastRelease, setArtistLastRelease] = useState([]);
+    const [artistLastRelease, setArtistLastRelease] = useState(false);
     const [artistTokenInfos, setArtistTokenInfos] = useState([]);
 
     const fetchOwnedNFTs = async (accessToken) => {
@@ -76,7 +76,7 @@ const MyProfile = () => {
         }
     }
 
-    if (isArtist && mintingContract) {
+    if (isArtist && user.artist_description && user.artist_photo) {
         return (
             <div className={Style2.Vh_artist}>
                 <NextSeo title="Profile | LIR" description="Your personal sanctuary of digital collectibles. Listen to your unique music treasures, manage your collection, and immerse yourself in your musical legacy." />
@@ -93,7 +93,7 @@ const MyProfile = () => {
             <div>
                 <NextSeo title="Profile | LIR" description="Your personal sanctuary of digital collectibles. Listen to your unique music treasures, manage your collection, and immerse yourself in your musical legacy." />
                 <div className={Style.author} onClick={closeWindow}>
-                    <AuthorProfileCard user={user} userWallet={userWallet} joiningDate={joiningDate} />
+                    <UserProfileCard user={user} userWallet={userWallet} joiningDate={joiningDate} />
                     <div className={Style.author_song}>
                         <SongDisplay
                             myNFTs={myNFTs}

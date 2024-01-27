@@ -39,49 +39,49 @@ const ArtistForm = ({ closeArtistForm }) => {
             </div>
             <div className={Style.login_container_bottom}>
                 <p className={`${Style.form_paragraph} font-small`}>Please introduce yourself by completing the form below. We are highly interested in learning about your work and your music! We'll get back to you within a couple of business days.</p>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="string"
                         placeholder="Insert Your Name"
                         onChange={(e) => setName(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="email"
                         placeholder="Insert Your email"
                         onChange={(e) => setEmail(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="link"
                         placeholder="Link Your Instagram"
                         onChange={(e) => setInstagram(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="link"
                         placeholder="Link Your Spotify"
                         onChange={(e) => setSpotify(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="link"
                         placeholder="Link Your SoundCloud"
                         onChange={(e) => setSoundcloud(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.user_box_input}>
+                <div className={Style.ArtistForm_box_input}>
                     <input
-                        className={Style.user_box_input_input}
+                        className={Style.inputFake}
                         type="link"
                         placeholder="Everything else (BandCamp, etc..)"
                         onChange={(e) => setOther(e.target.value)}

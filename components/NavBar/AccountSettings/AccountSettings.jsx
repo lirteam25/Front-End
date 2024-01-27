@@ -6,7 +6,6 @@ import UpdateUsername from "./UpdateUsername/UpdateUsername";
 import UpdatePassword from "./UpdatePassword/UpdatePassword";
 import UnlinkCrytpoWallet from "./UnlinkCryptoWallet/UnlinkCryptoWallet";
 import DeleteAccount from "./DeleteAccount/DeleteAccount";
-import { ActionButton, InfoButton } from '../../../components/componentsIndex';
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
 const ArtistSettings = ({ closeArtistSettings }) => {
@@ -58,7 +57,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                 <AiOutlineClose className={Style.ArtistSettings_top_x} onClick={closeArtistSettings} />
             </div>
 
-            <div className={`${Style.ArtistSettings_bottom_title} font-normal`} onClick={openUsername}>
+            <div className={`${Style.ArtistSettings_bottom_title} ${!openUpdateUsername && Style.hover} font-normal`} onClick={openUsername}>
                 <div className={Style.ArtistSettings_bottom_title_95}>
                     <div className={`${openUpdateUsername && Style.red}`}>Update Username</div>
                     {openUpdateUsername &&
@@ -67,7 +66,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                         </div>}
                 </div>
             </div>
-            <div className={`${Style.ArtistSettings_bottom_title} font-normal`} onClick={openPsw}>
+            <div className={`${Style.ArtistSettings_bottom_title} ${!openUpdatePsw && Style.hover} font-normal`} onClick={openPsw}>
                 <div className={Style.ArtistSettings_bottom_title_95}>
                     <div className={`${openUpdatePsw && Style.red}`}>Update Password</div>
                     {openUpdatePsw && <div className={Style.ArtistSettings_bottom_title_95_active}>
@@ -75,7 +74,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                     </div>}
                 </div>
             </div>
-            <div className={`${Style.ArtistSettings_bottom_title} font-normal`} onClick={openUn}>
+            <div className={`${Style.ArtistSettings_bottom_title} ${!openUnlink && Style.hover} font-normal`} onClick={openUn}>
                 <div className={Style.ArtistSettings_bottom_title_95}>
                     <div className={`${openUnlink && Style.red}`}>Unlink Crypto Wallet</div>
                     {openUnlink && <div className={Style.ArtistSettings_bottom_title_95_active}>
@@ -83,8 +82,8 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                     </div>}
                 </div>
             </div>
-            <div className={`${Style.ArtistSettings_bottom_title} font-normal`} onClick={openDelete}>
-                <div className={Style.ArtistSettings_bottom_title_95}>
+            <div className={`${Style.ArtistSettings_bottom_title} ${!openDeleteAccount && Style.hover} font-small`} onClick={openDelete}>
+                <div className={Style.ArtistSettings_bottom_title_95_delete}>
                     <div className={`${openDeleteAccount && Style.red}`}>Delete Account</div>
                     {openDeleteAccount && <div className={Style.ArtistSettings_bottom_title_95_active}>
                         <DeleteAccount />

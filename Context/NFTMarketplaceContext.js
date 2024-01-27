@@ -8,7 +8,7 @@ const FormData = require('form-data');
 import { isMobile } from "react-device-detect";
 
 //Internal Imports
-import { NFTMintABI, NFTMarketplaceAddress, NFTMarketplaceABI } from "./Constants";
+import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -31,19 +31,11 @@ const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
     }
 };
 
-const connectingwithSmartContract4FreeTransaction = async (artistName, ContractAddress, ContractABI) => {
+const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
     try {
-        console.log(artistName);
         const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
-        let privatKey
-        if (artistName == "Marlon") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_MARLON}`
-        } else if (artistName == "Toriuke") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_TORIUKE}`
-        } else if (artistName == "Troviero") {
-            privatKey = `0x${process.env.METAMASK_WALLET_PRIVATE_KEY_TROVIERO}`
-        }
-        const signer = new ethers.Wallet(privatKey, provider);
+        const owner_privateKey = process.env.OWNER_PRIVATE_KEY;
+        const signer = new ethers.Wallet(owner_privateKey, provider);
         const contract = fetchContract(ContractAddress, ContractABI, signer);
         const gasPrice = (await provider.getFeeData()).gasPrice;
         return [contract, gasPrice];
@@ -189,7 +181,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const chainId = await window.ethereum.request({
                 method: "eth_chainId",
             });
-            if (chainId != "0x89") {
+            if (chainId != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
                 await switchToPolygon();
             }
             setCurrentAccount(accounts[0]);
@@ -220,7 +212,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const switchToPolygon = async () => {
-        const polygonNetwork = {
+        const polygonNetwork = process.env.NODE_ENV == "production" ? {
             chainId: '0x89',
             chainName: 'Polygon Mainnet',
             nativeCurrency: {
@@ -230,9 +222,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
             },
             rpcUrls: ['https://polygon-rpc.com/'],
             blockExplorerUrls: ['https://polygonscan.com'],
+        } : {
+            chainId: '0x13881', // Chain ID for Mumbai Testnet
+            chainName: 'Mumbai',
+            nativeCurrency: {
+                name: 'Matic',
+                symbol: 'MATIC',
+                decimals: 18,
+            },
+            rpcUrls: ['https://rpc-mumbai.maticvigil.com'], // Mumbai Testnet RPC endpoint
+            blockExplorerUrls: ['https://rpc-mumbai.maticvigil.com'], // Mumbai Testnet Block Explorer
         };
         try {
-            const chainId = '0x89';
+            const chainId = polygonNetwork.chainId;
             // Check if the current chain ID is not Polygon
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
@@ -251,7 +253,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     // Upload image to IPFS function. The input is a file (audio). 
-    const pinFileToIPFS = async (file) => {
+    const pinFileToIPFS = async (file, artist) => {
         const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 
         //making axios POST request to Pinata
@@ -261,8 +263,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const metadata = JSON.stringify({
             name: `${file.path}`,
             keyvalues: {
-                exampleKey: 'Provina'
-            }
+                ArtistID: `${artist}`
+            },
         });
         data.append('pinataMetadata', metadata);
 
@@ -317,11 +319,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            data.append("upload_preset", "my-uploads");
+            if (process.env.NODE_ENV == "production") {
+                data.append("upload_preset", "my-uploads");
+            } else {
+                data.append("upload_preset", "test_uploads");
+            }
             data.append("folder", artist);
 
             const response = await fetch(
-                "https://api.cloudinary.com/v1_1/dihlirr2b/video/upload", // Replace with your Cloudinary cloud name
+                `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload`,
                 {
                     method: "POST",
                     body: data,
@@ -338,14 +344,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const cloudinaryUploadImage = async (file, artist) => {
         try {
-            console.log(artist);
             const data = new FormData();
             data.append("file", file[0]);
-            data.append("upload_preset", "my-uploads");
+            if (process.env.NODE_ENV == "production") {
+                data.append("upload_preset", "my-uploads");
+            } else {
+                data.append("upload_preset", "test_uploads");
+            }
             data.append("folder", artist);
 
             const response = await fetch(
-                "https://api.cloudinary.com/v1_1/dihlirr2b/image/upload", // Replace with your Cloudinary cloud name
+                `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
                 {
                     method: "POST",
                     body: data,
@@ -364,8 +373,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     async function withWalletAndBlockChainCheck(fn) {
         const identification = await fetchUserInformation();
         const user = await userToWallet(identification.accessToken);
-        const connectedWallet = await checkIfWalletConnected();
-        if (user.wallet !== connectedWallet) {
+        let connectedWallet = await checkIfWalletConnected();
+        if (!connectedWallet) {
+            await connectWallet();
+            connectedWallet = await checkIfWalletConnected();
+        }
+        if (connectedWallet && user.wallet !== connectedWallet) {
             setOpenLoading(false);
             setNotificationText(`The wallet connected ${renderString(connectedWallet, 5)} is not the same wallet connected to your account. Switch to ${user.wallet} to complete the transaction`);
             setNotificationTitle("Wrong wallet connected");
@@ -374,12 +387,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const chainId = await window.ethereum.request({
                 method: "eth_chainId",
             });
-            if (chainId != "0x89") {
+            if (chainId != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
                 await switchToPolygon();
                 const chainId2 = await window.ethereum.request({
                     method: "eth_chainId",
                 });
-                if (chainId2 != "0x89") {
+                if (chainId2 != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
                     setOpenError(true); setError("Please manually switch to Polygon and repeat the transaction");
                 } else {
                     return fn();
@@ -387,6 +400,54 @@ export const NFTMarketplaceProvider = ({ children }) => {
             }
             return fn();
         }
+    };
+
+    const createNFTMintSmartContract = async (nameToken, symbolToken, accessToken) => {
+        await withWalletAndBlockChainCheck(async () => {
+            setLoading("The smart contract creating procedure has started. Accept the metamask transaction."); setOpenLoading(true);
+            try {
+                const NFTMintSample = await connectingWithSmartContract(NFTMintSampleAddress, NFTMintABI);
+                const connectedWallet = await checkIfWalletConnected();
+                const initData = NFTMintSample.interface.encodeFunctionData("initialize", [nameToken, symbolToken, connectedWallet]);
+                const NFTMintFactoryContract = await connectingWithSmartContract(NFTMintFactoryAddress, NFTMintFactoryABI);
+                const tx = await NFTMintFactoryContract.createNFTMint(initData);
+                console.log(tx);
+                const result = await tx.wait();
+                console.log(result.logs);
+                const logs = result.logs;
+                var BeaconProxyAddress;
+                for (var i = 0; i < logs.length; i++) {
+                    var currentLog = logs[i];
+                    // Check if the current object has the desired fragment.name
+                    if (currentLog.fragment && currentLog.fragment.name === "NFTMintDeployed") {
+                        BeaconProxyAddress = currentLog.args[0].toLowerCase();
+                        break; // Stop the loop since you found the desired object
+                    }
+                };
+                console.log(BeaconProxyAddress);
+
+                const [NFTMarketplaceContract, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
+                console.log(NFTMarketplaceContract);
+                const tx1 = await NFTMarketplaceContract.storeMintingContracts(BeaconProxyAddress, {
+                    gasPrice: gasPrice
+                });
+                const result2 = await tx1.wait();
+                console.log(result2);
+
+                const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress });
+                console.log(data);
+                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
+                    .then((response) => {
+                        console.log(response);
+                        setOpenLoading(false);
+
+                    });
+
+                window.location.reload();
+            } catch (error) {
+                handleMetaMaskErrors(error, "Something went wrong while creating the smart contracts. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
+            }
+        })
     }
 
     const createNFT = async (
@@ -451,7 +512,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenLoading(false);
                 setToast("Token successfully listed");
                 setOpenToast(true);
-                router.push("/discover");
+                router.push("/collection");
             } catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while creating the tokens. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
             }
@@ -626,13 +687,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         await withWalletAndBlockChainCheck(async () => {
             try {
                 setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
-                const data = Buffer.from("None", "utf-8");
-                const [NFTMint, gasPrice] = await connectingwithSmartContract4FreeTransaction(nft.artist, nft.token_address, NFTMintABI);
-                console.log(nft.author_address, currentAccount, nft.token_id);
-                const transaction = await NFTMint.safeTransferFrom(nft.author_address, currentAccount, nft.token_id, 1, data,
+
+                const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
+                console.log(NFTMarketplace, gasPrice);
+                console.log(nft.token_id, nft.token_address, nft.owner_of, currentAccount);
+                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, currentAccount,
                     {
                         gasPrice: gasPrice
                     });
+
                 console.log(transaction);
                 const trans = await transaction.wait();
                 console.log(trans);
@@ -923,17 +986,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         });
     };
 
-    const updateUserInformations = async (artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo, accessToken) => {
+    const updateUserInformations = async (artist_name, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo, accessToken) => {
         const dataObject = {
+            artist_name,
             artist_description,
             artist_instagram,
             artist_spotify,
             artist_soundcloud,
             artist_photo,
         };
-
-        // Remove properties with null values
-        Object.keys(dataObject).forEach(key => dataObject[key] == null && delete dataObject[key]);
 
         const data = JSON.stringify(dataObject);
         console.log(data);
@@ -947,12 +1008,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenArtistSettings(false);
                 setUserAndCheckWallet();
             });
-    }
-
-    const updateArtistImage = async (file, accessToken) => {
-        const response = await cloudinaryUploadImage(file, user.artist_name);
-        console.log(response);
-        updateUserInformations({ artist_photo: response }, { accessToken: accessToken });
     }
 
     const updateUserPassword = async (currentPassword, newPassword, confirmNewPassword) => {
@@ -1079,6 +1134,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
     const [openArtistForm, setOpenArtistForm] = useState(false);
 
+    const [openCreateItem, setOpenCreateItem] = useState(false);
+
     const [openToast, setOpenToast] = useState(false);
     const [toast, setToast] = useState(null);
     const [openNotification, setOpenNotification] = useState(false);
@@ -1131,21 +1188,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 openArtistForm,
                 setOpenArtistForm,
 
-                openToast,
-                setOpenToast,
-                toast,
-                setToast,
-                openNotification,
-                setOpenNotification,
-                notificationTitle,
-                setNotificationTitle,
-                notificationText,
-                setNotificationText,
+                openCreateItem, setOpenCreateItem,
+
+                openToast, setOpenToast,
+                toast, setToast,
+                openNotification, setOpenNotification,
+                notificationTitle, setNotificationTitle,
+                notificationText, setNotificationText,
 
                 connectWallet,
                 pinFileToIPFS,
                 cloudinaryUploadVideo,
                 cloudinaryUploadImage,
+                createNFTMintSmartContract,
                 createNFT,
                 SecondListing,
                 fetchDiscoverNFTs,
@@ -1167,7 +1222,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 forgotPassword,
                 updateUserDisplayName,
                 updateUserInformations,
-                updateArtistImage,
                 updateUserPassword,
                 deleteUsersEmailPsw,
                 unlinkWalletEmailPsw,
