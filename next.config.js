@@ -32,9 +32,6 @@ const nextConfig = {
     PINATA_SECRET_API_KEY: process.env.NODE_ENV == "production" ? process.env.PINATA_SECRET_API_KEY : process.env.PINATA_SECRET_API_KEY_DEV,
     CLOUDINARY_URL: process.env.NODE_ENV == "production" ? process.env.CLOUDINARY_URL : process.env.CLOUDINARY_URL_DEV,
     CLOUDINARY_CLOUD_NAME: process.env.NODE_ENV == "production" ? process.env.CLOUDINARY_CLOUD_NAME : process.env.CLOUDINARY_CLOUD_NAME_DEV,
-    METAMASK_WALLET_PRIVATE_KEY_TORIUKE: process.env.METAMASK_WALLET_PRIVATE_KEY_TORIUKE,
-    METAMASK_WALLET_PRIVATE_KEY_MARLON: process.env.METAMASK_WALLET_PRIVATE_KEY_MARLON,
-    METAMASK_WALLET_PRIVATE_KEY_TROVIERO: process.env.METAMASK_WALLET_PRIVATE_KEY_TROVIERO,
     OWNER_PRIVATE_KEY: process.env.NODE_ENV == "production" ? process.env.OWNER_PRIVATE_KEY : process.env.OWNER_PRIVATE_KEY_DEV,
     ALCHEMY_RPC_MAINNET: process.env.NODE_ENV == "production" ? process.env.ALCHEMY_RPC_MAINNET : process.env.ALCHEMY_RPC_TESTNET_DEV
   },

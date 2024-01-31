@@ -411,13 +411,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 const initData = NFTMintSample.interface.encodeFunctionData("initialize", [nameToken, symbolToken, connectedWallet]);
                 const NFTMintFactoryContract = await connectingWithSmartContract(NFTMintFactoryAddress, NFTMintFactoryABI);
                 const tx = await NFTMintFactoryContract.createNFTMint(initData);
+                setLoading("The smart contract is being created. Wait for the transaction to be completed."); setOpenLoading(true);
                 console.log(tx);
                 const result = await tx.wait();
                 console.log(result.logs);
                 const logs = result.logs;
-                var BeaconProxyAddress;
-                for (var i = 0; i < logs.length; i++) {
-                    var currentLog = logs[i];
+                let BeaconProxyAddress;
+                for (const element of logs) {
+                    let currentLog = element;
                     // Check if the current object has the desired fragment.name
                     if (currentLog.fragment && currentLog.fragment.name === "NFTMintDeployed") {
                         BeaconProxyAddress = currentLog.args[0].toLowerCase();
@@ -444,6 +445,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     });
 
                 window.location.reload();
+                setToast("You successfully created your smart contract");
             } catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while creating the smart contracts. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
             }
