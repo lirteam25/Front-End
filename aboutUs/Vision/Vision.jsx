@@ -16,7 +16,7 @@ const Introduction = () => {
                 <div className={Style.introduction_bottom_card}>
                     <p className='font-normal'>
                         LIR is a streaming platform where fans can collect, trade and resell exclusive musical artist contents, such as live versions and bonus tracks. <br />
-                        The idea is to revive the music collectionism that has always existed with vinyl and CDs, but which declined with digitalization and streaming platforms. <br />
+                        The idea is to revive music collecting, currently still ancored to vinyl and CDs, by digitalizing its practices. <br />
                         We strongly believe in blockchain technology as the ideal vehicle for our concept.</p>
                 </div>
                 <div className={Style.introduction_bottom_card}>
@@ -32,7 +32,7 @@ const Introduction = () => {
                     <p className='font-normal'>{t("purpose")}</p>
                 </div>
                 <div className={Style.introduction_bottom_card}>
-                    <p className='font-normal'>This is the beta version of LIR.
+                    <p className='font-normal'>This is LIR's MVP.
                         We are currently curating artists for the platform.
                         If you would like to join our project or for any other inquiries, contact us at <a href='mailto:info@lirmusic.com' style={{ color: "var(--main-color)" }}>info@lirmusic.com</a>.
                     </p>

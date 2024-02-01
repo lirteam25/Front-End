@@ -453,26 +453,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const createNFT = async (
-        nftMintAddress, artist, song, version, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
+        nftMintAddress, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
     ) => {
         await withWalletAndBlockChainCheck(async () => {
             setLoading("The token creating procedure has started. Accept the metamask transaction."); setOpenLoading(true);
             //AGGIUNGI PINATAA
-            const data = { artist, song, version, "image": imageSongPinata, "audio": audioPinata, description, royalties, supply };
+            const data = { artist, song, "image": imageSongPinata, "audio": audioPinata, description, royalties };
             const token_URI = await pinJSONToIPFS(data);
 
             try {
                 const price = ethers.parseUnits(formInputPrice.toString(), 18);
                 const NFTMintContract = await connectingWithSmartContract(nftMintAddress, NFTMintABI);
-                const token_id = Number(await NFTMintContract.getLastTokenId()) + 1;
-                console.log(token_id);
 
                 //First smart contract transaction to create the token
                 console.log(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
                 const tokenCreation = await NFTMintContract.createAndListToken(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
                 setOpenLoading(true); setLoading("The token is being created and the relative amount listed. Wait for the transaction to be completed.");
                 const tokenCreation1 = await tokenCreation.wait();
-                console.log(tokenCreation1);
+
+                const logs = tokenCreation1.logs;
+                console.log(logs);
+                let token_id;
+                for (const element of logs) {
+                    let currentLog = element;
+                    // Check if the current object has the desired fragment.name
+                    if (currentLog.fragment && currentLog.fragment.name === "TokenCreated") {
+                        token_id = Number(currentLog.args[0]);
+                        break; // Stop the loop since you found the desired object
+                    }
+                };
+                console.log(token_id);
+
+
                 const transaction1 = tokenCreation1.hash;
                 const token_address = nftMintAddress;
                 const author_address = tokenCreation1.from.toLowerCase();
@@ -487,9 +499,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 const audioPreview = "/du_30" + audioCloudinary;
                 let dataTokenInfo;
                 if (launch_date) {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, version, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
+                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
                 } else {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, version, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
+                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
                 }
                 await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, identification.accessToken).then((response) => {
                     console.log("response:", response);
