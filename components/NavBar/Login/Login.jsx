@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
-import { useTranslation } from 'next-i18next';
 
 //Internal Imports
 import Style from "./Login.module.css";
@@ -33,7 +32,6 @@ const Login = ({ closeLogin, setOpenRegister, setForgotPassword }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { t } = useTranslation();
     return (
         <div className={Style.login}>
             <div className={Style.login_container}>
@@ -48,7 +46,7 @@ const Login = ({ closeLogin, setOpenRegister, setForgotPassword }) => {
                         <input
                             className={Style.user_box_input_input}
                             type="email"
-                            placeholder={t("_app:navbar_login_mail")}
+                            placeholder="Email Address"
                             onChange={(e) => setEmail(e.target.value)}
                             onKeyDown={handleKeyPress} />
                         <input
@@ -58,7 +56,7 @@ const Login = ({ closeLogin, setOpenRegister, setForgotPassword }) => {
                             onKeyDown={handleKeyPress} />
                         <div className={`${Style.user_box_input_forgot} font-small`}>
                             <div>
-                                <span style={{ cursor: "pointer" }} onClick={() => ChangeLoginToForgotPassword()}>{t("_app:navbar_login_forgot")}</span>
+                                <span style={{ cursor: "pointer" }} onClick={() => ChangeLoginToForgotPassword()}>Forgot password</span>
                             </div>
                         </div>
                     </div>

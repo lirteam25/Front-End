@@ -1,13 +1,5 @@
 import React, { useContext } from 'react';
 import { NextSeo } from 'next-seo';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["index", "_app"])),
-    }
-  }
-}
 import { useQuery } from '@tanstack/react-query';
 
 

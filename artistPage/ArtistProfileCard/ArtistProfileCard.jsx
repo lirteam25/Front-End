@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaInstagram, FaSpotify, FaSoundcloud } from "react-icons/fa";
-import { FiEdit } from "react-icons/fi";
 
 import Style from "./ArtistProfileCard.module.css";
 import img from "../../img/index";

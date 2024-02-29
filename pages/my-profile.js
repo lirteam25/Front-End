@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { NextSeo } from 'next-seo';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ["_app"])),
-        }
-    }
-}
 
 //INTERNAL IMPORT
 import Style from "../styles/myprofile.module.css";

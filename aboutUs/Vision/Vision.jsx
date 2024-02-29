@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'next-i18next';
 
 //Internal Imports
 import Style from "./Vision.module.css";
@@ -7,8 +6,6 @@ import { LinkButton } from '../../components/componentsIndex';
 
 
 const Introduction = () => {
-
-    const { t } = useTranslation("aboutUs");
     return (
         <div className={Style.introduction}>
             <h1 className='font-large'>About</h1>
@@ -21,15 +18,21 @@ const Introduction = () => {
                 </div>
                 <div className={Style.introduction_bottom_card}>
                     <h2 className='font-normal'>Vision</h2>
-                    <p className='font-normal'>{t("vision")}</p>
+                    <p className='font-normal'>
+                        Make digital music valuable as an art piece enabling it to be collected and easily spreadable through Web3.
+                    </p>
                 </div>
                 <div className={Style.introduction_bottom_card}>
                     <h2 className='font-normal'>Mission</h2>
-                    <p className='font-normal'>{t("mission")}</p>
+                    <p className='font-normal'>
+                        Stimulate the creativity and the growth of music industry giving artists a blank space to experiment while enabling most demanding fans to enjoy, collect, and directly support their artistic growth.
+                    </p>
                 </div>
                 <div className={Style.introduction_bottom_card}>
                     <h2 className='font-normal'>Purpose</h2>
-                    <p className='font-normal'>{t("purpose")}</p>
+                    <p className='font-normal'>
+                        Bring people closer to the blockchain world, promoting an higher level of expressiveness and spreading of music digital collectibles.
+                    </p>
                 </div>
                 <div className={Style.introduction_bottom_card}>
                     <p className='font-normal'>This is LIR's MVP.

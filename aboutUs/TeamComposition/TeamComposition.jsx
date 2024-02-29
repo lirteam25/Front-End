@@ -57,4 +57,4 @@ const TeamComposition = () => {
     )
 }
 
-export default TeamComposition
+export default TeamComposition;

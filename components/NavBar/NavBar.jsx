@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
 // Internal Imports
@@ -46,8 +45,6 @@ const NavBar = () => {
         openCreateItem, setOpenCreateItem,
         disconnectUser
     } = useContext(NFTMarketplaceContext);
-    const { t } = useTranslation();
-
     const router = useRouter();
     const isIndexPage = router.pathname === '/';
 
@@ -138,10 +135,10 @@ const NavBar = () => {
                     {user == null ? (
                         <div className={Style.navbar_container_right_noUser}>
                             <div onClick={() => setOpenLogin(true)} className={Style.navbar_container_right_noUser_login}>
-                                {t("_app:navbar_login")}
+                                log in
                             </div>
                             <div onClick={() => setOpenRegister(true)} className={Style.navbar_container_right_noUser_register}>
-                                {t("_app:navbar_register")}
+                                sign up
                             </div>
                         </div>
                     ) : (
@@ -149,7 +146,7 @@ const NavBar = () => {
                             <div className={Style.navbar_container_right_yesUser_connect}>
                                 {currentAccount == "" ? (
                                     <div className={Style.navbar_container_right_yesUser_connect_button} onClick={() => connectWallet()}>
-                                        {t("_app:navbar_connect")}
+                                        connect wallet
                                     </div>
                                 ) : (
                                     <div className={Style.navbar_container_right_yesUser_connect_wallet}>

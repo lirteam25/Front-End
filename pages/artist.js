@@ -1,14 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { NextSeo } from 'next-seo';
 import { useRouter } from "next/router";
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ["artist", "_app"])),
-        }
-    }
-}
 
 //INTERNAL IMPORTS
 import Style from "./../styles/artist.module.css";

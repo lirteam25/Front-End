@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 require("dotenv").config({ path: './.env' });
-const { i18n } = require('./next-i18next.config');
 
 const nextConfig = {
   reactStrictMode: false,
@@ -34,8 +33,7 @@ const nextConfig = {
     CLOUDINARY_CLOUD_NAME: process.env.NODE_ENV == "production" ? process.env.CLOUDINARY_CLOUD_NAME : process.env.CLOUDINARY_CLOUD_NAME_DEV,
     OWNER_PRIVATE_KEY: process.env.NODE_ENV == "production" ? process.env.OWNER_PRIVATE_KEY : process.env.OWNER_PRIVATE_KEY_DEV,
     ALCHEMY_RPC_MAINNET: process.env.NODE_ENV == "production" ? process.env.ALCHEMY_RPC_MAINNET : process.env.ALCHEMY_RPC_TESTNET_DEV
-  },
-  i18n
+  }
 };
 
 module.exports = nextConfig;
