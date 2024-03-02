@@ -27,6 +27,8 @@ const Footer = () => {
                 <div className={`${Style.footer_box_rights} font-normal`}>
                     ©2023 LIR, all rights reserved<br />
                     lirmusic.com
+                    <br /><br />
+                    <Link href="https://play.google.com/store/apps/details?id=com.lirmusic.LIRMUSIC&hl=en&gl=US" target="_blank">Android App</Link>
                 </div>
                 <div className={`${Style.footer_box_text} font-normal`}>
                     get in touch <a className={Style.mail} href="mailto:info@lirmusic.com">info@lirmusic.com</a>

@@ -37,6 +37,7 @@
 
 @media screen and (max-width: 480px) {
 
+    .Button,
     .ActionButton_text,
     .Button_text,
     .InfoButton_text {

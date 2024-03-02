@@ -1,5 +1,5 @@
 import React from 'react';
-import { LinkButton } from '../../components/componentsIndex';
+import { ExternalLinkButton } from '../../components/componentsIndex';
 
 
 //INTERNAL IMPORT
@@ -14,7 +14,7 @@ const HeroSection = () => {
                     <h1 className="font-huge">REVIVING <span className='bold'>MUSIC COLLECTING</span><br />
                         BY <span className='bold'>DIGITIZING</span> ITS PRACTICES <br />
                         THROUGH BLOCKCHAIN</h1>
-                    <LinkButton text="learn more" path="www.docs.lirmusic.com" background="white" textColor="black" />
+                    <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
                 </div>
             </div>
             <div className={Style.heroSection_gradient} />

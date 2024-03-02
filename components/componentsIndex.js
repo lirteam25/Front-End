@@ -6,6 +6,7 @@ import FooterAudioPlayer from "./FooterAudioPlayer/FooterAudioPlayer";
 import LinkButton from "./Button/LinkButton/LinkButton";
 import ActionButton from "./Button/ActionButton/ActionButton";
 import InfoButton from "./Button/InfoButton/InfoButton";
+import ExternalLinkButton from "./Button/ExternalLink/ExternalLink";
 import Toast from "./Toast/Toast";
 import Notification from "./Notification/Notification";
 
@@ -18,6 +19,7 @@ export {
     LinkButton,
     ActionButton,
     InfoButton,
+    ExternalLinkButton,
     Toast,
     Notification
 };

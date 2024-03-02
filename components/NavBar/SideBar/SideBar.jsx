@@ -37,6 +37,9 @@ const SideBar = ({ setOpenArtistSettings, setOpenSideBar, user, setOpenRegister,
                     <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>collection</Link>
                 </div>
                 <div className={Style.sidebar_center_element} >
+                    <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>docs</Link>
+                </div>
+                <div className={Style.sidebar_center_element} >
                     <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>about</Link>
                 </div>
                 {user && <div className={Style.sidebar_center_element} >

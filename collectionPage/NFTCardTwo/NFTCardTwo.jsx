@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,15 +13,6 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
 
     const loading = [{ _id: 0 }, { _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }, { _id: 5 }, { _id: 6 }, { _id: 7 }, { _id: 8 }, { _id: 9 }]
 
-    const [mouseMoved, setMouseMoved] = useState(false);
-
-
-    const handleClick = (e) => {
-        if (!mouseMoved) {
-            e.preventDefault();
-        }
-    };
-
     return (
         <div className={`${Style.NFTCardTwo} ${!sellingNFTs && Style.pulseClass} ${isSingle && Style.single}`}>
             {sellingNFTs ? (sellingNFTs.map((el, i) => (
@@ -30,9 +21,6 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                         { pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }}
                     className={`${Style.NFTCardTwo_box}`}
                     key={el._id}
-                    onMouseMove={() => setMouseMoved(true)}
-                    onMouseDown={() => setMouseMoved(false)}
-                    onMouseUp={() => handleClick()}
                 >
                     <div className={Style.NFTCardTwo_box_img}><Image
                         src={el.imageSongCloudinary}

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import Style from "./JoinLir.module.css";
-import { ActionButton, LinkButton } from '../../components/componentsIndex';
+import { ActionButton, ExternalLinkButton } from '../../components/componentsIndex';
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const JoinLir = () => {
@@ -27,7 +27,7 @@ const JoinLir = () => {
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="SIGN UP" action={register} />
                         </div>
-                        <LinkButton text="learn more" path="www.docs.lirmusic.com" background="white" textColor="black" />
+                        <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
                     </div>
                 </div>
                 <div className={Style.JoinLir_grid_right}>
@@ -38,7 +38,7 @@ const JoinLir = () => {
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="APPLY" action={openForm} />
                         </div>
-                        <LinkButton text="LEARN MORE" path="./about-us" background="white" textColor="black" />
+                        <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
                     </div>
                 </div>
             </div>
