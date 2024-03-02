@@ -1,7 +1,16 @@
 .NFTCardTwo {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2.5%;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 1rem 1rem;
+}
+
+.disable {
+    pointer-events: none;
+}
+
+.single {
+    grid-template-columns: repeat(1, 1fr);
+    margin-right: 1rem;
 }
 
 .NFTCardTwo_box {
@@ -168,6 +177,7 @@
 }
 
 @media screen and (max-width: 480px) {
+
     .NFTCardTwo {
         gap: 15px;
         padding-bottom: 0rem;
@@ -238,11 +248,21 @@
     .NFTCardTwo {
         grid-template-columns: 1fr;
     }
+
+    .single {
+        grid-template-columns: repeat(1, 1fr);
+        margin-right: 1rem;
+    }
 }
 
 @media screen and (min-width: 375px) and (max-width: 670px) {
     .NFTCardTwo {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .single {
+        grid-template-columns: repeat(1, 1fr);
+        margin-right: 1rem;
     }
 }
 
@@ -250,5 +270,21 @@
     .NFTCardTwo {
         grid-template-columns: repeat(3, 1fr);
         margin-bottom: 2rem;
+    }
+
+    .single {
+        grid-template-columns: repeat(1, 1fr);
+        margin-right: 1rem;
+    }
+}
+
+@media screen and (min-width: 901px) and (max-width: 1200px) {
+    .NFTCardTwo {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .single {
+        grid-template-columns: repeat(1, 1fr);
+        margin-right: 1rem;
     }
 }

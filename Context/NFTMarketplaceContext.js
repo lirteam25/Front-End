@@ -165,11 +165,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
             if (!window.ethereum) {
                 if (isMobile) {
                     setOpenNotification(true);
-                    setNotificationText("Follow our <a href='./#RedeemAToken' style='color:var(--main-color)'>documentation</a> or directly install MetaMask app on the <a href='https://apps.apple.com/us/app/metamask/id1438144202' target='_blank' style='color:var(--main-color)'>Apple Store</a> or <a href='https://play.google.com/store/apps/details?id=io.metamask' target='_blank' style='color:var(--main-color)'>Google PlayStore</a>. <br/>Once installed the app and configured your crypto wallet, use the in-app MetaMask browser to visit lirmusic.com and connect the wallet to redeem the token.");
+                    setNotificationText("Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or directly install MetaMask app on the <a href='https://apps.apple.com/us/app/metamask/id1438144202' target='_blank' style='color:var(--main-color)'>Apple Store</a> or <a href='https://play.google.com/store/apps/details?id=io.metamask' target='_blank' style='color:var(--main-color)'>Google PlayStore</a>. <br/>Once installed the app and configured your crypto wallet, use the in-app MetaMask browser to visit lirmusic.com and connect the wallet to redeem the token.");
                     setNotificationTitle("Install MetaMask");
                 } else {
                     setOpenNotification(true);
-                    setNotificationText("Install MetaMask extension to create your first crytpo wallet. Follow our <a href='./#createAWallet' style='color:var(--main-color)'>documentation</a> or go directly to <a style='color:var(--main-color)' href='https://metamask.io/download/' target='_blank' >MetaMask.io</a>.<br/>If you just installed it, please refresh the page.");
+                    setNotificationText("Install MetaMask extension to create your first crytpo wallet. Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or go directly to <a style='color:var(--main-color)' href='https://metamask.io/download/' target='_blank' >MetaMask.io</a>.<br/>If you just installed it, please refresh the page.");
                     setNotificationTitle("Install MetaMask");
                 };
                 return

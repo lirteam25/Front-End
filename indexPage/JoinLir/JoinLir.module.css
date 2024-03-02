@@ -1,41 +1,60 @@
 .JoinLir {
     width: 95%;
     margin: auto;
+    padding: 4rem 0;
+}
+
+.JoinLir h3,
+.JoinLir h2 {
+    margin: 0;
+    padding: 0;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.JoinLir h4 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
 .JoinLir_grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    margin: 2rem 0;
 }
 
+.JoinLir_grid_right,
+.JoinLir_grid_left {
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.JoinLir_grid_left {
+    border-right: 1px solid white;
+}
+
+.JoinLir_grid_right_buttons,
 .JoinLir_grid_left_button {
-    width: 20%;
-    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
 }
 
 .JoinLir_grid_right_secondButton {
     width: 20%;
 }
 
-.JoinLir_grid_right_buttons {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
 @media screen and (max-width:480px) {
     .JoinLir {
         width: 90%;
-        margin: 2rem auto;
+        padding: 2rem 0;
     }
 
-    .JoinLir h2 {
-        margin: 0.5rem 0;
-    }
-
-    .JoinLir h3 {
-        margin: 0rem 0;
+    .JoinLir_grid_left {
+        border-right: none;
     }
 
     .JoinLir_grid {
@@ -44,28 +63,28 @@
     }
 
     .JoinLir_grid_right_secondButton {
-        width: 30%;
-        margin: 0.5rem 0;
+        width: 100px;
     }
 
+    .JoinLir_grid_right,
+    .JoinLir_grid_left {
+        padding: 0;
+    }
+
+    .JoinLir_grid_right_buttons,
     .JoinLir_grid_left_button {
-        width: 30%;
-        margin: 0;
+        gap: 0.5rem;
     }
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {
     .JoinLir {
         width: 95%;
-        margin: 2rem auto 3rem auto;
+        padding: 3rem 0;
     }
 
-    .JoinLir h2 {
-        margin: 0.5rem 0;
-    }
-
-    .JoinLir h3 {
-        margin: 0rem 0;
+    .JoinLir_grid_left {
+        border-right: none;
     }
 
     .JoinLir_grid {
@@ -74,12 +93,16 @@
     }
 
     .JoinLir_grid_right_secondButton {
-        width: 20%;
-        margin: 0.5rem 0;
+        width: 100px;
     }
 
+    .JoinLir_grid_right,
+    .JoinLir_grid_left {
+        padding: 0;
+    }
+
+    .JoinLir_grid_right_buttons,
     .JoinLir_grid_left_button {
-        width: 20%;
-        margin: 0;
+        gap: 0.5rem;
     }
 }
