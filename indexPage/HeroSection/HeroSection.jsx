@@ -11,10 +11,13 @@ const HeroSection = () => {
         <div className={Style.heroSection}>
             <div className={Style.heroSection_box}>
                 <div className={Style.heroSection_box_colums}>
-                    <h1 className="font-huge">REVIVING <span className='bold'>MUSIC COLLECTING</span><br />
-                        BY <span className='bold'>DIGITIZING</span> ITS PRACTICES <br />
-                        THROUGH BLOCKCHAIN</h1>
+                    <div className={Style.heroSection_box_colums_title}>
+                        <h1 className="font-huge">REVIVING <span className='bold'>MUSIC COLLECTING</span><br />
+                            BY <span className='bold'>DIGITIZING</span> ITS PRACTICES <br />
+                            THROUGH BLOCKCHAIN</h1>
+                    </div>
                     <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
+
                 </div>
             </div>
             <div className={Style.heroSection_gradient} />
