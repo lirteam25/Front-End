@@ -27,14 +27,14 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                         <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                         <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
                             <p>
-                                <span style={{ color: "var(--main-color)" }}>CAREFUL!</span>...technical explanation...an artist might find this very boring!
+                                What is and why do I need a smart contract?
                             </p>
                             <p>
-                                Smart contracts are digital agreements formed on the blockchain.
-                                They autonomously execute when predefined conditions are fulfilled.
+                                You are creating your first <span style={{ color: "var(--main-color)" }}>smart contract</span>. Smart contracts are digital agreements formed on the blockchain
+                                that autonomously execute when predefined conditions are fulfilled.<br />
                                 In this context, we will be generating a customized contract tailored to your needs.
-                                This contract serves as the foundation for creating tokens, representing access to your track.
-                                Through this contract, you gain the capability to distribute your music and monitor individuals who are accessing your exclusive content.
+                                This contract serves as the foundation for creating tokens, representing access to your tracks.
+                                Through it, you gain the capability to distribute your music, monitor individuals who are accessing your exclusive content and give them the possibility to exchange it.
                             </p>
                         </div>
                     </div>
@@ -49,13 +49,11 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                             <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
                                 <p>
-                                    <span style={{ color: "var(--main-color)" }}>CAREFUL!</span>...technical explanation...an artist might find this very boring!
+                                    To digitize music collecting, tokens are employed and their transactions are recorded on the blockchain to identify those who can access the audio file.
+                                    Tokens on the blockchain are given names and symbols. <br />
+                                    You can choose your token's name. Once you selected, it will be shared in all your collections. It is suggested to use your artist name plus "token".
                                 </p>
-                                <p>
-                                    To digitize music collecting, token are employed and their transactions are recorded on the blockchain to identify those who can access the audio file.
-                                    Tokens on the blockchain are given names and symbols. You can choose your token's name. It is suggested to use your artist name plus "token".
-                                </p>
-                                <p>E.g. your artist name is "Pink Floyd"; your token name could be "Pink Floyd Token".</p>
+                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Artist name: "Pink Floyd" ={'>'} <span style={{ color: "var(--main-color)" }}>Token name</span>: "Pink Floyd Token".</p>
                             </div>
                         </div>
                     </div>
@@ -74,8 +72,8 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                         <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
-                                <p>The symbol is just an abbrevation of the token name.</p>
-                                <p>E.g. your artist name is "Red Hot Chili Peppers"; your token name could be "Red Hot Chili Peppers Token"; your symbol could be "RHCP"</p>
+                                <p>The symbol is an abbrevation of the token name. Once you selected, it will be shared in all your collections.</p>
+                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Artist name: "Red Hot Chili Peppers" ={'>'} Token name: "Red Hot Chili Peppers Token" ={'>'} <span style={{ color: "var(--main-color)" }}>Symbol</span>: "RHCP"</p>
                             </div>
                         </div>
                     </div>

@@ -1,14 +1,6 @@
 import React, { useContext } from "react";
 import { NextSeo } from 'next-seo';
 import { useQuery } from "@tanstack/react-query";
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ["discover", "_app"])),
-        }
-    }
-}
 
 //Internal Imports 
 import { NFTCardTwo } from "../collectionPage/collectionPageIndex";

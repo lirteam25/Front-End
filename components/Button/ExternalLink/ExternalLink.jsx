@@ -4,7 +4,7 @@ import Link from 'next/link';
 //INTERNAL IMPORTS
 import Style from "./../Button.module.css";
 
-const LinkButton = ({ path, queries, text, background, fontSize, textColor }) => {
+const LinkButton = ({ path, text, background, fontSize, textColor }) => {
 
     const buttonStyle = {
         fontSize: fontSize,
@@ -12,7 +12,7 @@ const LinkButton = ({ path, queries, text, background, fontSize, textColor }) =>
 
     return (
         <div className={Style.Button} style={buttonStyle}>
-            <Link href={queries ? { pathname: path, query: queries } : path} className={Style.Button_text} style={{ backgroundColor: `${background}`, color: `${textColor}` }} >
+            <Link href={path} target="_blank" className={Style.Button_text} style={{ backgroundColor: `${background}`, color: `${textColor}` }} >
                 {text}
             </Link>
         </div>

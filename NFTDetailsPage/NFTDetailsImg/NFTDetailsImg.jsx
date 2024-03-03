@@ -169,7 +169,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                                 </div>
                                                             ) : (
                                                                 <div className={Style.NFTDetailsImg_description_info_button2}>
-                                                                    <InfoButton text={`Connect ${renderString(shownNft.owner_of, 5)} wallet to change price or delist your tokens`} />
+                                                                    <InfoButton text={`Connect ${renderString(shownNft.owner_of, 5)} wallet for actions`} />
                                                                 </div>
                                                             )}
                                                         </div>

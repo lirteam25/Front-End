@@ -13,7 +13,6 @@ const CreateItem = ({ closeCreateItems }) => {
     const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, connectWallet, currentAccount } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
-    const [version, setVersion] = useState("-");
     const [description, setDescription] = useState(null);
     const [royalties, setRoyalties] = useState(null);
     const [supply, setSupply] = useState(null);
@@ -49,7 +48,6 @@ const CreateItem = ({ closeCreateItems }) => {
             user.artist_minting_contract,
             user.artist_name,
             song,
-            version,
             price,
             urlPinata,
             urlCloudinary,
@@ -249,7 +247,7 @@ const CreateItem = ({ closeCreateItems }) => {
                 </div>
 
                 <div className={Style.CreateItems_bottom_yesOrNo}>
-                    <div className='font-normal'>Would you like to schedule the drop of the version?</div>
+                    <div className='font-normal'>Would you like to schedule the drop of the track?</div>
                     <Switch style={switchStyle} color="default" onChange={() => { setSchedule(!schedule) }} />
                 </div>
 
@@ -278,7 +276,7 @@ const CreateItem = ({ closeCreateItems }) => {
 
                 <div className={Style.CreateItems_bottom_btn}>
                     {currentAccount ? <div>
-                        {(song && version && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && royalties && supply && amount && user.artist_first_sale_fee && duration) ? (
+                        {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && royalties && supply && amount && user.artist_first_sale_fee && duration) ? (
                             <div>
                                 {(amount > supply) ? (<InfoButton text="The amount is higher than the supply" />) : (
                                     <ActionButton action={mintNFT} text="Create tokens" />

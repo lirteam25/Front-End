@@ -4,7 +4,6 @@ import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
 import Script from 'next/script';
 
 import { useEffect } from 'react';
-import { appWithTranslation } from 'next-i18next';
 import { useRouter } from "next/router";
 import { firebaseApp } from '../firebase-init';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -74,6 +73,6 @@ _iub.csConfiguration = {
   )
 };
 
-export default appWithTranslation(MyApp);
+export default MyApp;
 
 

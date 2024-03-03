@@ -48,7 +48,7 @@ const ForgotPassword = ({ closeForgot }) => {
                     </div>
                 }
                 <div className={Style.login_box_button}>
-                    <ActionButton action={resetPassword} text="_app:navbar_forgot_reset" fontSize="0.9rem" />
+                    <ActionButton action={resetPassword} text="CONTINUE" fontSize="0.9rem" />
                 </div>
 
             </div>

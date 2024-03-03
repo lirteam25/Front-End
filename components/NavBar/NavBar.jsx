@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
 // Internal Imports
@@ -46,8 +45,6 @@ const NavBar = () => {
         openCreateItem, setOpenCreateItem,
         disconnectUser
     } = useContext(NFTMarketplaceContext);
-    const { t } = useTranslation();
-
     const router = useRouter();
     const isIndexPage = router.pathname === '/';
 
@@ -96,13 +93,18 @@ const NavBar = () => {
             // Detect scroll event
             const handleScroll = () => {
                 const navbar = document.querySelector(`.${Style.navbar}`);
+                const signUp = document.querySelector(`.${Style.navbar_container_right_noUser_register}`)
                 const scrollPosition = window.scrollY;
                 if (scrollPosition >= (window.innerHeight - 60)) {
                     navbar.classList.add(Style.greyNavbar);
                     navbar.classList.remove(Style.transparentNavbar);
+                    signUp.classList.add(Style.red)
+                    signUp.classList.remove(Style.black)
                 } else if (!openSideBar) {
                     navbar.classList.add(Style.transparentNavbar);
                     navbar.classList.remove(Style.greyNavbar);
+                    signUp.classList.add(Style.black)
+                    signUp.classList.remove(Style.red)
                 }
             };
 
@@ -129,27 +131,28 @@ const NavBar = () => {
                             priority
                         />
                     </Link>
-                    <Link className={Style.navbar_container_left_discover} href={{ pathname: `collection` }}>
-                        collection
-                    </Link>
+                    <div className={Style.navbar_container_left_discover} href={{ pathname: `collection` }}>
+                        <Link className={Style.navbar_container_left_discover_discover} href={{ pathname: `collection` }}>collection</Link>
+                        <Link className={Style.navbar_container_left_discover_docs} target="_blank" href="https://www.docs.lirmusic.com">docs</Link>
+                    </div>
                 </div>
                 <div className={Style.navbar_container_right}>
                     {/* Create button */}
                     {user == null ? (
                         <div className={Style.navbar_container_right_noUser}>
                             <div onClick={() => setOpenLogin(true)} className={Style.navbar_container_right_noUser_login}>
-                                {t("_app:navbar_login")}
+                                log in
                             </div>
-                            <div onClick={() => setOpenRegister(true)} className={Style.navbar_container_right_noUser_register}>
-                                {t("_app:navbar_register")}
+                            <div onClick={() => setOpenRegister(true)} className={`${Style.navbar_container_right_noUser_register} ${!isIndexPage ? Style.red : Style.black}`}>
+                                sign up
                             </div>
                         </div>
                     ) : (
                         <div className={Style.navbar_container_right_yesUser}>
                             <div className={Style.navbar_container_right_yesUser_connect}>
                                 {currentAccount == "" ? (
-                                    <div className={Style.navbar_container_right_yesUser_connect_button} onClick={() => connectWallet()}>
-                                        {t("_app:navbar_connect")}
+                                    <div className={`${Style.navbar_container_right_noUser_register} ${!isIndexPage ? Style.red : Style.black}`} onClick={() => connectWallet()}>
+                                        connect wallet
                                     </div>
                                 ) : (
                                     <div className={Style.navbar_container_right_yesUser_connect_wallet}>

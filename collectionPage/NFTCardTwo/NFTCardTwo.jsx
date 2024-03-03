@@ -7,15 +7,21 @@ import Style from "./NFTCardTwo.module.css";
 import img from "./../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
-const NFTCardTwo = ({ sellingNFTs }) => {
+const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
+
     const { setOpenFooterAudio, setNft, nft, setCurrentIndex, setStopFooter, stopFooter, sendUserActivity } = useContext(NFTMarketplaceContext);
 
     const loading = [{ _id: 0 }, { _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }, { _id: 5 }, { _id: 6 }, { _id: 7 }, { _id: 8 }, { _id: 9 }]
 
     return (
-        <div className={`${Style.NFTCardTwo} ${!sellingNFTs && Style.pulseClass}`}>
+        <div className={`${Style.NFTCardTwo} ${!sellingNFTs && Style.pulseClass} ${isSingle && Style.single}`}>
             {sellingNFTs ? (sellingNFTs.map((el, i) => (
-                <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }} className={Style.NFTCardTwo_box} key={el._id}>
+                <Link
+                    href={
+                        { pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }}
+                    className={`${Style.NFTCardTwo_box}`}
+                    key={el._id}
+                >
                     <div className={Style.NFTCardTwo_box_img}><Image
                         src={el.imageSongCloudinary}
                         alt="NFT image"

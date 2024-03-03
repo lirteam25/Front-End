@@ -12,7 +12,7 @@ const TopCollectors = ({ collectors }) => {
             <div className={Style.TopCollectors}>
                 <div className={Style.TopCollectors_grid}>
                     <div className={`${Style.TopCollectors_grid_left} font-huge`}>
-                        TOP 10 COLLECTORS
+                        <h2 className='font-huge'>TOP 10 COLLECTORS</h2>
                     </div>
                     <div className={Style.TopCollectors_grid_right}>
                         <div className={Style.TopCollectors_grid_right_title}>

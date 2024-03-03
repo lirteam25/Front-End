@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Link from "next/link";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import Image from 'next/image';
@@ -35,6 +35,9 @@ const SideBar = ({ setOpenArtistSettings, setOpenSideBar, user, setOpenRegister,
                 )}
                 <div className={Style.sidebar_center_element}>
                     <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>collection</Link>
+                </div>
+                <div className={Style.sidebar_center_element} >
+                    <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>docs</Link>
                 </div>
                 <div className={Style.sidebar_center_element} >
                     <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>about</Link>

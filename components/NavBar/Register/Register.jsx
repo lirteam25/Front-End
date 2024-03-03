@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
-import { useTranslation } from 'next-i18next';
 import Checkbox from "@mui/material/Checkbox";
 
 
@@ -38,7 +37,6 @@ const Register2 = ({ setOpenLogin, closeRegister }) => {
         }
     }
 
-    const { t } = useTranslation();
     return (
         <div className={Style.login}>
             <div className={`${Style.login_container} font-normal`}>
@@ -61,7 +59,7 @@ const Register2 = ({ setOpenLogin, closeRegister }) => {
                     <input
                         className={Style.user_box_input_input}
                         type="email"
-                        placeholder={t("_app:navbar_login_mail")}
+                        placeholder="Email Address"
                         onChange={(e) => setEmail(e.target.value)}
                         onKeyDown={handleKeyPress} />
 
@@ -75,7 +73,7 @@ const Register2 = ({ setOpenLogin, closeRegister }) => {
                     <input
                         className={Style.user_box_input_input}
                         type="password"
-                        placeholder={t("_app:navbar_register_repeatPassword")}
+                        placeholder="Repeat Password"
                         onChange={(e) => setPasswordConfirm(e.target.value)}
                         onKeyDown={handleKeyPress}
                     />
@@ -101,12 +99,12 @@ const Register2 = ({ setOpenLogin, closeRegister }) => {
                 }
                 <div className={Style.login_box_button}>
                     {username && email && password && passwordConfirm ?
-                        (<ActionButton action={signUpEmailPsw} text="_app:navbar_register_register" fontSize="0.9rem" />) :
+                        (<ActionButton action={signUpEmailPsw} text="Register" fontSize="0.9rem" />) :
                         (<InfoButton text="Fill All Required Fields" fontSize="0.9rem" />)}
 
                 </div>
                 <div className={`${Style.login_box_para} font-small`}>
-                    {t("_app:navbar_register_alreadyRegister")} <div onClick={() => ChangeRegisterToLog()} className={Style.login_box_para_action}>{t("_app:navbar_register_login")}</div>
+                    Already registered?<div onClick={() => ChangeRegisterToLog()} className={Style.login_box_para_action}>Login</div>
                 </div>
 
             </div>

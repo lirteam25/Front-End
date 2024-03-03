@@ -1,13 +1,5 @@
 import React from 'react';
 import { NextSeo } from 'next-seo';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ["aboutUs", "_app", "index"])),
-        }
-    }
-}
 
 //Internal Imports
 import Style from "./../styles/about-us.module.css";

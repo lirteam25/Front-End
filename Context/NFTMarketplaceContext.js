@@ -165,11 +165,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
             if (!window.ethereum) {
                 if (isMobile) {
                     setOpenNotification(true);
-                    setNotificationText("Follow our <a href='./#RedeemAToken' style='color:var(--main-color)'>documentation</a> or directly install MetaMask app on the <a href='https://apps.apple.com/us/app/metamask/id1438144202' target='_blank' style='color:var(--main-color)'>Apple Store</a> or <a href='https://play.google.com/store/apps/details?id=io.metamask' target='_blank' style='color:var(--main-color)'>Google PlayStore</a>. <br/>Once installed the app and configured your crypto wallet, use the in-app MetaMask browser to visit lirmusic.com and connect the wallet to redeem the token.");
+                    setNotificationText("Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or directly install MetaMask app on the <a href='https://apps.apple.com/us/app/metamask/id1438144202' target='_blank' style='color:var(--main-color)'>Apple Store</a> or <a href='https://play.google.com/store/apps/details?id=io.metamask' target='_blank' style='color:var(--main-color)'>Google PlayStore</a>. <br/>Once installed the app and configured your crypto wallet, use the in-app MetaMask browser to visit lirmusic.com and connect the wallet to redeem the token.");
                     setNotificationTitle("Install MetaMask");
                 } else {
                     setOpenNotification(true);
-                    setNotificationText("Install MetaMask extension to create your first crytpo wallet. Follow our <a href='./#createAWallet' style='color:var(--main-color)'>documentation</a> or go directly to <a style='color:var(--main-color)' href='https://metamask.io/download/' target='_blank' >MetaMask.io</a>.<br/>If you just installed it, please refresh the page.");
+                    setNotificationText("Install MetaMask extension to create your first crytpo wallet. Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or go directly to <a style='color:var(--main-color)' href='https://metamask.io/download/' target='_blank' >MetaMask.io</a>.<br/>If you just installed it, please refresh the page.");
                     setNotificationTitle("Install MetaMask");
                 };
                 return
@@ -411,13 +411,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 const initData = NFTMintSample.interface.encodeFunctionData("initialize", [nameToken, symbolToken, connectedWallet]);
                 const NFTMintFactoryContract = await connectingWithSmartContract(NFTMintFactoryAddress, NFTMintFactoryABI);
                 const tx = await NFTMintFactoryContract.createNFTMint(initData);
+                setLoading("The smart contract is being created. Wait for the transaction to be completed."); setOpenLoading(true);
                 console.log(tx);
                 const result = await tx.wait();
                 console.log(result.logs);
                 const logs = result.logs;
-                var BeaconProxyAddress;
-                for (var i = 0; i < logs.length; i++) {
-                    var currentLog = logs[i];
+                let BeaconProxyAddress;
+                for (const element of logs) {
+                    let currentLog = element;
                     // Check if the current object has the desired fragment.name
                     if (currentLog.fragment && currentLog.fragment.name === "NFTMintDeployed") {
                         BeaconProxyAddress = currentLog.args[0].toLowerCase();
@@ -444,6 +445,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     });
 
                 window.location.reload();
+                setToast("You successfully created your smart contract");
             } catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while creating the smart contracts. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
             }
@@ -451,26 +453,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const createNFT = async (
-        nftMintAddress, artist, song, version, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
+        nftMintAddress, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
     ) => {
         await withWalletAndBlockChainCheck(async () => {
             setLoading("The token creating procedure has started. Accept the metamask transaction."); setOpenLoading(true);
             //AGGIUNGI PINATAA
-            const data = { artist, song, version, "image": imageSongPinata, "audio": audioPinata, description, royalties, supply };
+            const data = { artist, song, "image": imageSongPinata, "audio": audioPinata, description, royalties };
             const token_URI = await pinJSONToIPFS(data);
 
             try {
                 const price = ethers.parseUnits(formInputPrice.toString(), 18);
                 const NFTMintContract = await connectingWithSmartContract(nftMintAddress, NFTMintABI);
-                const token_id = Number(await NFTMintContract.getLastTokenId()) + 1;
-                console.log(token_id);
 
                 //First smart contract transaction to create the token
                 console.log(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
                 const tokenCreation = await NFTMintContract.createAndListToken(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
                 setOpenLoading(true); setLoading("The token is being created and the relative amount listed. Wait for the transaction to be completed.");
                 const tokenCreation1 = await tokenCreation.wait();
-                console.log(tokenCreation1);
+
+                const logs = tokenCreation1.logs;
+                console.log(logs);
+                let token_id;
+                for (const element of logs) {
+                    let currentLog = element;
+                    // Check if the current object has the desired fragment.name
+                    if (currentLog.fragment && currentLog.fragment.name === "TokenCreated") {
+                        token_id = Number(currentLog.args[0]);
+                        break; // Stop the loop since you found the desired object
+                    }
+                };
+                console.log(token_id);
+
+
                 const transaction1 = tokenCreation1.hash;
                 const token_address = nftMintAddress;
                 const author_address = tokenCreation1.from.toLowerCase();
@@ -485,9 +499,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 const audioPreview = "/du_30" + audioCloudinary;
                 let dataTokenInfo;
                 if (launch_date) {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, version, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
+                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
                 } else {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, version, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
+                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
                 }
                 await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, identification.accessToken).then((response) => {
                     console.log("response:", response);
