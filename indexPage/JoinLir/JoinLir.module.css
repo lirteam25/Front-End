@@ -73,7 +73,7 @@
 
     .JoinLir_grid_right_buttons,
     .JoinLir_grid_left_button {
-        gap: 0.5rem;
+        gap: 2rem;
     }
 }
 
@@ -103,6 +103,6 @@
 
     .JoinLir_grid_right_buttons,
     .JoinLir_grid_left_button {
-        gap: 2rem;
+        gap: 5rem;
     }
 }

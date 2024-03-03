@@ -27,7 +27,9 @@ const JoinLir = () => {
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="SIGN UP" action={register} />
                         </div>
-                        <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
+                        <div>
+                            <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
+                        </div>
                     </div>
                 </div>
                 <div className={Style.JoinLir_grid_right}>
@@ -38,7 +40,9 @@ const JoinLir = () => {
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="APPLY" action={openForm} />
                         </div>
-                        <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
+                        <div>
+                            <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
+                        </div>
                     </div>
                 </div>
             </div>
