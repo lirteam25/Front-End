@@ -35,7 +35,7 @@ const JoinLir = () => {
                 <div className={Style.JoinLir_grid_right}>
                     <h3 className="font-huge" style={{ color: "var(--main-color)" }}>JOIN AS AN <span className='bold'>ARTIST</span></h3>
                     <h4 className="font-medium" >
-                        Collect exclusive tracks that only a few can access and become contributor of artists' success.</h4>
+                        Engage your superfans and generate a new indipendent revenue stream.</h4>
                     <div className={Style.JoinLir_grid_right_buttons}>
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="APPLY" action={openForm} />
