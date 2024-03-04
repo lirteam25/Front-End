@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaInstagram, FaDiscord, FaYoutube } from "react-icons/fa";
+import { FaInstagram, FaTwitter, FaDiscord, FaYoutube } from "react-icons/fa";
 
 //INTERNAL IMPORT
 import Style from "./Footer.module.css";
@@ -58,6 +58,7 @@ const Footer = () => {
                 </div>
                 <div className={Style.footer_box_right}>
                     <a href="https://www.instagram.com/lirmusicofficial" target="_blank"><FaInstagram size={23} className={Style.link} /></a>
+                    <a href="https://twitter.com/LIRMusicOfc" target="_blank"><FaTwitter size={23} className={Style.link} /></a>
                     <a href="https://discord.gg/JbxC2ucbM8" target="_blank"><FaDiscord size={23} className={Style.link} /></a>
                     <a href="https://www.youtube.com/@lirmusicofficial" target="_blank"><FaYoutube size={23} className={Style.link} /></a>
                 </div>
