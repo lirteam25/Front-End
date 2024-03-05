@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 const FormData = require('form-data');
-import { isMobile } from "react-device-detect";
 
 //Internal Imports
 import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
@@ -18,32 +18,6 @@ const fetchContract = (ContractAddress, ContractABI, signerOrProvider) =>
         ContractABI,
         signerOrProvider
     );
-//Connecting with smart contract enable the calling of its functions.  
-//When the web3modal tries to connect with the smart contract it will automatically open MetaMask.
-const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
-    try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const contract = fetchContract(ContractAddress, ContractABI, signer);
-        return contract;
-    } catch (error) {
-        handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
-    }
-};
-
-const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
-    try {
-        const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
-        const owner_privateKey = process.env.OWNER_PRIVATE_KEY;
-        const signer = new ethers.Wallet(owner_privateKey, provider);
-        const contract = fetchContract(ContractAddress, ContractABI, signer);
-        const gasPrice = (await provider.getFeeData()).gasPrice;
-        return [contract, gasPrice];
-    } catch (error) {
-        console.log(error);
-        handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
-    }
-};
 
 const postOnDB = async (url, data = {}, token) => {
     const response = await fetch(url, {
@@ -100,6 +74,9 @@ export const NFTMarketplaceContext = React.createContext();
 export const NFTMarketplaceProvider = ({ children }) => {
     const DBUrl = process.env.DB_URL;
 
+    const { open } = useWeb3Modal();
+    const { address, isConnected } = useWeb3ModalAccount();
+    const { walletProvider } = useWeb3ModalProvider();
     // Open Error
     const [error, setError] = useState("");
     const [openError, setOpenError] = useState(false);
@@ -124,6 +101,32 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const router = useRouter();
 
+    const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
+        try {
+            const provider = new ethers.BrowserProvider(walletProvider);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(ContractAddress, ContractABI, signer);
+            return contract;
+        } catch (error) {
+            console.log(error);
+            handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
+        }
+    };
+
+    const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
+        try {
+            const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
+            const owner_privateKey = process.env.OWNER_PRIVATE_KEY;
+            const signer = new ethers.Wallet(owner_privateKey, provider);
+            const contract = fetchContract(ContractAddress, ContractABI, signer);
+            const gasPrice = (await provider.getFeeData()).gasPrice;
+            return [contract, gasPrice];
+        } catch (error) {
+            console.log(error);
+            handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
+        }
+    };
+
     const handleMetaMaskErrors = (error, string, event) => {
         setOpenLoading(false);
         console.log(error);
@@ -145,14 +148,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     //Check if wallet is connected to the application
     const checkIfWalletConnected = async () => {
         try {
-            if (!window.ethereum) return;
-            const accounts = await window.ethereum.request({
-                method: "eth_accounts",
-            });
-            if (accounts.length) {
-                setCurrentAccount((accounts[0]));
-                return accounts[0];
-            }
+            if (isConnected) { return address.toLocaleLowerCase() }
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
         }
@@ -160,95 +156,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
 
     // Connect Wallet to the apllication function
-    const connectWallet = async () => {
+    const connectWallet = () => {
         try {
-            if (!window.ethereum) {
-                if (isMobile) {
-                    setOpenNotification(true);
-                    setNotificationText("Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or directly install MetaMask app on the <a href='https://apps.apple.com/us/app/metamask/id1438144202' target='_blank' style='color:var(--main-color)'>Apple Store</a> or <a href='https://play.google.com/store/apps/details?id=io.metamask' target='_blank' style='color:var(--main-color)'>Google PlayStore</a>. <br/>Once installed the app and configured your crypto wallet, use the in-app MetaMask browser to visit lirmusic.com and connect the wallet to redeem the token.");
-                    setNotificationTitle("Install MetaMask");
-                } else {
-                    setOpenNotification(true);
-                    setNotificationText("Install MetaMask extension to create your first crytpo wallet. Follow our <a href='https://www.docs.lirmusic.com/?key=howToCreateCryptoWallet' target:'_blank' style='color:var(--main-color)'>documentation</a> or go directly to <a style='color:var(--main-color)' href='https://metamask.io/download/' target='_blank' >MetaMask.io</a>.<br/>If you just installed it, please refresh the page.");
-                    setNotificationTitle("Install MetaMask");
-                };
-                return
-            };
-            // Request for the account number. The difference is in the method
-            const accounts = await window.ethereum.request({
-                method: "eth_requestAccounts",
-            });
-            const chainId = await window.ethereum.request({
-                method: "eth_chainId",
-            });
-            if (chainId != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
-                await switchToPolygon();
-            }
-            setCurrentAccount(accounts[0]);
-            console.log(accounts[0]);
-            const identification = await fetchUserInformation();
-            const user = await userToWallet(identification.accessToken);
-            if (user) {
-                if (!user.wallet) {
-                    const data = JSON.stringify({ 'wallet': accounts[0] });
-                    await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, identification.accessToken).then((response) => {
-                        console.log("Update Wallet:", response);
-                        if (response.status == "error" && response.error.codeName == "DuplicateKey") {
-                            setNotificationText(`The wallet ${renderString(accounts[0], 5)} is already linked to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet and the other account`);
-                            setNotificationTitle("Wallet already linked");
-                            setOpenNotification(true);
-                        }
-                    });
-                    setUserAndCheckWallet();
-                } else if (user.wallet != accounts[0]) {
-                    setNotificationText(`The wallet ${renderString(accounts[0], 5)} you are trying to connect is not the wallet linked to your account. Please connect  ${renderString(user.wallet, 5)} or delete the connection between this wallet and your account to add a new wallet`);
-                    setNotificationTitle("Wallet already linked");
-                    setOpenNotification(true);
-                }
-            }
+            open();
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while connecting the wallet. <br/>Please try again to connect the wallet. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_wallet");
-        }
-    };
-
-    const switchToPolygon = async () => {
-        const polygonNetwork = process.env.NODE_ENV == "production" ? {
-            chainId: '0x89',
-            chainName: 'Polygon Mainnet',
-            nativeCurrency: {
-                name: 'Matic',
-                symbol: 'MATIC',
-                decimals: 18,
-            },
-            rpcUrls: ['https://polygon-rpc.com/'],
-            blockExplorerUrls: ['https://polygonscan.com'],
-        } : {
-            chainId: '0x13881', // Chain ID for Mumbai Testnet
-            chainName: 'Mumbai',
-            nativeCurrency: {
-                name: 'Matic',
-                symbol: 'MATIC',
-                decimals: 18,
-            },
-            rpcUrls: ['https://rpc-mumbai.maticvigil.com'], // Mumbai Testnet RPC endpoint
-            blockExplorerUrls: ['https://rpc-mumbai.maticvigil.com'], // Mumbai Testnet Block Explorer
-        };
-        try {
-            const chainId = polygonNetwork.chainId;
-            // Check if the current chain ID is not Polygon
-            await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [polygonNetwork],
-            });
-
-            // Switch to the Mumbai network
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId }],
-            });
-
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while switching blockchain. <br/>Please try again. If the error persist manually shift to Polygon blockchain or contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_switch_to_polygon");
         }
     };
 
@@ -375,7 +287,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const user = await userToWallet(identification.accessToken);
         let connectedWallet = await checkIfWalletConnected();
         if (!connectedWallet) {
-            await connectWallet();
+            connectWallet();
             connectedWallet = await checkIfWalletConnected();
         }
         if (connectedWallet && user.wallet !== connectedWallet) {
@@ -384,20 +296,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
             setNotificationTitle("Wrong wallet connected");
             setOpenNotification(true);
         } else {
-            const chainId = await window.ethereum.request({
-                method: "eth_chainId",
-            });
-            if (chainId != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
-                await switchToPolygon();
-                const chainId2 = await window.ethereum.request({
-                    method: "eth_chainId",
-                });
-                if (chainId2 != (process.env.NODE_ENV == "production" ? "0x89" : "0x13881")) {
-                    setOpenError(true); setError("Please manually switch to Polygon and repeat the transaction");
-                } else {
-                    return fn();
-                }
-            }
             return fn();
         }
     };
@@ -731,45 +629,45 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const changeNFTPrice = async (nft, formInputPrice) => {
-        await withWalletAndBlockChainCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the metamask transaction.");
-                const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-                const price = ethers.parseUnits(formInputPrice, 18);
 
-                //Smart contract transaction to change token price
-                const transaction = await NFTMarketplaceContract.changePrice(nft.token_id, nft.token_address, price);
-                console.log(transaction);
-                setOpenLoading(true); setLoading("The price is being changed. Wait for the transaction to be completed.");
-                await transaction.wait();
-                console.log(transaction);
-                const transactions = transaction.hash;
+        try {
+            setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the metamask transaction.");
+            const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
+            const price = ethers.parseUnits(formInputPrice, 18);
 
-                //Update transaction history
-                const identification = await fetchUserInformation();
-                const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "PRICE CHANGE", "price": formInputPrice, 'quantity': nft.sellingQuantity });
-                await patchOnDB(
-                    `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
-                        console.log(response);
-                    });
-                //Update Owners selling price
-                const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, 'price': formInputPrice });
-                await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, identification.accessToken).then((response) => {
+            //Smart contract transaction to change token price
+            const transaction = await NFTMarketplaceContract.changePrice(nft.token_id, nft.token_address, price);
+            console.log(transaction);
+            setOpenLoading(true); setLoading("The price is being changed. Wait for the transaction to be completed.");
+            await transaction.wait();
+            console.log(transaction);
+            const transactions = transaction.hash;
+
+            //Update transaction history
+            const identification = await fetchUserInformation();
+            const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "PRICE CHANGE", "price": formInputPrice, 'quantity': nft.sellingQuantity });
+            await patchOnDB(
+                `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
                     console.log(response);
                 });
+            //Update Owners selling price
+            const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, 'price': formInputPrice });
+            await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, identification.accessToken).then((response) => {
+                console.log(response);
+            });
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'change_price');
+            const analytics = getAnalytics();
+            logEvent(analytics, 'change_price');
 
-                setOpenLoading(false);
+            setOpenLoading(false);
 
-                setToast("Price successfully modified");
-                setOpenToast(true);
-                router.push("/my-profile");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
-            }
-        })
+            setToast("Price successfully modified");
+            setOpenToast(true);
+            router.push("/my-profile");
+        } catch (error) {
+            handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
+        }
+
     };
 
     const delistItem = async (nft, amount) => {
@@ -1158,10 +1056,18 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
 
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         setUserAndCheckWallet();
     }, []);
+
+    useEffect(() => {
+        console.log(address);
+        if (address) {
+            setCurrentAccount(address.toLowerCase())
+        } else {
+            setCurrentAccount("")
+        };
+    }, [isConnected, address])
 
     return (
         <NFTMarketplaceContext.Provider
