@@ -22,7 +22,7 @@ const JoinLir = () => {
                 <div className={Style.JoinLir_grid_left}>
                     <h3 className="font-huge" style={{ color: "var(--main-color)" }}>JOIN AS A <span className='bold'>FAN</span></h3>
                     <h4 className="font-medium" >
-                        Collect exclusive tracks that only a few can access and become contributor of artists' success.</h4>
+                        Collect limited editions tracks, not available elsewhere, and contribute in artists' success.</h4>
                     <div className={Style.JoinLir_grid_left_button}>
                         <div className={Style.JoinLir_grid_right_secondButton}>
                             <ActionButton text="SIGN UP" action={register} />
