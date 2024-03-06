@@ -35,6 +35,7 @@ createWeb3Modal({
     }),
     chains: [process.env.NODE_ENV === 'production' ? mainnet : testnet],
     projectId,
+    allWallets: 'ONLY_MOBILE',
     enableAnalytics: true, // Optional - defaults to your Cloud configuration
     themeVariables: {
         '--w3m-font-family': "Space Grotesk, san-serif",
