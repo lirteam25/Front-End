@@ -21,11 +21,9 @@ const prova = () => {
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
-                <button onClick={() => open()}>Open Connect Modal</button>
-                <button onClick={() => open({ view: 'Networks' })}>Open Network Modal</button>
                 <div>
-                    <div>{account}</div>
-                    <div>{chain}</div>
+                    <w3m-button />
+
                 </div>
             </div>
         </div>
