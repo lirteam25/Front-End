@@ -72,6 +72,7 @@
 .sidebar_center_element {
     padding: 1rem 0.3rem;
     border-bottom: 1px solid var(--background-grey);
+    margin: 0;
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {

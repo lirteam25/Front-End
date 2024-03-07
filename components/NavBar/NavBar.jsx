@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from 'next/router';
+import { useWeb3Modal } from '@web3modal/ethers/react'
 
 // Internal Imports
 import Style from "./NavBar.module.css";
@@ -88,23 +89,55 @@ const NavBar = () => {
         setOpenErrorAuth(false);
     }
 
+    const { open } = useWeb3Modal()
+
     useEffect(() => {
         if (isIndexPage) {
             // Detect scroll event
             const handleScroll = () => {
                 const navbar = document.querySelector(`.${Style.navbar}`);
-                const signUp = document.querySelector(`.${Style.navbar_container_right_noUser_register}`)
+                const signUp = document.getElementById("signUp");
+                const discover = document.getElementById("discover");
+                const docs = document.getElementById("docs");
+                const logIn = document.getElementById("logIn");
+                const wallet = document.getElementById("wallet");
                 const scrollPosition = window.scrollY;
                 if (scrollPosition >= (window.innerHeight - 60)) {
                     navbar.classList.add(Style.greyNavbar);
                     navbar.classList.remove(Style.transparentNavbar);
-                    signUp.classList.add(Style.red)
-                    signUp.classList.remove(Style.black)
+
+
+                    signUp && signUp.classList.add(Style.red)
+                    signUp && signUp.classList.remove(Style.black)
+
+                    wallet && wallet.classList.add(Style.red)
+                    wallet && wallet.classList.remove(Style.black)
+
+                    discover.classList.remove(Style.black_hover);
+                    docs.classList.remove(Style.black_hover);
+                    logIn && logIn.classList.remove(Style.black_hover);
+
+                    discover.classList.add(Style.red_hover);
+                    docs.classList.add(Style.red_hover);
+                    logIn && logIn.classList.add(Style.red_hover);
+
                 } else if (!openSideBar) {
                     navbar.classList.add(Style.transparentNavbar);
                     navbar.classList.remove(Style.greyNavbar);
-                    signUp.classList.add(Style.black)
-                    signUp.classList.remove(Style.red)
+
+                    signUp && signUp.classList.add(Style.black);
+                    signUp && signUp.classList.remove(Style.red);
+
+                    wallet && wallet.classList.add(Style.black);
+                    wallet && wallet.classList.remove(Style.red);
+
+                    discover.classList.add(Style.black_hover);
+                    docs.classList.add(Style.black_hover);
+                    logIn && logIn.classList.add(Style.black_hover);
+
+                    discover.classList.remove(Style.red_hover);
+                    docs.classList.remove(Style.red_hover);
+                    logIn && logIn.classList.remove(Style.red_hover);
                 }
             };
 
@@ -131,19 +164,19 @@ const NavBar = () => {
                             priority
                         />
                     </Link>
-                    <div className={Style.navbar_container_left_discover} href={{ pathname: `collection` }}>
-                        <Link className={Style.navbar_container_left_discover_discover} href={{ pathname: `collection` }}>collection</Link>
-                        <Link className={Style.navbar_container_left_discover_docs} target="_blank" href="https://www.docs.lirmusic.com">docs</Link>
+                    <div className={Style.navbar_container_left_discover}>
+                        <Link id="discover" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} href={{ pathname: `collection` }}>collection</Link>
+                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://www.docs.lirmusic.com"}>docs</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
                     {/* Create button */}
                     {user == null ? (
                         <div className={Style.navbar_container_right_noUser}>
-                            <div onClick={() => setOpenLogin(true)} className={Style.navbar_container_right_noUser_login}>
+                            <div id="logIn" onClick={() => setOpenLogin(true)} className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`}>
                                 log in
                             </div>
-                            <div onClick={() => setOpenRegister(true)} className={`${Style.navbar_container_right_noUser_register} ${!isIndexPage ? Style.red : Style.black}`}>
+                            <div id="signUp" onClick={() => setOpenRegister(true)} className={`${!isIndexPage ? Style.red : Style.black}`}>
                                 sign up
                             </div>
                         </div>
@@ -151,14 +184,14 @@ const NavBar = () => {
                         <div className={Style.navbar_container_right_yesUser}>
                             <div className={Style.navbar_container_right_yesUser_connect}>
                                 {currentAccount == "" ? (
-                                    <div className={`${Style.navbar_container_right_noUser_register} ${!isIndexPage ? Style.red : Style.black}`} onClick={() => connectWallet()}>
+                                    <div id="wallet" className={`${!isIndexPage ? Style.red : Style.black}`} onClick={() => connectWallet()}>
                                         connect wallet
                                     </div>
                                 ) : (
                                     <div className={Style.navbar_container_right_yesUser_connect_wallet}>
                                         {currentAccount == user.wallet ? (
                                             <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window} font-small`}>
+                                                <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
                                                     <GoDotFill color="green" size={15} className={Style.wallet_info_window_icon} />
                                                     <div>
                                                         {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>

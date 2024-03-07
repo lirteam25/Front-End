@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import { NavBar, Footer } from "../components/componentsIndex";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
+import { Web3ModalProvider } from "../Context/Web3Modal";
 import Script from 'next/script';
 
 import { useEffect } from 'react';
@@ -10,6 +11,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleAnalytics } from "nextjs-google-analytics";
 
 const queryClient = new QueryClient();
+
+/* export const metadata = {
+  title: 'Web3Modal',
+  description: 'Web3Modal Example'
+} */
 
 function MyApp({ Component, pageProps }) {
   const location = useRouter();
@@ -58,16 +64,18 @@ _iub.csConfiguration = {
   return (
     <div>
       <QueryClientProvider client={queryClient}>
-        <NFTMarketplaceProvider>
-          <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />
-          <Script strategy="lazyOnload" src="https://cs.iubenda.com/autoblocking/3354885.js" />
-          <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/gpp/stub.js" />
-          <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async />
-          <GoogleAnalytics strategy="lazyOnload" trackPageViews={false} />
-          <NavBar />
-          <Component {...pageProps} />
-          <Footer />
-        </NFTMarketplaceProvider>
+        <Web3ModalProvider>
+          <NFTMarketplaceProvider>
+            <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />
+            <Script strategy="lazyOnload" src="https://cs.iubenda.com/autoblocking/3354885.js" />
+            <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/gpp/stub.js" />
+            <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async />
+            <GoogleAnalytics strategy="lazyOnload" trackPageViews={false} />
+            <NavBar />
+            <Component {...pageProps} />
+            <Footer />
+          </NFTMarketplaceProvider>
+        </Web3ModalProvider>
       </QueryClientProvider>
     </div>
   )

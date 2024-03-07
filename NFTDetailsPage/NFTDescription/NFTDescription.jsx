@@ -12,6 +12,7 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT 
     const mumbaiScanner = "https://polygonscan.com";
 
     const [description, setDescription] = useState(true);
+    const [collectors, setCollectors] = useState(true);
     const [tokenDetails, setTokenDetails] = useState(true);
     const [itemsListed, setItemsListed] = useState(true);
     const [transactionHistory, setTransactionHistory] = useState(true);
@@ -39,6 +40,9 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT 
                             dangerouslySetInnerHTML={{ __html: nft.description || "----" }}
                         />
                     }
+                    <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
+                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    </div>
                 </div>
             </div>
             <div className={Style.NFTDescription_second}>
