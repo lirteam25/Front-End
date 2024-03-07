@@ -69,18 +69,25 @@
 }
 
 .red {
-    color: var(--main-color)
+    color: var(--main-color);
+    cursor: pointer;
 }
 
 .black {
-    color: black
+    color: black;
+    cursor: pointer;
 }
 
-.navbar_container_left_discover_discover:hover,
-.navbar_container_left_discover_docs:hover,
-.navbar_container_right_noUser_login:hover {
+.red_hover:hover {
     transition: 0.5s all;
     color: var(--main-color);
+    cursor: pointer;
+}
+
+.black_hover:hover {
+    transition: 0.5s all;
+    color: black;
+    cursor: pointer;
 }
 
 .navbar_container_right_yesUser_connect_button:hover,

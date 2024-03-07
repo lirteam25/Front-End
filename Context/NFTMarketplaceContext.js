@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react';
+import { useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider, useWeb3ModalError } from '@web3modal/ethers/react';
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 const FormData = require('form-data');
@@ -106,6 +106,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const provider = new ethers.BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
             const contract = fetchContract(ContractAddress, ContractABI, signer);
+            console.log(contract);
             return contract;
         } catch (error) {
             console.log(error);
@@ -136,8 +137,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         } else if (error.code == -32002) {
             setOpenError(true); setError(`A MetaMask request has alreayd being throw. Please check MetaMask and accept the transaction.`);
         }
-        else if (error.code == "-32603") {
-            setOpenError(true); setError(`${string}. Insufficient fund to perform the transaction.`);
+        else if (error.code == "CALL_EXCEPTION") {
+            setOpenError(true); setError(`${string} <br/><br/>Check if you have sufficient fund to perform the transaction.`);
         } else {
             setOpenError(true); setError(`${string}`);
             const analytics = getAnalytics();
@@ -156,9 +157,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
 
     // Connect Wallet to the apllication function
-    const connectWallet = () => {
+    const connectWallet = async () => {
         try {
-            open();
+            await open();
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while connecting the wallet. <br/>Please try again to connect the wallet. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_wallet");
         }
@@ -282,7 +283,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    async function withWalletAndBlockChainCheck(fn) {
+    async function withWalletCheck(fn) {
         const identification = await fetchUserInformation();
         const user = await userToWallet(identification.accessToken);
         let connectedWallet = await checkIfWalletConnected();
@@ -301,8 +302,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const createNFTMintSmartContract = async (nameToken, symbolToken, accessToken) => {
-        await withWalletAndBlockChainCheck(async () => {
-            setLoading("The smart contract creating procedure has started. Accept the metamask transaction."); setOpenLoading(true);
+        await withWalletCheck(async () => {
+            setLoading("The smart contract creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
             try {
                 const NFTMintSample = await connectingWithSmartContract(NFTMintSampleAddress, NFTMintABI);
                 const connectedWallet = await checkIfWalletConnected();
@@ -353,8 +354,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const createNFT = async (
         nftMintAddress, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
     ) => {
-        await withWalletAndBlockChainCheck(async () => {
-            setLoading("The token creating procedure has started. Accept the metamask transaction."); setOpenLoading(true);
+        await withWalletCheck(async () => {
+            setLoading("The token creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
             //AGGIUNGI PINATAA
             const data = { artist, song, "image": imageSongPinata, "audio": audioPinata, description, royalties };
             const token_URI = await pinJSONToIPFS(data);
@@ -432,9 +433,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const SecondListing = async (nft, formInputPrice, amount) => {
-        await withWalletAndBlockChainCheck(async () => {
+        await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token listing producedure has started. Accept the metamask transaction.");
+                setOpenLoading(true); setLoading("The token listing producedure has started. Accept the MetaMask transaction.");
                 const price = ethers.parseUnits(formInputPrice.toString(), 18);
                 const NFTMintContract = await connectingWithSmartContract(nft.token_address, NFTMintABI);
 
@@ -545,9 +546,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const buyNFTMatic = async (seller) => {
-        await withWalletAndBlockChainCheck(async () => {
+        await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token buying producedure has started. Accept the metamask transaction.");
+                setOpenLoading(true); setLoading("The token buying producedure has started. Accept the MetaMask transaction.");
                 //Smart contract transaction to buy the token
                 const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
                 const [roundId, startedAt,] = await NFTMarketplaceContract.getLatestPrice();
@@ -596,7 +597,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const freeNFTTransfer = async (nft) => {
-        await withWalletAndBlockChainCheck(async () => {
+        await withWalletCheck(async () => {
             try {
                 setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
 
@@ -631,7 +632,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const changeNFTPrice = async (nft, formInputPrice) => {
 
         try {
-            setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the metamask transaction.");
+            setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction.");
             const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
             const price = ethers.parseUnits(formInputPrice, 18);
 
@@ -671,9 +672,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const delistItem = async (nft, amount) => {
-        await withWalletAndBlockChainCheck(async () => {
+        await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the metamask transaction.");
+                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the MetaMask transaction.");
                 const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
                 //Smart contract transaction to delist
                 const transaction = await NFTMarketplaceContract.delistTokens(nft.token_id, nft.token_address, amount);
@@ -724,12 +725,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const setUserAndCheckWallet = async () => {
         checkIfWalletConnected().then((wallet) => {
-            console.log(wallet);
             fetchUserInformation().then((UserFirebase) => {
                 if (UserFirebase) {
                     userToWallet(UserFirebase.accessToken).then((UserDB) => {
                         const userData = { ...UserFirebase, ...UserDB };
-                        console.log("userData: ", userData);
                         setUser(userData);
                         if (wallet && UserDB.wallet && wallet != UserDB.wallet) {
                             setNotificationText(`The current connected wallet (${renderString(wallet, 5)}) does not match the one linked with you account (${renderString(UserDB.wallet, 5)}). <br/>Just one wallet can be linked with your account. In order to change your account linked wallet, go in <a href='./my-profile' style='color: var(--main-color)'>your profile</a>.`)
@@ -1061,7 +1060,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        console.log(address);
         if (address) {
             setCurrentAccount(address.toLowerCase())
         } else {

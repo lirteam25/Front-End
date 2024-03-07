@@ -33,15 +33,15 @@ const SideBar = ({ setOpenArtistSettings, setOpenSideBar, user, setOpenRegister,
                         <div onClick={() => { setOpenRegister(true) }} className={Style.sidebar_center_register}>sign up</div>
                     </div>
                 )}
-                <div className={Style.sidebar_center_element}>
-                    <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>collection</Link>
-                </div>
-                <div className={Style.sidebar_center_element} >
-                    <Link href={"https://www.docs.lirmusic.com"} onClick={() => setOpenSideBar(false)}>docs</Link>
-                </div>
-                <div className={Style.sidebar_center_element} >
-                    <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>about</Link>
-                </div>
+                <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>
+                    <div className={Style.sidebar_center_element}>collection</div>
+                </Link>
+                <Link href={"https://www.docs.lirmusic.com"} onClick={() => setOpenSideBar(false)}>
+                    <div className={Style.sidebar_center_element}>docs</div>
+                </Link>
+                <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>
+                    <div className={Style.sidebar_center_element} >about</div>
+                </Link>
                 {user && <div className={Style.sidebar_center_element} >
                     <div className="font-medium" onClick={() => disconnectUser()}>
                         log out

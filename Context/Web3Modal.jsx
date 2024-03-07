@@ -26,19 +26,18 @@ const metadata = {
     name: 'LIR Music',
     description: 'LIR is a music streaming platform integrating a digital collectibles marketplace, empowering fans to collect, enjoy and resale exclusive musical content while investing in artists. Explore our unique collection of digital treasures and own a piece of music history.',
     url: 'https://www.lirmusic.com', // origin must match your domain & subdomain
-    icons: ['https://avatars.mywebsite.com/']
+    icons: ['https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg']
 }
 
 createWeb3Modal({
     ethersConfig: defaultConfig({
         metadata
     }),
-    chains: [process.env.NODE_ENV === 'production' ? mainnet : testnet],
+    chains: [process.env == "production" ? mainnet : testnet],
     projectId,
-    allWallets: 'ONLY_MOBILE',
-    enableAnalytics: true, // Optional - defaults to your Cloud configuration
+    enableAnalytics: true,
     themeVariables: {
-        '--w3m-font-family': "Space Grotesk, san-serif",
+        '--w3m-font-family': "Space Grotesk",
         "--w3m-border-radius-master": "0px",
         "--w3m-accent": "var(--main-color)"
     }

@@ -2,12 +2,7 @@
 require("dotenv").config({ path: './.env' });
 
 const nextConfig = {
-  webpack: config => {
-    config.externals.push('pino-pretty', 'lokijs', 'encoding')
-    return config
-  },
   reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
