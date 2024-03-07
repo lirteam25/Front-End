@@ -23,32 +23,34 @@ const LastRelease = ({ tokenInfoData }) => {
                 <div className={`${Style.LastRelease_box_title} font-huge`}>
                     <h2 className='font-huge'>Latest Drops</h2>
                 </div>
-                <Swiper slidesPerView={1}
-                    spaceBetween="1rem"
-                    modules={[Pagination]}
-                    className="mySwiper"
-                    breakpoints={{
-                        375: {
-                            slidesPerView: 2,
-                        },
-                        670: {
-                            slidesPerView: 3,
-                        },
-                        900: {
-                            slidesPerView: 4,
-                        },
-                        1200: {
-                            slidesPerView: 5,
-                        }
-                    }}
-                >
-                    {tokenInfoData &&
-                        tokenInfoData.map((token, index) => (
-                            <SwiperSlide key={index}>
-                                <NFTCard sellingNFTs={[token]} isSingle={true} />
-                            </SwiperSlide>
-                        ))}
-                </Swiper>
+                <div className={Style.LastRelease_box_swiper}>
+                    <Swiper slidesPerView={1}
+                        spaceBetween="1rem"
+                        modules={[Pagination]}
+                        className="mySwiper"
+                        breakpoints={{
+                            375: {
+                                slidesPerView: 2,
+                            },
+                            670: {
+                                slidesPerView: 3,
+                            },
+                            900: {
+                                slidesPerView: 4,
+                            },
+                            1200: {
+                                slidesPerView: 5,
+                            }
+                        }}
+                    >
+                        {tokenInfoData &&
+                            tokenInfoData.map((token, index) => (
+                                <SwiperSlide key={index}>
+                                    <NFTCard sellingNFTs={[token]} isSingle={true} />
+                                </SwiperSlide>
+                            ))}
+                    </Swiper>
+                </div>
             </div>
         </div>
     );
