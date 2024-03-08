@@ -5,7 +5,7 @@
 
 .NFTDescription_first {
     display: grid;
-    grid-template-columns: 5fr 1fr 6fr;
+    grid-template-columns: 41.67% 8.33% 50%;
     align-items: baseline;
 }
 
@@ -54,7 +54,7 @@
 
     .NFTDescription_first,
     .NFTDescription_second {
-        grid-template-columns: 1fr;
+        grid-template-columns: 100%;
     }
 
     .NFTDescription_box_tokenDetails,
@@ -82,7 +82,7 @@
 
     .NFTDescription_first,
     .NFTDescription_second {
-        grid-template-columns: 1fr;
+        grid-template-columns: 100%;
     }
 
     .NFTDescription_box_tokenDetails,

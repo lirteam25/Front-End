@@ -14,19 +14,144 @@ import { Pagination } from 'swiper/modules';
 import Style from "./Collectors.module.css";
 
 const Collectors = ({ supporters }) => {
+
+    const prova = [{
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 3,
+        displayName: "wedeidkw"
+    }, {
+        picture: 4,
+        displayName: "wedeidkw"
+    }, {
+        picture: 5,
+        displayName: "wedeidkw"
+    }, {
+        picture: 6,
+        displayName: "wedeidkw"
+    }, {
+        picture: 7,
+        displayName: "wedeidkw"
+    }, {
+        picture: 3,
+        displayName: "wedeidkw"
+    }, {
+        picture: 5,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 5,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 7,
+        displayName: "wedeidkw"
+    }, {
+        picture: 2,
+        displayName: "wedeidkw"
+    }, {
+        picture: 5,
+        displayName: "wedeidkw"
+    }, {
+        picture: 6,
+        displayName: "wedeidkw"
+    }, {
+        picture: 7,
+        displayName: "wedeidkw"
+    }, {
+        picture: 7,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 3,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }, {
+        picture: 1,
+        displayName: "wedeidkw"
+    }]
+
+
     return (
         <div>
             <div className={Style.Collectors}>
-                <Swiper slidesPerView={12}
-                    spaceBetween="1rem"
+                <Swiper slidesPerView={5}
                     modules={[Pagination]}
                     className="mySwiper"
+                    breakpoints={{
+                        375: {
+                            slidesPerView: 6,
+                        },
+                        670: {
+                            slidesPerView: 8,
+                        },
+                        900: {
+                            slidesPerView: 10,
+                        },
+                        1200: {
+                            slidesPerView: 12,
+                        }
+                    }}
                 >
                     {supporters &&
-                        supporters.map((el, index) => (
-                            <SwiperSlide key={index} className={Style.Collectors_img}>
-                                <div>
-                                    <Image src={img[`utente_${el.picture}`]} alt="profile user" width={30.5} height={30.5} />
+                        prova.map((el, index) => (
+                            <SwiperSlide key={index}>
+                                <div className={Style.Collectors_box}>
+                                    <Image src={img[`utente_${el.picture}`]} alt="profile user" />
                                     <div className={`${Style.Collectors_displayOnHover} font-small`}>
                                         <div className={Style.Collectors_displayOnHover_box}>{el.displayName}</div>
                                     </div>
@@ -34,6 +159,7 @@ const Collectors = ({ supporters }) => {
                             </SwiperSlide>
                         ))}
                 </Swiper>
+
             </div>
         </div>
     )
