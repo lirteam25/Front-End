@@ -19,6 +19,7 @@
 .Collectors_displayOnHover_box {
     background-color: var(--background-grey2);
     overflow: hidden;
+    padding: 0.2rem 0;
     text-align: center;
     text-overflow: ellipsis;
     border: 1px solid var(--background-grey);
