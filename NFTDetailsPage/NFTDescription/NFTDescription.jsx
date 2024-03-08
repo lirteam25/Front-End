@@ -6,8 +6,9 @@ import Style from "./NFTDescription.module.css";
 import NFTDetails from "./NFTDetails/NFTDetails";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
+import Collectors from "./Collectors/Collectors";
 
-const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT }) => {
+const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT, supporters }) => {
 
     const mumbaiScanner = "https://polygonscan.com";
 
@@ -31,6 +32,14 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT 
                     }
                 </div>
                 <div className={Style.NFTDescription_box_description}>
+                    <div className={`${Style.NFTDescription_box_title} ${collectors && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
+                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    </div>
+                    {collectors &&
+                        <div className={Style.NFTDescription_box_content}>
+                            <Collectors supporters={supporters} />
+                        </div>
+                    }
                     <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setDescription(!description)}>
                         Description {description ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     </div>
@@ -40,9 +49,7 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT 
                             dangerouslySetInnerHTML={{ __html: nft.description || "----" }}
                         />
                     }
-                    <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
-                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </div>
+
                 </div>
             </div>
             <div className={Style.NFTDescription_second}>

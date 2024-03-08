@@ -12,7 +12,7 @@ import Style from "../styles/tokenDetails.module.css";
 import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 
 const NFTDetails = () => {
-    const { fetchNFTOwner, fetchTransactionsInfo, fetchSellingSameTokenNFT, fetchNFTOwners, user } = useContext(NFTMarketplaceContext);
+    const { fetchNFTOwner, fetchTransactionsInfo, fetchSellingSameTokenNFT, fetchNFTOwners, fetchSupporters, user } = useContext(NFTMarketplaceContext);
 
     const [nft, setNft] = useState([]);
 
@@ -24,6 +24,9 @@ const NFTDetails = () => {
     const [date, setDate] = useState([]);
 
     const [sameTokenNFT, setSameTokenNFT] = useState([]);
+
+    const [supporters, setSupporters] = useState([])
+
     const [userOwn, setUserOwn] = useState(false);
 
 
@@ -44,6 +47,10 @@ const NFTDetails = () => {
         fetchSellingSameTokenNFT(token_id, token_address).then((items) => {
             console.log("Same token NFT", items);
             setSameTokenNFT(items);
+        });
+        fetchSupporters(id).then((item) => {
+            console.log("supporters", item);
+            setSupporters(item);
         });
     }, [router]);
 
@@ -72,7 +79,7 @@ const NFTDetails = () => {
             <NextSeo title="Token Details | LIR" description="Delve deep into the details of this exclusive music digital collectible. Learn about its history, rarity, and the story it carries. Own a piece of music history." />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} />
-                <NFTDescription nft={nft} event={event} hash={hash} price={price} quantity={quantity} date={date} sameTokenNFT={sameTokenNFT} />
+                <NFTDescription nft={nft} event={event} hash={hash} price={price} quantity={quantity} date={date} sameTokenNFT={sameTokenNFT} supporters={supporters} />
             </div>
         </div>
     );
