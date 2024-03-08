@@ -537,6 +537,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response.topCollectors;
     }
 
+    const fetchSupporters = async (id) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/supporters/${id}`
+        ).then((response) => { return response });
+        return response.supporters;
+    }
+
     const sendArtistForm = async (name, email, instagram, spotify, soundcloud, other) => {
         const data = JSON.stringify({ name, email, instagram, spotify, soundcloud, other })
         const response = await postOnDB(`${DBUrl}/api/v1/artistForm`, data).then((response) => { return response });
@@ -1129,6 +1135,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 fetchArtistNFT,
                 fetchArtistName,
                 fetchTopCollectors,
+                fetchSupporters,
                 sendArtistForm,
                 buyNFTMatic,
                 freeNFTTransfer,

@@ -1,0 +1,31 @@
+.Collectors {
+    position: relative;
+}
+
+.Collectors_displayOnHover {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.Collectors_img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.Collectors_img:hover .Collectors_displayOnHover {
+    display: inline-block;
+}
+
+.Collectors_displayOnHover_box {
+    background-color: var(--background-grey2);
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    border: 1px solid var(--background-grey);
+}

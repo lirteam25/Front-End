@@ -6,8 +6,9 @@ import Style from "./NFTDescription.module.css";
 import NFTDetails from "./NFTDetails/NFTDetails";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
+import Collectors from "./Collectors/Collectors";
 
-const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT }) => {
+const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT, supporters }) => {
 
     const mumbaiScanner = "https://polygonscan.com";
 
@@ -43,6 +44,11 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT 
                     <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
                         Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     </div>
+                    {collectors &&
+                        <div className={Style.NFTDescription_box_content}>
+                            <Collectors supporters={supporters} />
+                        </div>
+                    }
                 </div>
             </div>
             <div className={Style.NFTDescription_second}>
