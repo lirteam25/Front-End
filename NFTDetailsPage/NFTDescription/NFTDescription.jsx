@@ -32,6 +32,14 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT,
                     }
                 </div>
                 <div className={Style.NFTDescription_box_description}>
+                    <div className={`${Style.NFTDescription_box_title} ${collectors && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
+                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    </div>
+                    {collectors &&
+                        <div className={Style.NFTDescription_box_content}>
+                            <Collectors supporters={supporters} />
+                        </div>
+                    }
                     <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setDescription(!description)}>
                         Description {description ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     </div>
@@ -41,14 +49,7 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT,
                             dangerouslySetInnerHTML={{ __html: nft.description || "----" }}
                         />
                     }
-                    <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
-                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </div>
-                    {collectors &&
-                        <div className={Style.NFTDescription_box_content}>
-                            <Collectors supporters={supporters} />
-                        </div>
-                    }
+
                 </div>
             </div>
             <div className={Style.NFTDescription_second}>
