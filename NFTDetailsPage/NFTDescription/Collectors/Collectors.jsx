@@ -14,118 +14,6 @@ import { Pagination } from 'swiper/modules';
 import Style from "./Collectors.module.css";
 
 const Collectors = ({ supporters }) => {
-
-    const prova = [{
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 3,
-        displayName: "wedeidkw"
-    }, {
-        picture: 4,
-        displayName: "wedeidkw"
-    }, {
-        picture: 5,
-        displayName: "wedeidkw"
-    }, {
-        picture: 6,
-        displayName: "wedeidkw"
-    }, {
-        picture: 7,
-        displayName: "wedeidkw"
-    }, {
-        picture: 3,
-        displayName: "wedeidkw"
-    }, {
-        picture: 5,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 5,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 7,
-        displayName: "wedeidkw"
-    }, {
-        picture: 2,
-        displayName: "wedeidkw"
-    }, {
-        picture: 5,
-        displayName: "wedeidkw"
-    }, {
-        picture: 6,
-        displayName: "wedeidkw"
-    }, {
-        picture: 7,
-        displayName: "wedeidkw"
-    }, {
-        picture: 7,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 3,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }, {
-        picture: 1,
-        displayName: "wedeidkw"
-    }]
-
-
     return (
         <div>
             <div className={Style.Collectors}>
@@ -148,7 +36,7 @@ const Collectors = ({ supporters }) => {
                     }}
                 >
                     {supporters &&
-                        prova.map((el, index) => (
+                        supporters.map((el, index) => (
                             <SwiperSlide key={index}>
                                 <div className={Style.Collectors_box}>
                                     <Image src={img[`utente_${el.picture}`]} alt="profile user" />

@@ -35,17 +35,3 @@
     display: flex;
     justify-content: center;
 }
-
-@media screen and (max-width: 480px) {
-
-    .Collectors {
-        width: 100%;
-        max-width: unset
-    }
-}
-
-@media screen and (min-width: 481px) and (max-width: 1024px) {
-    .LastRelease_box {
-        margin: 1rem auto 2rem auto;
-    }
-}
