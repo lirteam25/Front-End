@@ -33,7 +33,7 @@ createWeb3Modal({
     ethersConfig: defaultConfig({
         metadata
     }),
-    chains: [process.env == "production" ? mainnet : testnet],
+    chains: [process.env.NODE_ENV == "production" ? mainnet : testnet],
     projectId,
     enableAnalytics: true,
     themeVariables: {
