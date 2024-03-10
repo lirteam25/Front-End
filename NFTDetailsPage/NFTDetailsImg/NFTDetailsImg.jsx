@@ -109,7 +109,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                 <div className={Style.NFTDetailsImg_description_info}>
                     <div className={Style.NFTDetailsImg_description_info_title}>
                         <div className={Style.NFTDetailsImg_description_info_title_songAndartist}>
-                            <h1 className="font-medium">{shownNft.song && shownNft.version ? `${shownNft.song}` : "----"}</h1>
+                            <h1 className="font-medium">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
                             <h2 className="font-medium"><Link href={{ pathname: "/artist", query: `cnt=${shownNft.token_address}` }}>{shownNft.artist ? shownNft.artist : "----"}</Link></h2>
                         </div>
                         <div className={Style.NFTDetailsImg_description_info_title_play}>
