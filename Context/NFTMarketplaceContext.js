@@ -567,7 +567,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     seller.token_id, seller.token_address, seller.owner_of, roundId, startedAt,
                     { value: MaticPrice }
                 );
-                setOpenLoading(true); setLoading("The token is being bought. Wait for the transaction to be completed.");
+                setOpenLoading(true); setLoading("The token is being bought. Wait for the transaction to be completed. Do not refresh or close the page.");
                 await transaction.wait();
                 console.log("transaction", transaction);
 
@@ -605,7 +605,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const freeNFTTransfer = async (nft) => {
         await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
+                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
 
                 const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
                 console.log(NFTMarketplace, gasPrice);
