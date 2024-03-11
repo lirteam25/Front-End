@@ -605,7 +605,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const freeNFTTransfer = async (nft) => {
         await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
+                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. If");
 
                 const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
                 console.log(NFTMarketplace, gasPrice);
@@ -1060,6 +1060,27 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [notificationText, setNotificationText] = useState(null);
 
 
+    const verifyWallet = async (wallet) => {
+        const identification = await fetchUserInformation();
+        if (user) {
+            if (!user.wallet) {
+                const data = JSON.stringify({ 'wallet': wallet });
+                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, identification.accessToken).then((response) => {
+                    console.log("Update Wallet:", response);
+                    if (response.status == "error" && response.error.codeName == "DuplicateKey") {
+                        setNotificationText(`The wallet ${renderString(wallet, 5)} is already linked to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet and the other account`);
+                        setNotificationTitle("Wallet already linked");
+                        setOpenNotification(true);
+                    }
+                });
+                setUserAndCheckWallet();
+            } else if (user.wallet != wallet) {
+                setNotificationText(`The wallet ${renderString(wallet, 5)} you are trying to connect is not the wallet linked to your account. Please connect  ${renderString(user.wallet, 5)} or delete the connection between this wallet and your account to add a new wallet`);
+                setNotificationTitle("Wallet already linked");
+                setOpenNotification(true);
+            }
+        }
+    }
 
     useEffect(() => {
         setUserAndCheckWallet();
@@ -1067,7 +1088,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     useEffect(() => {
         if (address) {
-            setCurrentAccount(address.toLowerCase())
+            setCurrentAccount(address.toLowerCase());
+            verifyWallet(address.toLowerCase());
         } else {
             setCurrentAccount("")
         };
