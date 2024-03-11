@@ -24,7 +24,7 @@ const Home = () => {
 
   return (
     <div>
-      <NextSeo title="LIR MUSIC" description="LIR is a music streaming platform integrating a digital collectibles marketplace, empowering fans to collect, enjoy and resale exclusive musical content while investing in artists. Explore our unique collection of digital treasures and own a piece of music history." />
+      <NextSeo title="LIR MUSIC" description="LIR Music is a streaming platform integrating a digital collectibles marketplace, empowering fans to collect, enjoy and resale exclusive musical content while investing in artists. Explore our unique collection of digital treasures and own a piece of music history." />
       <div className={Style.index}>
         <HeroSection />
         <LastRelease tokenInfoData={tokenInfoData} />
