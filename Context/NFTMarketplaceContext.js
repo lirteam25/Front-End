@@ -605,7 +605,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const freeNFTTransfer = async (nft) => {
         await withWalletCheck(async () => {
             try {
-                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. If");
+                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
 
                 const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
                 console.log(NFTMarketplace, gasPrice);
