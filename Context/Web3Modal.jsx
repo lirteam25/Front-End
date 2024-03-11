@@ -31,7 +31,8 @@ const metadata = {
 
 createWeb3Modal({
     ethersConfig: defaultConfig({
-        metadata
+        metadata,
+        enableEmail: true,
     }),
     chains: [process.env.NODE_ENV == "production" ? mainnet : testnet],
     projectId,

@@ -37,7 +37,7 @@ const Footer = () => {
                             about<br />
                         </Link>
                         <Link className={Style.footer_box_1_item} target="_blank" href={"https://www.docs.lirmusic.com"}>
-                            project documentation
+                            docs
                         </Link><br />
                         <Link className={Style.footer_box_1_item} target="_blank" href={"https://www.iubenda.com/privacy-policy/94474485"}>
                             privacy policy
