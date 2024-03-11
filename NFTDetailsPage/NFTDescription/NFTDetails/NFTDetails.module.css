@@ -1,10 +1,13 @@
+.NFTDetails {
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
+}
+
 .NFTDetails_box {
     display: grid;
     grid-template-columns: 3fr 4fr;
     background-color: var(--background-grey2);
-    border-top: 1px solid var(--background-grey);
-    border-left: 1px solid var(--background-grey);
-    border-right: 1px solid var(--background-grey);
     align-items: center;
     border-bottom: 1px solid var(--background-grey);
 }
