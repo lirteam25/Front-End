@@ -200,10 +200,10 @@ const NavBar = () => {
                                             </div>
                                         ) : (<div className={Style.navbar_container_right_yesUser_connect_wallet_wrong}>
                                             <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window_wrong} font-small`}>
+                                                <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
                                                     <GoDotFill className={Style.wallet_info_window_icon_wrong} />
                                                     <div>
-                                                        {renderString(currentAccount, 6)}
+                                                        {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
                                                     </div>
                                                 </div>
                                             </div>
