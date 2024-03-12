@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from 'next/router';
-import { useWeb3Modal } from '@web3modal/ethers/react'
 
 // Internal Imports
 import Style from "./NavBar.module.css";
@@ -88,8 +87,6 @@ const NavBar = () => {
         setOpenCreateItem(false);
         setOpenErrorAuth(false);
     }
-
-    const { open } = useWeb3Modal()
 
     useEffect(() => {
         if (isIndexPage) {

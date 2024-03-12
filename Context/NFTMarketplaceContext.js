@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider, useWeb3ModalError } from '@web3modal/ethers/react';
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 const FormData = require('form-data');
@@ -74,9 +73,6 @@ export const NFTMarketplaceContext = React.createContext();
 export const NFTMarketplaceProvider = ({ children }) => {
     const DBUrl = process.env.DB_URL;
 
-    const { open } = useWeb3Modal();
-    const { address, isConnected } = useWeb3ModalAccount();
-    const { walletProvider } = useWeb3ModalProvider();
     // Open Error
     const [error, setError] = useState("");
     const [openError, setOpenError] = useState(false);
@@ -1086,14 +1082,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         setUserAndCheckWallet();
     }, []);
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (address) {
             setCurrentAccount(address.toLowerCase());
             verifyWallet(address.toLowerCase());
         } else {
             setCurrentAccount("")
         };
-    }, [isConnected, address])
+    }, [isConnected, address]) */
 
     return (
         <NFTMarketplaceContext.Provider

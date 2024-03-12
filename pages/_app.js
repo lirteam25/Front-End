@@ -1,8 +1,14 @@
 import "../styles/globals.css";
 import { NavBar, Footer } from "../components/componentsIndex";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
-import { Web3ModalProvider } from "../Context/Web3Modal";
 import Script from 'next/script';
+import {
+  ThirdwebProvider,
+  metamaskWallet,
+  coinbaseWallet,
+  walletConnect,
+  embeddedWallet
+} from "./../Context/ThirdwebProvider";
 
 import { useEffect } from 'react';
 import { useRouter } from "next/router";
@@ -12,10 +18,6 @@ import { GoogleAnalytics } from "nextjs-google-analytics";
 
 const queryClient = new QueryClient();
 
-/* export const metadata = {
-  title: 'Web3Modal',
-  description: 'Web3Modal Example'
-} */
 
 function MyApp({ Component, pageProps }) {
   const location = useRouter();
@@ -64,7 +66,15 @@ _iub.csConfiguration = {
   return (
     <div>
       <QueryClientProvider client={queryClient}>
-        <Web3ModalProvider>
+        <ThirdwebProvider
+          supportedWallets={[
+            metamaskWallet(),
+            coinbaseWallet(),
+            walletConnect(),
+            embeddedWallet()
+          ]}
+          activeChain="mumbai"
+          clientId="3d60c6caaa12c62a65cecff17b2d0a40" >
           <NFTMarketplaceProvider>
             <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />
             <Script strategy="lazyOnload" src="https://cs.iubenda.com/autoblocking/3354885.js" />
@@ -75,7 +85,7 @@ _iub.csConfiguration = {
             <Component {...pageProps} />
             <Footer />
           </NFTMarketplaceProvider>
-        </Web3ModalProvider>
+        </ThirdwebProvider>
       </QueryClientProvider>
     </div>
   )
