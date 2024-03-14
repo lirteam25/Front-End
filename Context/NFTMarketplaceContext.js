@@ -5,6 +5,12 @@ import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 const FormData = require('form-data');
+import {
+    useConnect, metamaskWallet,
+    coinbaseWallet,
+    walletConnect,
+    embeddedWallet
+} from "@thirdweb-dev/react";
 
 //Internal Imports
 import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
@@ -63,6 +69,13 @@ const deleteOnDB = async (url, token) => {
     });
     return response.json();
 }
+
+const walletConfig = [
+    metamaskWallet(),
+    coinbaseWallet(),
+    walletConnect(),
+    embeddedWallet()
+];
 
 //Creates a Context object. 
 //When React renders a component that subscribes to this Context object it will read the current context value from the closest matching Provider above it in the tree.
@@ -145,6 +158,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     //Check if wallet is connected to the application
     const checkIfWalletConnected = async () => {
         try {
+            const isConnected = false;
             if (isConnected) { return address.toLocaleLowerCase() }
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
@@ -152,10 +166,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
 
+    const connect = useConnect();
+
     // Connect Wallet to the apllication function
     const connectWallet = async () => {
         try {
-            await open();
+            const wallet = await connect(
+                walletConfig
+            );
+            setCurrentAccount(wallet);
+
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while connecting the wallet. <br/>Please try again to connect the wallet. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_wallet");
         }

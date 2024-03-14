@@ -14,7 +14,7 @@
     "@firebase/auth": "^1.5.1",
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@mui/material": "^5.14.12",
-    "@tanstack/react-query": "^5.4.3",
+    "@tanstack/react-query": "^4.36.1",
     "@thirdweb-dev/react": "^4.4.16",
     "@thirdweb-dev/sdk": "^4.0.43",
     "@types/node": "^20.8.9",
