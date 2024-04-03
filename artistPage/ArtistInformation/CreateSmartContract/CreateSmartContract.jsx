@@ -128,7 +128,7 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                 </div>
                 <div className={`${Style.CreateSmartContract_bottom_95} ${Style.bottom}`}>
                     {nameOfToken && symbolOfToken && royalties ?
-                        <SmartContractButton text="Deploy contract" action={mintSmartContract} contractAddress={NFTMintFactoryAddress} ABI={NFTMintFactoryABI} toast="You successfully created your smart contract" />
+                        <SmartContractButton text="Deploy contract" action={mintSmartContract} contractAddress={NFTMintFactoryAddress} ABI={NFTMintFactoryABI} />
                         :
                         <InfoButton text="CREATE SMART CONTRACT" fontSize="0.9rem" />
                     }

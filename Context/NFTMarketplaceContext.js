@@ -294,9 +294,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     async function createNFTMintSmartContract(NFTMintFactoryContract, nameToken, symbolToken, royalties, user) {
-        await withWalletCheck(async () => {
+        await withWalletCheck(async (accessToken) => {
             console.log(NFTMintFactoryContract, nameToken, symbolToken, royalties);
-            setLoading("The smart contract creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
+            setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
 
             const _defaultAdmin = address;
             const _name = nameToken;
@@ -329,7 +329,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             );
 
             const prova = await NFTMintFactoryContract.call("createNFTMint", [initData]);
-
+            setLoading("The smart contract is being created.");
 
             console.log(prova);
             const events = prova.receipt.events;
@@ -346,11 +346,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
             console.log(BeaconProxyAddress);
 
             const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress, "artist_royalties": royalties });
-            await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, user.accessToken)
+            await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
                 .then((response) => {
                     console.log(response);
                     setOpenLoading(false);
                 });
+
+            setOpenLoading(false);
+            setToast("Smart Contract successfully created");
+            setOpenToast(true);
+
+            window.location.reload()
         })
     }
 
@@ -358,6 +364,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         nftMintArtistContract, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, supply, royalties, launch_date, audioDuration) {
 
         await withWalletCheck(async (accessToken) => {
+            setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
             const nextTokenIdToMint = parseInt(await nftMintArtistContract.call("nextTokenIdToMint", []));
             const metadatas = [{ name: song, description, image: imageSongPinata, audio: audioPinata }]
             const prepareMint = await nftMintArtistContract.erc1155.lazyMint.prepare(metadatas);
@@ -379,6 +386,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             let encodedClaimCondition = preparedClaimCondition.encode()
 
             const transaction = await nftMintArtistContract.call("multicall", [[encodedMint, encodedClaimCondition]]);
+            setLoading("The tokens are being created.");
             console.log(transaction);
             const transactionHash = transaction.receipt.transactionHash;
             const events = transaction.receipt.events;
@@ -429,6 +437,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const analytics = getAnalytics();
             logEvent(analytics, 'create');
 
+            setOpenLoading(false);
+            setToast("Tokens successfully created");
+            setOpenToast(true);
+
             router.push("/collection");
         })
     }
@@ -436,7 +448,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const SecondListing = async (NFTMarketplaceContract, nft, formInputPrice, amount) => {
         await withWalletCheck(async (accessToken) => {
             try {
-                setOpenLoading(true); setLoading("The token listing producedure has started. Accept the MetaMask transaction.");
+                setOpenLoading(true); setLoading("The token listing producedure has started. Accept the transaction.");
                 console.log(NFTMarketplaceContract);
                 let transactions;
                 let listing_id;
@@ -460,6 +472,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     console.log(listing);
                     console.log(nft.listing_id);
                     const tx = await NFTMarketplaceContract.directListings.updateListing(nft.listing_id, listing);
+                    setLoading("The token is being listed.");
                     console.log(tx);
                     transactions = tx.receipt.transactionHash;
                     listing_id = nft.listing_id;
@@ -478,6 +491,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     await tx.estimateGasCost(); // Estimate the gas cost
                     await tx.setGasLimitMultiple(1.3);
                     const aspetta = await tx.send();
+                    setLoading("The token is being listed.");
                     const sentTx = await aspetta.wait();
                     console.log(sentTx);
                     transactions = sentTx.transactionHash;
@@ -600,17 +614,18 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const claimNFT = async (contract, nft) => {
         await withWalletCheck(async (accessToken) => {
             try {
-                setOpenLoading(true); setLoading("The token buying producedure has started. Accept the MetaMask transaction.");
+                setOpenLoading(true); setLoading("The token buying procedure has started. Accept the transaction.");
                 //Smart contract transaction to buy the token
                 console.log(contract);
 
                 let tx;
                 if (nft.isFirstSale) {
                     tx = await contract.erc1155.claim(nft.token_id, 1);
+                    setLoading("The token is being transferred.");
                     console.log("transaction", tx);
                 } else {
-                    console.log(nft.listing_id, 1, address);
                     tx = await contract.directListings.buyFromListing(nft.listing_id, 1, address);
+                    setLoading("The token is being transferred.");
                     console.log("transaction", tx);
                 }
                 await updateDBafterPurchase(nft, tx, accessToken);
@@ -676,14 +691,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         })
     }
 
-    const changeNFTPrice = async (NFTMintContract, nft, formInputPrice) => {
+    const changeNFTPrice = async (contract, nft, formInputPrice) => {
         await withWalletCheck(async (accessToken) => {
+            setLoading("The change price procedure has started. Accept the transaction."); setOpenLoading(true);
             try {
-                console.log(NFTMintContract);
+                console.log(contract);
                 /* setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction."); */
                 let transactions;
                 if (nft.isFirstSale) {
-
                     const claimConditions = [
                         {
                         },
@@ -694,11 +709,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
                             maxClaimableSupply: nft.supply
                         }];
 
-                    const prova = await NFTMintContract.erc1155.claimConditions.set(nft.token_id, claimConditions, true);
+                    const prova = await contract.erc1155.claimConditions.set(nft.token_id, claimConditions, true);
+                    setLoading("The price is being changed.");
                     console.log(prova);
                     transactions = prova.receipt.transactionHash;
                 } else {
-                    const params = await NFTMintContract.call("getListing", [nft.listing_id])
+                    const params = await contract.call("getListing", [nft.listing_id])
                     const date = new Date(params.startTimestamp * 1000);
                     console.log(date);
                     //Call updateListing
@@ -712,7 +728,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                         startTimestamp: date
                     }
 
-                    const tx = await NFTMintContract.directListings.updateListing(nft.listing_id, listing);
+                    const tx = await contract.directListings.updateListing(nft.listing_id, listing);
+                    setLoading("The price is being changed.");
                     console.log(tx);
                     transactions = tx.receipt.transactionHash;
                 }
@@ -747,10 +764,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const delistItem = async (NFTMarketplaceContract, nft, amount) => {
         await withWalletCheck(async (accessToken) => {
             try {
-                //setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the MetaMask transaction.");
+                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the transaction.");
                 let transactions
                 if (nft.sellingQuantity <= amount) {
                     const tx = await NFTMarketplaceContract.directListings.cancelListing(nft.listing_id);
+                    setLoading("The token is being delisted.");
                     console.log(tx);
                     transactions = tx.receipt.transactionHash;
                 } else {
@@ -769,6 +787,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     }
 
                     const tx = await NFTMarketplaceContract.directListings.updateListing(nft.listing_id, listing);
+                    setLoading("The token is being delisted.");
                     console.log(tx);
                     transactions = tx.receipt.transactionHash;
                 }
@@ -894,7 +913,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             if (UserFirebase.emailVerified) {
                 //Check Wallet connected
-                if (address.toLowerCase()) {
+                if (address) {
                     const DBUser = await userToWallet(UserFirebase.accessToken);
                     console.log(DBUser);
                     console.log(DBUser.wallet == null);

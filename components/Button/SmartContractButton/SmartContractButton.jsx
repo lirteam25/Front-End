@@ -3,7 +3,7 @@ import { Web3Button, darkTheme } from "@thirdweb-dev/react";
 
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
-const SmartContractButton = ({ text, contractAddress, action, toast, ABI }) => {
+const SmartContractButton = ({ text, contractAddress, action, ABI }) => {
 
     const customDarkTheme = darkTheme({
         fontFamily: "Space Grotesk, sans-serif",
@@ -14,18 +14,13 @@ const SmartContractButton = ({ text, contractAddress, action, toast, ABI }) => {
         },
     });
 
-    const { setToast, setOpenLoading, handleMetaMaskErrors } = useContext(NFTMarketplaceContext);
+    const { handleMetaMaskErrors } = useContext(NFTMarketplaceContext);
 
     return (
         <Web3Button
             contractAddress={contractAddress}
             contractAbi={ABI ? ABI : undefined}
             action={async (contract) => { await action(contract) }}
-
-            onSuccess={() => {
-                setOpenLoading(false);
-                setToast(toast);
-            }}
 
             onError={(error) => {
                 console.log(error);
