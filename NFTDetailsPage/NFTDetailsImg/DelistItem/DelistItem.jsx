@@ -2,7 +2,8 @@ import React, { useState, useContext } from 'react';
 
 import Style from "../ListItem/ListItem.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { ActionButton, InfoButton } from '../../../components/componentsIndex';
+import { SmartContractButton, InfoButton } from '../../../components/componentsIndex';
+import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const DelistItem = ({ nft, setOpenDelistItem }) => {
     const { delistItem } = useContext(NFTMarketplaceContext);
@@ -15,10 +16,11 @@ const DelistItem = ({ nft, setOpenDelistItem }) => {
         }
     };
 
-    const delist = () => {
+    const delist = (contract) => {
         setOpenDelistItem(false);
-        delistItem(nft, amount)
+        delistItem(contract, nft, amount)
     }
+
     return (
         <div className={Style.ListItem}>
             <div className={Style.ListItem_input}>
@@ -30,7 +32,7 @@ const DelistItem = ({ nft, setOpenDelistItem }) => {
             </div>
             <div className={Style.ListItem_button}>
                 {(amount && amount <= nft.sellingQuantity && amount > 0) ? (
-                    < ActionButton text="delist tokens" action={delist} />
+                    <SmartContractButton text="delist tokens" action={delist} contractAddress={NFTMarketplaceAddress} />
                 ) : (
                     <InfoButton text="Insert a valid amount" />)}
             </div>

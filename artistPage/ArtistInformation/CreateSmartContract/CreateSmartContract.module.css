@@ -68,6 +68,10 @@
     display: block;
 }
 
+.bottom {
+    margin-top: 1rem;
+}
+
 @media screen and (max-width:480px) {
     .CreateSmartContract_bottom_95_titleWithTutorial_icon {
         display: none;

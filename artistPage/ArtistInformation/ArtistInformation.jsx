@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
-import Link from 'next/link';
+import { useAddress } from "@thirdweb-dev/react";
+
 import DOMPurify from 'dompurify';
 
 import Style from "./ArtistInformation.module.css";
 import { SongDisplay } from "./../../myProfilePage/myProfilePageIndex";
 import { NFTMarketplaceContext } from '../../Context/NFTMarketplaceContext';
-import { ActionButton, InfoButton } from "../../components/componentsIndex";
+import { ActionButton, InfoButton, ButtonConnectWallet } from "../../components/componentsIndex";
 import CreateSmartContract from './CreateSmartContract/CreateSmartContract';
 
 const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs }) => {
 
+    const address = useAddress();
     const [openRelease, setOpenRelease] = useState(true);
     const [openAbout, setOpenAbout] = useState(false);
     const [openCollectedItems, setOpenCollectedItems] = useState(false);
@@ -23,7 +25,7 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
         setOpenCreateSmartContract(false);
     }
 
-    const { user, setOpenCreateItem, currentAccount, connectWallet, renderString } = useContext(NFTMarketplaceContext);
+    const { user, setOpenCreateItem, renderString } = useContext(NFTMarketplaceContext);
 
     const openCrtItem = () => {
         setOpenCreateItem(true);
@@ -98,14 +100,14 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
             <div className={Style.ArtistInformation_bottom}>
                 {openRelease && <div>
                     {myArtistProfile && <div>
-                        {currentAccount == "" ? <ActionButton text="connect your crypto wallet" action={connectWallet} fontSize="0.9rem" /> :
+                        {!address ? <ButtonConnectWallet user={user} /> :
                             <div>
-                                {currentAccount == user.wallet ?
+                                {address.toLowerCase() == user.wallet ?
                                     <div>
                                         {user.artist_minting_contract ?
                                             <ActionButton text="create a new digital collectible" action={openCrtItem} fontSize="0.9rem" /> :
                                             <ActionButton text="create your unique smart contract" action={openSmartCnt} fontSize="0.9rem" />}
-                                    </div> : <InfoButton text={`The wallet connected ${renderString(currentAccount, 5)}... is not the one connected to your account`} />}
+                                    </div> : <InfoButton text={`The wallet connected ${renderString(address, 5)}... is not the one connected to your account`} />}
                             </div>
                         }
                     </div>}

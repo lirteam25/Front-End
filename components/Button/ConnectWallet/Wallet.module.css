@@ -1,0 +1,33 @@
+.buttonWallet {
+    border: 1px solid white;
+    border-radius: 0px;
+    background-color: transparent;
+    color: var(--main-color);
+    padding: 0;
+    margin: 0;
+}
+
+.wallet_icon_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+
+.navbar_container_right_yesUser_connect_wallet {
+    grid-column: 2 / 3;
+}
+
+.wallet_info_window,
+.wallet_info_window_wrong {
+    font-family: "Space Mono", sans-serif;
+    padding: 0.2rem 0.4rem;
+    align-items: center;
+    display: flex;
+    gap: 5px;
+}
+
+.wallet_info_window_icon_wrong {
+    color: red;
+}

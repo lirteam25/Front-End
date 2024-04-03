@@ -32,7 +32,9 @@ const nextConfig = {
     CLOUDINARY_CLOUD_NAME: process.env.NODE_ENV == "production" ? process.env.CLOUDINARY_CLOUD_NAME : process.env.CLOUDINARY_CLOUD_NAME_DEV,
     OWNER_PRIVATE_KEY: process.env.NODE_ENV == "production" ? process.env.OWNER_PRIVATE_KEY : process.env.OWNER_PRIVATE_KEY_DEV,
     ALCHEMY_RPC_MAINNET: process.env.NODE_ENV == "production" ? process.env.ALCHEMY_RPC_MAINNET : process.env.ALCHEMY_RPC_TESTNET_DEV,
-    WEB3MODAL_PROJECT_ID: process.env.WEB3MODAL_PROJECT_ID
+    WEB3MODAL_PROJECT_ID: process.env.WEB3MODAL_PROJECT_ID,
+    THIRDWEB_PROJECT_ID: process.env.THIRDWEB_PROJECT_ID,
+    ACTIVE_CHAIN: process.env.ACTIVE_CHAIN
   }
 };
 

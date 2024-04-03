@@ -1,44 +1,22 @@
-import React from 'react';
-import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react";
+import React, { useContext } from 'react';
+import { Web3Button } from '@thirdweb-dev/react';
 
 import Style from "../styles/discover.module.css";
-
-const customDarkTheme = darkTheme({
-    fontFamily: "Space Grotesk, sans-serif",
-    colors: {
-        modalBg: "#000000",
-        accentText: "var(--main-color)",
-        // ... etc
-    },
-});
-
+import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
+import { NFTMintSampleAddress } from '../Context/Constants';
 
 const prova = () => {
-    const address = useAddress();
 
+    const { user } = useContext(NFTMarketplaceContext);
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
-                <ConnectWallet
-                    btnTitle="connect wallet"
-                    theme={customDarkTheme}
-                    welcomeScreen={{
-                        title: "LIR Music",
-                        subtitle: "Connect your wallet to LIR Music",
-                        img: {
-                            src: "https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg",
-                            width: 100,
-                            height: 100,
-                        },
-                    }}
-                    detailsBtn={() => {
-                        return <div> {address} </div>;
-                    }}
-                    termsOfServiceUrl="https://www.iubenda.com/terms-and-conditions/94474485"
-                    privacyPolicyUrl="https://www.iubenda.com/privacy-policy/94474485"
-                    switchToActiveChain={true}
-                    className={`${Style.buttonWallet} font-normal`}
-                />
+                <Web3Button contractAddress="0x21D8d4A6e469BF3de45f5dbae3CEea09D33af003"
+                    action={async (contract) => {
+                        const data = await contract.call("uri", [0])
+                        console.log(data);
+
+                    }}>MINTA</Web3Button>
             </div>
         </div>
     )

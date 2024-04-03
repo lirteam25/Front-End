@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 // Internal Imports
 import Style from "./NavBar.module.css";
 import images from "../../img";
-import { Error, Loading, FooterAudioPlayer, Notification, Toast } from "../componentsIndex";
+import { Error, Loading, FooterAudioPlayer, Notification, Toast, NavBarConnectWallet } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
@@ -33,10 +33,7 @@ const NavBar = () => {
         openError,
         openLoading,
         openFooterAudio,
-        currentAccount,
-        connectWallet,
         user,
-        renderString,
         openNotification,
         openToast,
         openArtistForm, setOpenArtistForm,
@@ -180,34 +177,7 @@ const NavBar = () => {
                     ) : (
                         <div className={Style.navbar_container_right_yesUser}>
                             <div className={Style.navbar_container_right_yesUser_connect}>
-                                {currentAccount == "" ? (
-                                    <div id="wallet" className={`${!isIndexPage ? Style.red : Style.black}`} onClick={() => connectWallet()}>
-                                        connect wallet
-                                    </div>
-                                ) : (
-                                    <div className={Style.navbar_container_right_yesUser_connect_wallet}>
-                                        {currentAccount == user.wallet ? (
-                                            <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
-                                                    <GoDotFill color="green" size={15} className={Style.wallet_info_window_icon} />
-                                                    <div>
-                                                        {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (<div className={Style.navbar_container_right_yesUser_connect_wallet_wrong}>
-                                            <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
-                                                    <GoDotFill className={Style.wallet_info_window_icon_wrong} />
-                                                    <div>
-                                                        {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>)}
-                                    </div>
-                                )
-                                }
+                                <NavBarConnectWallet user={user} />
                             </div>
                             <div className={Style.navbar_container_right_yesUser_profile}>
                                 <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}

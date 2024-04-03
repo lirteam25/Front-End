@@ -9,6 +9,10 @@ import InfoButton from "./Button/InfoButton/InfoButton";
 import ExternalLinkButton from "./Button/ExternalLink/ExternalLink";
 import Toast from "./Toast/Toast";
 import Notification from "./Notification/Notification";
+import NavBarConnectWallet from "./Button/ConnectWallet/NavBarConnectWallet";
+import ButtonConnectWallet from "./Button/ConnectWallet/ButtonConnectWallet";
+import SmartContractButton from "./Button/SmartContractButton/SmartContractButton";
+
 
 export {
     NavBar,
@@ -21,5 +25,8 @@ export {
     InfoButton,
     ExternalLinkButton,
     Toast,
-    Notification
+    Notification,
+    NavBarConnectWallet,
+    ButtonConnectWallet,
+    SmartContractButton
 };

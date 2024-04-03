@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import {
+    useContract,
+    NATIVE_TOKEN_ADDRESS
+} from "@thirdweb-dev/react";
 import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
+import { useAddress } from "@thirdweb-dev/react";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 const FormData = require('form-data');
 import {
@@ -13,7 +18,7 @@ import {
 } from "@thirdweb-dev/react";
 
 //Internal Imports
-import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
+import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -106,9 +111,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [stopAudioPlayer, setStopAudioPlayer] = useState(true);
 
     //We want to get the address of the wallet of who interact with the smart contract
-    const [currentAccount, setCurrentAccount] = useState("");
 
     const router = useRouter();
+
+    const address = useAddress();
+    const { data: NFTMintSample } = useContract(NFTMintSampleAddress);
+
 
     const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
         try {
@@ -138,46 +146,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const handleMetaMaskErrors = (error, string, event) => {
-        setOpenLoading(false);
         console.log(error);
-        console.log(error.code);
-        if (error.code == 4001 || error.code == "ACTION_REJECTED") {
-            setOpenError(true); setError(`User rejected the request. Please try again.`);
-        } else if (error.code == -32002) {
-            setOpenError(true); setError(`A MetaMask request has alreayd being throw. Please check MetaMask and accept the transaction.`);
-        }
-        else if (error.code == "CALL_EXCEPTION") {
-            setOpenError(true); setError(`${string} <br/><br/>Check if you have sufficient fund to perform the transaction.`);
-        } else {
-            setOpenError(true); setError(`${string}`);
-            const analytics = getAnalytics();
-            logEvent(analytics, `${event}`);
-        }
+        setOpenLoading(false);
+        setOpenError(true); setError(`${string}`);
+        const analytics = getAnalytics();
+        logEvent(analytics, `${event}`);
     }
 
     //Check if wallet is connected to the application
     const checkIfWalletConnected = async () => {
         try {
-            const isConnected = false;
-            if (isConnected) { return address.toLocaleLowerCase() }
+            if (address) { return address.toLocaleLowerCase() }
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
-        }
-    };
-
-
-    const connect = useConnect();
-
-    // Connect Wallet to the apllication function
-    const connectWallet = async () => {
-        try {
-            const wallet = await connect(
-                walletConfig
-            );
-            setCurrentAccount(wallet);
-
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while connecting the wallet. <br/>Please try again to connect the wallet. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_wallet");
         }
     };
 
@@ -302,178 +283,226 @@ export const NFTMarketplaceProvider = ({ children }) => {
     async function withWalletCheck(fn) {
         const identification = await fetchUserInformation();
         const user = await userToWallet(identification.accessToken);
-        let connectedWallet = await checkIfWalletConnected();
-        if (!connectedWallet) {
-            connectWallet();
-            connectedWallet = await checkIfWalletConnected();
-        }
-        if (connectedWallet && user.wallet !== connectedWallet) {
+        if (address && user.wallet !== address.toLowerCase()) {
             setOpenLoading(false);
-            setNotificationText(`The wallet connected ${renderString(connectedWallet, 5)} is not the same wallet connected to your account. Switch to ${user.wallet} to complete the transaction`);
+            setNotificationText(`The wallet connected ${renderString(address.toLowerCase(), 5)} is not the same wallet connected to your account. Switch to ${user.address.toLowerCase()} to complete the transaction`);
             setNotificationTitle("Wrong wallet connected");
             setOpenNotification(true);
         } else {
-            return fn();
+            return fn(identification.accessToken);
         }
     };
 
-    const createNFTMintSmartContract = async (nameToken, symbolToken, accessToken) => {
+    async function createNFTMintSmartContract(NFTMintFactoryContract, nameToken, symbolToken, royalties, user) {
         await withWalletCheck(async () => {
+            console.log(NFTMintFactoryContract, nameToken, symbolToken, royalties);
             setLoading("The smart contract creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
-            try {
-                const NFTMintSample = await connectingWithSmartContract(NFTMintSampleAddress, NFTMintABI);
-                const connectedWallet = await checkIfWalletConnected();
-                const initData = NFTMintSample.interface.encodeFunctionData("initialize", [nameToken, symbolToken, connectedWallet]);
-                const NFTMintFactoryContract = await connectingWithSmartContract(NFTMintFactoryAddress, NFTMintFactoryABI);
-                const tx = await NFTMintFactoryContract.createNFTMint(initData);
-                setLoading("The smart contract is being created. Wait for the transaction to be completed."); setOpenLoading(true);
-                console.log(tx);
-                const result = await tx.wait();
-                console.log(result.logs);
-                const logs = result.logs;
-                let BeaconProxyAddress;
-                for (const element of logs) {
-                    let currentLog = element;
-                    // Check if the current object has the desired fragment.name
-                    if (currentLog.fragment && currentLog.fragment.name === "NFTMintDeployed") {
-                        BeaconProxyAddress = currentLog.args[0].toLowerCase();
-                        break; // Stop the loop since you found the desired object
-                    }
-                };
-                console.log(BeaconProxyAddress);
 
-                const [NFTMarketplaceContract, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
-                console.log(NFTMarketplaceContract);
-                const tx1 = await NFTMarketplaceContract.storeMintingContracts(BeaconProxyAddress, {
-                    gasPrice: gasPrice
+            const _defaultAdmin = address;
+            const _name = nameToken;
+            const _symbol = symbolToken;
+
+            const _contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
+
+            const _trustedForwarders = [];
+            const _primarySaleRecipient = address;
+            const _royaltyRecipient = address;
+            const _royaltyBps = royalties * 100;
+            const _platformFeeBps = user.artist_first_sale_fee;
+            const _platformFeeRecipient = MarketplaceOwner;
+
+            console.log(_defaultAdmin, _name, _symbol, _contractURI, _trustedForwarders, _primarySaleRecipient, _royaltyRecipient, _royaltyBps, _platformFeeBps, _platformFeeRecipient)
+
+            const initData = NFTMintSample.encoder.encode(
+                "initialize", [
+                _defaultAdmin,
+                _name,
+                _symbol,
+                _contractURI,
+                _trustedForwarders,
+                _primarySaleRecipient,
+                _royaltyRecipient,
+                _royaltyBps,
+                _platformFeeBps,
+                _platformFeeRecipient
+            ]
+            );
+
+            const prova = await NFTMintFactoryContract.call("createNFTMint", [initData]);
+
+
+            console.log(prova);
+            const events = prova.receipt.events;
+            let BeaconProxyAddress;
+            for (const element of events) {
+                let currentEvent = element;
+                // Check if the current object has the desired fragment.name
+                if (currentEvent.event && currentEvent.event === "NFTMintDeployed") {
+                    BeaconProxyAddress = currentEvent.args[0].toLowerCase();
+                    break;
+                }
+            };
+
+            console.log(BeaconProxyAddress);
+
+            const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress, "artist_royalties": royalties });
+            await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, user.accessToken)
+                .then((response) => {
+                    console.log(response);
+                    setOpenLoading(false);
                 });
-                const result2 = await tx1.wait();
-                console.log(result2);
-
-                const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress });
-                console.log(data);
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
-                    .then((response) => {
-                        console.log(response);
-                        setOpenLoading(false);
-
-                    });
-
-                window.location.reload();
-                setToast("You successfully created your smart contract");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while creating the smart contracts. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
-            }
         })
     }
 
-    const createNFT = async (
-        nftMintAddress, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
-    ) => {
-        await withWalletCheck(async () => {
-            setLoading("The token creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
-            //AGGIUNGI PINATAA
-            const data = { artist, song, "image": imageSongPinata, "audio": audioPinata, description, royalties };
-            const token_URI = await pinJSONToIPFS(data);
+    async function createNFT(
+        nftMintArtistContract, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, supply, royalties, launch_date, audioDuration) {
 
-            try {
-                const price = ethers.parseUnits(formInputPrice.toString(), 18);
-                const NFTMintContract = await connectingWithSmartContract(nftMintAddress, NFTMintABI);
+        await withWalletCheck(async (accessToken) => {
+            const nextTokenIdToMint = parseInt(await nftMintArtistContract.call("nextTokenIdToMint", []));
+            const metadatas = [{ name: song, description, image: imageSongPinata, audio: audioPinata }]
+            const prepareMint = await nftMintArtistContract.erc1155.lazyMint.prepare(metadatas);
+            console.log(prepareMint);
 
-                //First smart contract transaction to create the token
-                console.log(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
-                const tokenCreation = await NFTMintContract.createAndListToken(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
-                setOpenLoading(true); setLoading("The token is being created and the relative amount listed. Wait for the transaction to be completed.");
-                const tokenCreation1 = await tokenCreation.wait();
+            let encodedMint = prepareMint.encode()
+            const startingTime = launch_date ? launch_date : new Date();
+            const claimConditions = [
+                {
+                },
+                {
+                    startTime: startingTime,
+                    currencyAddress: NATIVE_TOKEN_ADDRESS,
+                    price: formInputPrice, // public sale price
+                    maxClaimableSupply: supply
+                }];
 
-                const logs = tokenCreation1.logs;
-                console.log(logs);
-                let token_id;
-                for (const element of logs) {
-                    let currentLog = element;
-                    // Check if the current object has the desired fragment.name
-                    if (currentLog.fragment && currentLog.fragment.name === "TokenCreated") {
-                        token_id = Number(currentLog.args[0]);
-                        break; // Stop the loop since you found the desired object
-                    }
-                };
-                console.log(token_id);
+            let preparedClaimCondition = await nftMintArtistContract.erc1155.claimConditions.set.prepare(nextTokenIdToMint, claimConditions, true);
+            let encodedClaimCondition = preparedClaimCondition.encode()
 
-
-                const transaction1 = tokenCreation1.hash;
-                const token_address = nftMintAddress;
-                const author_address = tokenCreation1.from.toLowerCase();
-
-                //Retreive the name and symbol of the token
-                const name = await NFTMintContract.viewName();
-                const symbol = await NFTMintContract.viewSymbol();
-                //Get Firebase Access Token
-                const identification = await fetchUserInformation();
-
-                //Post NFTInfo document
-                const audioPreview = "/du_30" + audioCloudinary;
-                let dataTokenInfo;
-                if (launch_date) {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
-                } else {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
+            const transaction = await nftMintArtistContract.call("multicall", [[encodedMint, encodedClaimCondition]]);
+            console.log(transaction);
+            const transactionHash = transaction.receipt.transactionHash;
+            const events = transaction.receipt.events;
+            let token_id;
+            let token_address;
+            for (const element of events) {
+                let currentEvent = element;
+                // Check if the current object has the desired fragment.name
+                if (currentEvent.event && currentEvent.event === "TokensLazyMinted") {
+                    token_id = parseInt(currentEvent.args[0]);
+                    token_address = currentEvent.address.toLowerCase();
+                    break;
                 }
-                await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
+            };
 
-                //Post Owners document
-                const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": author_address, "amount": supply, "sellingQuantity": amount, "price": formInputPrice, date: new Date() });
+            const token_URI = await nftMintArtistContract.call("uri", [token_id]);
+            console.log(token_URI);
 
-                await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
+            const symbol = await nftMintArtistContract.call("symbol", []);
+            const name = await nftMintArtistContract.call("name", []);
+            console.log(symbol, name);
 
-                //Post Transaction document
-                const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply, amount], "transactions": [transaction1, transaction1], 'transactions_type': ["MINTING", "LISTING"], 'price': [0, formInputPrice] })
-                await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
-
-                const analytics = getAnalytics();
-                logEvent(analytics, 'create');
-
-                setOpenLoading(false);
-                setToast("Token successfully listed");
-                setOpenToast(true);
-                router.push("/collection");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while creating the tokens. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
+            //Post NFTInfo document
+            const audioPreview = "/du_30" + audioCloudinary;
+            let dataTokenInfo;
+            if (launch_date) {
+                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+            } else {
+                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
             }
-        })
-    };
+            await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
+                console.log("response:", response);
+            });
 
-    const SecondListing = async (nft, formInputPrice, amount) => {
-        await withWalletCheck(async () => {
+            //Post Owners document
+            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address.toLowerCase(), "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+
+            await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
+                console.log("response:", response);
+            });
+
+            //Post Transaction document
+            const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
+            await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
+                console.log("response:", response);
+            });
+
+            const analytics = getAnalytics();
+            logEvent(analytics, 'create');
+
+            router.push("/collection");
+        })
+    }
+
+    const SecondListing = async (NFTMarketplaceContract, nft, formInputPrice, amount) => {
+        await withWalletCheck(async (accessToken) => {
             try {
                 setOpenLoading(true); setLoading("The token listing producedure has started. Accept the MetaMask transaction.");
-                const price = ethers.parseUnits(formInputPrice.toString(), 18);
-                const NFTMintContract = await connectingWithSmartContract(nft.token_address, NFTMintABI);
+                console.log(NFTMarketplaceContract);
+                let transactions;
+                let listing_id;
+                const totalQuantity = parseInt(nft.sellingQuantity) + parseInt(amount);
+                if (nft.sellingQuantity && nft.sellingQuantity > 0) {
 
-                //Smart contract transaction to list the token
-                const transaction = await NFTMintContract.secondaryListing(nft.token_id, amount, price, NFTMarketplaceAddress);
-                setOpenLoading(true); setLoading("The token is being listed. Wait for the transaction to be completed.");
-                await transaction.wait();
-                console.log(transaction);
+                    const params = await NFTMarketplaceContract.call("getListing", [nft.listing_id])
+                    const date = new Date(params.startTimestamp * 1000);
+                    console.log(date);
+                    //Call updateListing
+                    const listing = {
+                        assetContractAddress: nft.token_address,
+                        tokenId: nft.token_id,
+                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                        pricePerToken: formInputPrice,
+                        quantity: totalQuantity,
+                        isReservedListing: false,
+                        startTimestamp: date
+                    }
 
-                const transactions = transaction.hash;
-                const newseller = transaction.from.toLowerCase();
+                    console.log(listing);
+                    console.log(nft.listing_id);
+                    const tx = await NFTMarketplaceContract.directListings.updateListing(nft.listing_id, listing);
+                    console.log(tx);
+                    transactions = tx.receipt.transactionHash;
+                    listing_id = nft.listing_id;
 
-                const identification = await fetchUserInformation();
+                } else {
+                    const listing = {
+                        assetContractAddress: nft.token_address,
+                        tokenId: nft.token_id,
+                        quantity: amount,
+                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                        pricePerToken: formInputPrice,
+                        startTimestamp: new Date(),
+                        isReservedListing: false
+                    }
+                    const tx = await NFTMarketplaceContract.directListings.createListing.prepare(listing);
+                    await tx.estimateGasCost(); // Estimate the gas cost
+                    await tx.setGasLimitMultiple(1.3);
+                    const aspetta = await tx.send();
+                    const sentTx = await aspetta.wait();
+                    console.log(sentTx);
+                    transactions = sentTx.transactionHash;
+
+                    const events = sentTx.events;
+                    for (const element of events) {
+                        let currentEvent = element;
+                        // Check if the current object has the desired fragment.name
+                        if (currentEvent.event && currentEvent.event === "NewListing") {
+                            listing_id = parseInt(currentEvent.args.listingId);
+                            break;
+                        }
+                    };
+                    console.log(listing_id);
+                }
+
                 //Update transaction history
                 const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
                 await patchOnDB(
-                    `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, identification.accessToken).then((response) => {
+                    `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
                         console.log(response);
                     });
                 //Update token Owners
-                const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": newseller, "sellingQuantity": amount, "price": formInputPrice });
-                await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, identification.accessToken).then((response) => {
+                const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address.toLowerCase(), listing_id, "sellingQuantity": amount, "price": formInputPrice });
+                await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
                     console.log(response);
                 });
 
@@ -485,6 +514,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setToast("Token successfully listed");
                 setOpenToast(true);
                 router.push("/my-profile");
+
             }
             catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while listing the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_secondary_listing");
@@ -567,27 +597,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
         setOpenToast(true);
     }
 
-    const buyNFTMatic = async (seller) => {
-        await withWalletCheck(async () => {
+    const claimNFT = async (contract, nft) => {
+        await withWalletCheck(async (accessToken) => {
             try {
                 setOpenLoading(true); setLoading("The token buying producedure has started. Accept the MetaMask transaction.");
                 //Smart contract transaction to buy the token
-                const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-                const [roundId, startedAt,] = await NFTMarketplaceContract.getLatestPrice();
-                console.log(roundId);
-                const USDprice = ethers.parseEther(seller.price.toString());
-                const MaticPrice = await NFTMarketplaceContract.getLatestPriceGivenRound(roundId, USDprice);
-                console.log(MaticPrice);
-                console.log(seller.token_id, seller.token_address, seller.owner_of);
-                const transaction = await NFTMarketplaceContract.createMarketSaleMatic(
-                    seller.token_id, seller.token_address, seller.owner_of, roundId, startedAt,
-                    { value: MaticPrice }
-                );
-                setOpenLoading(true); setLoading("The token is being bought. Wait for the transaction to be completed. Do not refresh or close the page.");
-                await transaction.wait();
-                console.log("transaction", transaction);
+                console.log(contract);
 
-                await updateDBafterPurchase(seller, transaction);
+                let tx;
+                if (nft.isFirstSale) {
+                    tx = await contract.erc1155.claim(nft.token_id, 1);
+                    console.log("transaction", tx);
+                } else {
+                    console.log(nft.listing_id, 1, address);
+                    tx = await contract.directListings.buyFromListing(nft.listing_id, 1, address);
+                    console.log("transaction", tx);
+                }
+                await updateDBafterPurchase(nft, tx, accessToken);
 
                 const analytics = getAnalytics();
                 logEvent(analytics, 'purchase');
@@ -602,18 +628,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
         })
     };
 
-    const updateDBafterPurchase = async (seller, transaction, newBuyer) => {
-        const identification = await fetchUserInformation();
-        const transactions = transaction.hash;
-        const buyer = newBuyer || transaction.from.toLowerCase();
+    const updateDBafterPurchase = async (seller, transaction, accessToken, newBuyer) => {
+        const transactions = transaction.receipt.transactionHash;
+        const buyer = newBuyer || transaction.receipt.from.toLowerCase();
         const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
         await patchOnDB(
-            `${DBUrl}/api/v1/transactions/addTransaction`, data1, identification.accessToken).then((response) => {
+            `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
                 console.log(response);
             });
         const data2 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, "owner_of": seller.owner_of, "buyer": buyer });
         await patchOnDB(
-            `${DBUrl}/api/v1/owners/nftSold`, data2, identification.accessToken).then((response) => {
+            `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
                 console.log(response);
             });
     };
@@ -625,8 +650,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
                 const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
                 console.log(NFTMarketplace, gasPrice);
-                console.log(nft.token_id, nft.token_address, nft.owner_of, currentAccount);
-                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, currentAccount,
+                console.log(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase());
+                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase(),
                     {
                         gasPrice: gasPrice
                     });
@@ -635,7 +660,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 const trans = await transaction.wait();
                 console.log(trans);
 
-                await updateDBafterPurchase(nft, transaction, currentAccount);
+                await updateDBafterPurchase(nft, transaction, address.toLowerCase());
 
                 const analytics = getAnalytics();
                 logEvent(analytics, 'retrieve');
@@ -651,70 +676,113 @@ export const NFTMarketplaceProvider = ({ children }) => {
         })
     }
 
-    const changeNFTPrice = async (nft, formInputPrice) => {
+    const changeNFTPrice = async (NFTMintContract, nft, formInputPrice) => {
+        await withWalletCheck(async (accessToken) => {
+            try {
+                console.log(NFTMintContract);
+                /* setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction."); */
+                let transactions;
+                if (nft.isFirstSale) {
 
-        try {
-            setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction.");
-            const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-            const price = ethers.parseUnits(formInputPrice, 18);
+                    const claimConditions = [
+                        {
+                        },
+                        {
+                            startTime: new Date(),
+                            currencyAddress: NATIVE_TOKEN_ADDRESS,
+                            price: formInputPrice, // public sale price
+                            maxClaimableSupply: nft.supply
+                        }];
 
-            //Smart contract transaction to change token price
-            const transaction = await NFTMarketplaceContract.changePrice(nft.token_id, nft.token_address, price);
-            console.log(transaction);
-            setOpenLoading(true); setLoading("The price is being changed. Wait for the transaction to be completed.");
-            await transaction.wait();
-            console.log(transaction);
-            const transactions = transaction.hash;
+                    const prova = await NFTMintContract.erc1155.claimConditions.set(nft.token_id, claimConditions, true);
+                    console.log(prova);
+                    transactions = prova.receipt.transactionHash;
+                } else {
+                    const params = await NFTMintContract.call("getListing", [nft.listing_id])
+                    const date = new Date(params.startTimestamp * 1000);
+                    console.log(date);
+                    //Call updateListing
+                    const listing = {
+                        assetContractAddress: nft.token_address,
+                        tokenId: nft.token_id,
+                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                        pricePerToken: formInputPrice,
+                        quantity: nft.sellingQuantity,
+                        isReservedListing: false,
+                        startTimestamp: date
+                    }
 
-            //Update transaction history
-            const identification = await fetchUserInformation();
-            const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "PRICE CHANGE", "price": formInputPrice, 'quantity': nft.sellingQuantity });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
+                    const tx = await NFTMintContract.directListings.updateListing(nft.listing_id, listing);
+                    console.log(tx);
+                    transactions = tx.receipt.transactionHash;
+                }
+
+                //Update DB
+                const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "PRICE CHANGE", "price": formInputPrice, 'quantity': nft.sellingQuantity });
+                await patchOnDB(
+                    `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, accessToken).then((response) => {
+                        console.log(response);
+                    });
+                //Update Owners selling price
+                const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, 'price': formInputPrice });
+                await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, accessToken).then((response) => {
                     console.log(response);
                 });
-            //Update Owners selling price
-            const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, 'price': formInputPrice });
-            await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, identification.accessToken).then((response) => {
-                console.log(response);
-            });
 
-            const analytics = getAnalytics();
-            logEvent(analytics, 'change_price');
+                const analytics = getAnalytics();
+                logEvent(analytics, 'change_price');
 
-            setOpenLoading(false);
+                setOpenLoading(false);
 
-            setToast("Price successfully modified");
-            setOpenToast(true);
-            router.push("/my-profile");
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
-        }
+                setToast("Price successfully modified");
+                setOpenToast(true);
+                router.push("/my-profile");
+            } catch (error) {
+                handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
+            }
+        })
 
     };
 
-    const delistItem = async (nft, amount) => {
-        await withWalletCheck(async () => {
+    const delistItem = async (NFTMarketplaceContract, nft, amount) => {
+        await withWalletCheck(async (accessToken) => {
             try {
-                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the MetaMask transaction.");
-                const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-                //Smart contract transaction to delist
-                const transaction = await NFTMarketplaceContract.delistTokens(nft.token_id, nft.token_address, amount);
-                setOpenLoading(true); setLoading("The token is being delisted. Wait for the transaction to be completed.");
-                await transaction.wait();
-                setOpenLoading(false);
-                const transactions = transaction.hash;
-                //Update transaction hystory
+                //setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the MetaMask transaction.");
+                let transactions
+                if (nft.sellingQuantity <= amount) {
+                    const tx = await NFTMarketplaceContract.directListings.cancelListing(nft.listing_id);
+                    console.log(tx);
+                    transactions = tx.receipt.transactionHash;
+                } else {
+                    const params = await NFTMarketplaceContract.call("getListing", [nft.listing_id])
+                    const date = new Date(params.startTimestamp * 1000);
+                    console.log(date);
+                    //Call updateListing
+                    const listing = {
+                        assetContractAddress: nft.token_address,
+                        tokenId: nft.token_id,
+                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                        pricePerToken: nft.price,
+                        quantity: amount,
+                        isReservedListing: false,
+                        startTimestamp: date
+                    }
 
-                const identification = await fetchUserInformation();
+                    const tx = await NFTMarketplaceContract.directListings.updateListing(nft.listing_id, listing);
+                    console.log(tx);
+                    transactions = tx.receipt.transactionHash;
+                }
+
+                //Update transaction hystory
                 const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "DELISTING", "price": nft.price, 'quantity': amount });
                 await patchOnDB(
-                    `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
+                    `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, accessToken).then((response) => {
                         console.log(response);
                     });
+
                 //Update Owners selling quantity
                 const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, "amount": amount });
-                await patchOnDB(`${DBUrl}/api/v1/owners/delistItems`, data, identification.accessToken).then((response) => {
+                await patchOnDB(`${DBUrl}/api/v1/owners/delistItems`, data, accessToken).then((response) => {
                     console.log(response);
                 });
 
@@ -752,6 +820,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     userToWallet(UserFirebase.accessToken).then((UserDB) => {
                         const userData = { ...UserFirebase, ...UserDB };
                         setUser(userData);
+                        console.log(userData);
                         if (wallet && UserDB.wallet && wallet != UserDB.wallet) {
                             setNotificationText(`The current connected wallet (${renderString(wallet, 5)}) does not match the one linked with you account (${renderString(UserDB.wallet, 5)}). <br/>Just one wallet can be linked with your account. In order to change your account linked wallet, go in <a href='./my-profile' style='color: var(--main-color)'>your profile</a>.`)
                             setNotificationTitle("Wrong wallet connected");
@@ -766,15 +835,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
     //MongoDB user instance creation and check if any wallet is connected
     const saveUserDataInDB = async (accessToken) => {
         let data;
-        if (currentAccount) {
-            data = JSON.stringify({ 'wallet': currentAccount });
+        if (address) {
+            data = JSON.stringify({ 'wallet': address.toLowerCase() });
         } else {
             data = JSON.stringify({});
         }
         const response = await postOnDB(`${DBUrl}/api/v1/users`, data, accessToken);
         console.log(response);
         if (response.status == "success" && response.message == "A user with this wallet already exists, but the new user has been created without setting the wallet parameter.") {
-            alert(`We were able to create your account but the wallet connected ${renderString(currentAccount, 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(currentAccount, 5)} and the other account`);
+            alert(`We were able to create your account but the wallet connected ${renderString(address.toLowerCase(), 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(address.toLowerCase(), 5)} and the other account`);
         };
     };
 
@@ -825,19 +894,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             if (UserFirebase.emailVerified) {
                 //Check Wallet connected
-                if (currentAccount) {
+                if (address.toLowerCase()) {
                     const DBUser = await userToWallet(UserFirebase.accessToken);
                     console.log(DBUser);
                     console.log(DBUser.wallet == null);
                     if (DBUser.wallet == null) {
-                        const data = JSON.stringify({ 'wallet': currentAccount });
+                        const data = JSON.stringify({ 'wallet': address.toLowerCase() });
                         console.log(data);
                         console.log(UserFirebase.accessToken);
                         const response = await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, UserFirebase.accessToken);
                         console.log("Update Wallet:", response);
                         if (response.status == "fail" && response.message == "Duplicate field value. Please use another value") {
                             setNotificationTitle("WRONG WALLET CONNECTED")
-                            setNotificationText(`We were able to login into your account but the wallet connected ${renderString(currentAccount, 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(currentAccount, 5)} and the other account`)
+                            setNotificationText(`We were able to login into your account but the wallet connected ${renderString(address.toLowerCase(), 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(address.toLowerCase(), 5)} and the other account`)
                             setOpenNotification(true);
                         }
                     }
@@ -1102,18 +1171,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
         setUserAndCheckWallet();
     }, []);
 
-    /* useEffect(() => {
+    useEffect(() => {
         if (address) {
-            setCurrentAccount(address.toLowerCase());
             verifyWallet(address.toLowerCase());
-        } else {
-            setCurrentAccount("")
-        };
-    }, [isConnected, address]) */
+        }
+    }, [address])
 
     return (
         <NFTMarketplaceContext.Provider
             value={{
+                handleMetaMaskErrors,
                 error,
                 setError,
                 openError,
@@ -1134,7 +1201,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setCurrentIndex,
                 stopFooter,
                 setStopFooter,
-                currentAccount,
                 user,
                 openRegister,
                 setOpenRegister,
@@ -1158,7 +1224,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 notificationTitle, setNotificationTitle,
                 notificationText, setNotificationText,
 
-                connectWallet,
                 pinFileToIPFS,
                 cloudinaryUploadVideo,
                 cloudinaryUploadImage,
@@ -1175,7 +1240,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 fetchTopCollectors,
                 fetchSupporters,
                 sendArtistForm,
-                buyNFTMatic,
+                claimNFT,
                 freeNFTTransfer,
                 changeNFTPrice,
                 delistItem,

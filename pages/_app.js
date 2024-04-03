@@ -18,8 +18,6 @@ import { firebaseApp } from '../firebase-init';
 
 import { GoogleAnalytics } from "nextjs-google-analytics";
 
-const chain = process.env.NODE_ENV == "production" ? "polygon" : "mumbai"
-
 
 function MyApp({ Component, pageProps }) {
   const location = useRouter();
@@ -76,8 +74,8 @@ _iub.csConfiguration = {
           walletConnect(),
           embeddedWallet()
         ]}
-        activeChain={chain}
-        clientId="3d60c6caaa12c62a65cecff17b2d0a40"
+        activeChain={process.env.ACTIVE_CHAIN}
+        clientId={process.env.THIRDWEB_PROJECT_ID}
         queryClient={queryClient}>
         <NFTMarketplaceProvider>
           <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />

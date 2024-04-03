@@ -8,15 +8,6 @@
     margin: calc(60px + 2.5%) auto;
 }
 
-.buttonWallet {
-    border: 1px solid white;
-    border-radius: 0px;
-    background-color: transparent;
-    color: var(--main-color);
-    padding: 0;
-    margin: 0;
-}
-
 @media screen and (max-width: 480px) {
     .discover {
         width: 90%;

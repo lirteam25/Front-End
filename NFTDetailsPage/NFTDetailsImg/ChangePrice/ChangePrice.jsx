@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 
 import Style from "../ListItem/ListItem.module.css";
-import { ActionButton, InfoButton } from "../../../components/componentsIndex";
+import { SmartContractButton, InfoButton } from "../../../components/componentsIndex";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
+import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const ChangePrice = ({ nft, setOpenChangePrice }) => {
     const { changeNFTPrice } = useContext(NFTMarketplaceContext);
@@ -14,9 +15,10 @@ const ChangePrice = ({ nft, setOpenChangePrice }) => {
         }
     };
 
-    const changePrice = () => {
+    const changePrice = (contract) => {
         setOpenChangePrice(false);
         changeNFTPrice(
+            contract,
             nft,
             newPrice
         )
@@ -34,7 +36,7 @@ const ChangePrice = ({ nft, setOpenChangePrice }) => {
             </div>
             <div className={Style.ListItem_button}>
                 {newPrice && newPrice >= 0 ?
-                    (<ActionButton action={changePrice} text="CHANGE PRICE" />) : (
+                    (<SmartContractButton contractAddress={nft.isFirstSelling ? nft.token_address : NFTMarketplaceAddress} toast="Ciao" action={changePrice} text="CHANGE PRICE" />) : (
                         <InfoButton text="Insert a valid price" />
                     )}
             </div>
