@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    if (process.env.NODE_ENV == "production") {
+    if (process.env.ACTIVE_CHAIN != "mumbai") {
       window.gtag("event", "page_view", {
         page_path: location.pathname + location.search + location.hash,
         page_search: location.search,
