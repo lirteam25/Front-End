@@ -32,11 +32,9 @@ const MyProfile = () => {
 
     function formatDateToMonthYear(timestamp) {
         const date = new Date(timestamp);
-        console.log(date);
         const options = { year: 'numeric', month: 'long' };
         const formattedDate = date.toLocaleString('en-US', options);
         const string = `Joined in ${formattedDate}`;
-        console.log(string);
         return string;
     }
 

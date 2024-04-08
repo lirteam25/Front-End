@@ -18,7 +18,7 @@ import {
 } from "@thirdweb-dev/react";
 
 //Internal Imports
-import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
+import { NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -308,7 +308,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const _primarySaleRecipient = address;
             const _royaltyRecipient = address;
             const _royaltyBps = royalties * 100;
-            const _platformFeeBps = user.artist_first_sale_fee;
+            const _platformFeeBps = user.artist_first_sale_fee * 100;
             const _platformFeeRecipient = MarketplaceOwner;
 
             console.log(_defaultAdmin, _name, _symbol, _contractURI, _trustedForwarders, _primarySaleRecipient, _royaltyRecipient, _royaltyBps, _platformFeeBps, _platformFeeRecipient)
@@ -327,6 +327,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 _platformFeeRecipient
             ]
             );
+            console.log(initData);
 
             const prova = await NFTMintFactoryContract.call("createNFTMint", [initData]);
             setLoading("The smart contract is being created.");
@@ -345,7 +346,28 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             console.log(BeaconProxyAddress);
 
-            const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress, "artist_royalties": royalties });
+            /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Mumbai" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
+
+            console.log(dataEnablingContractForPayments);
+            const post = async (url, data = {}, token) => {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-secret-key': token,
+                    },
+                    body: data
+                });
+                return response.json()
+            }
+
+            const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
+
+            console.log(final);
+            const contract_id = final.contractId
+            console.log(contract_id); */
+
+            const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress, "artist_royalties": royalties/*, contract_id */ });
             await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
                 .then((response) => {
                     console.log(response);
@@ -361,7 +383,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     async function createNFT(
-        nftMintArtistContract, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, supply, royalties, launch_date, audioDuration) {
+        nftMintArtistContract, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, supply, royalties, launch_date, audioDuration, startPreview /*, contract_id */) {
 
         await withWalletCheck(async (accessToken) => {
             setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
@@ -410,12 +432,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
             console.log(symbol, name);
 
             //Post NFTInfo document
-            const audioPreview = "/du_30" + audioCloudinary;
+            const endPreview = parseInt(startPreview) + 30;
+            const audioPreview = `/du_30,so_${startPreview},eo_${endPreview}` + audioCloudinary;
             let dataTokenInfo;
             if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
             } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
             }
             await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
                 console.log("response:", response);
@@ -628,24 +651,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     setLoading("The token is being transferred.");
                     console.log("transaction", tx);
                 }
-                await updateDBafterPurchase(nft, tx, accessToken);
+                const transactionHash = tx.receipt.transactionHash;
+                const transactionFrom = tx.receipt.from.toLowerCase();
+                await updateDBafterPurchase(nft, transactionHash, transactionFrom, accessToken);
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'purchase');
-
-                setOpenLoading(false);
-                setToast("Token successfully purchased");
-                setOpenToast(true);
-                router.push("/my-profile");
             } catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while buying the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_purchase");
             }
         })
     };
 
-    const updateDBafterPurchase = async (seller, transaction, accessToken, newBuyer) => {
-        const transactions = transaction.receipt.transactionHash;
-        const buyer = newBuyer || transaction.receipt.from.toLowerCase();
+    const updateDBafterPurchase = async (seller, transactionHash, transactionFrom, accessToken, newBuyer) => {
+        const transactions = transactionHash;
+        const buyer = newBuyer || transactionFrom;
         const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
         await patchOnDB(
             `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
@@ -656,6 +674,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
             `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
                 console.log(response);
             });
+
+        const analytics = getAnalytics();
+        logEvent(analytics, 'purchase');
+
+        setOpenLoading(false);
+        setToast("Token successfully purchased");
+        setOpenToast(true);
+        router.push("/my-profile");
     };
 
     const freeNFTTransfer = async (nft) => {
@@ -677,14 +703,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
                 await updateDBafterPurchase(nft, transaction, address.toLowerCase());
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'retrieve');
-
-                setOpenLoading(false);
-
-                setToast("Token successfully transferred");
-                setOpenToast(true);
-                router.push("/my-profile");
             } catch (error) {
                 handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
             }
@@ -1261,6 +1279,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 sendArtistForm,
                 claimNFT,
                 freeNFTTransfer,
+                updateDBafterPurchase,
                 changeNFTPrice,
                 delistItem,
                 signUp,

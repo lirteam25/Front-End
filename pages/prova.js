@@ -1,22 +1,48 @@
 import React, { useContext } from 'react';
-import { Web3Button } from '@thirdweb-dev/react';
+import { CheckoutWithCard, useAddress } from '@thirdweb-dev/react';
 
 import Style from "../styles/discover.module.css";
 import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
-import { NFTMintSampleAddress } from '../Context/Constants';
+import { EditionDropABI } from '../Context/Constants';
 
 const prova = () => {
+
+    const address = useAddress();
 
     const { user } = useContext(NFTMarketplaceContext);
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
-                <Web3Button contractAddress="0x21D8d4A6e469BF3de45f5dbae3CEea09D33af003"
-                    action={async (contract) => {
-                        const data = await contract.call("uri", [0])
-                        console.log(data);
+                {address &&
+                    <CheckoutWithCard
+                        clientId={process.env.THIRDWEB_PROJECT_ID}
+                        configs={{
+                            contractId: "8e78cdd7-e70f-44cb-b46b-17f1c839243f",
+                            walletAddress: address ?? '',
+                            contractArgs: {
+                                listings: [
+                                    { listingId: "19" },  // Add your listing IDs here
+                                    // Add more listing IDs as needed
+                                ]
+                            }
 
-                    }}>MINTA</Web3Button>
+                        }}
+                        onPaymentSuccess={async (result) => {
+                            console.log(result);
+                        }}
+                        onError={(error) => {
+                            console.log(error);
+                        }}
+                        options={{
+                            colorBackground: '#111111',
+                            colorPrimary: '#D60B52',
+                            colorText: '#FFFFFF',
+                            borderRadius: 0,
+                            inputBackgroundColor: '#1B1B1B',
+                            inputBorderColor: '#767676',
+                        }}
+                    />
+                }
             </div>
         </div>
     )

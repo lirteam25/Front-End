@@ -12,6 +12,7 @@ import Notification from "./Notification/Notification";
 import NavBarConnectWallet from "./Button/ConnectWallet/NavBarConnectWallet";
 import ButtonConnectWallet from "./Button/ConnectWallet/ButtonConnectWallet";
 import SmartContractButton from "./Button/SmartContractButton/SmartContractButton";
+import LazyMintCreditCard from "./Button/CreditCard/LazyMintCreditCard";
 
 
 export {
@@ -28,5 +29,6 @@ export {
     Notification,
     NavBarConnectWallet,
     ButtonConnectWallet,
-    SmartContractButton
+    SmartContractButton,
+    LazyMintCreditCard
 };

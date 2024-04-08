@@ -10,7 +10,7 @@ import { InfoButton, SmartContractButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, connectWallet, currentAccount } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
     const [description, setDescription] = useState(null);
@@ -20,6 +20,7 @@ const CreateItem = ({ closeCreateItems }) => {
 
     const [price, setPrice] = useState(null);
     const [duration, setDuration] = useState(null);
+    const [startPreview, setStartPreview] = useState(null);
     const [urlPinata, setUrlPinata] = useState(null);
     const [urlCloudinary, setUrlCloudinary] = useState(null)
     const [imageSongPinata, setImageSongPinata] = useState(null);
@@ -39,7 +40,7 @@ const CreateItem = ({ closeCreateItems }) => {
         }
 
         closeCreateItems();
-        await createNFT(nftMintArtistContract, user.artist_name, song, price, urlPinata, urlCloudinary, imageSongPinata, imageSongCloudinary, description, supply, user.artist_royalties, combinedDateISO, duration);
+        await createNFT(nftMintArtistContract, user.artist_name, song, price, urlPinata, urlCloudinary, imageSongPinata, imageSongCloudinary, description, supply, user.artist_royalties, combinedDateISO, duration, startPreview/* , user.contract_id */);
     }
 
     const numberInputOnWheelPreventChange = (e) => {
@@ -86,13 +87,12 @@ const CreateItem = ({ closeCreateItems }) => {
                     />
                 </div>
                 <div className={Style.CreateItems_bottom_element}>
-                    <label className='font-normal' htmlFor="duration">Track length</label>
+                    <label className='font-normal' htmlFor="duration">Track Preview</label>
                     <input
                         id="duration"
-                        type="text"
-                        pattern="\d{2}:\d{2}"
-                        placeholder="Track length. Suggested format: 03:21."
-                        onChange={(e) => setDuration(e.target.value)}
+                        type="number"
+                        placeholder="Insert the second at which the preview should start."
+                        onChange={(e) => setStartPreview(e.target.value)}
                     />
                 </div>
                 <DropZone
@@ -106,6 +106,7 @@ const CreateItem = ({ closeCreateItems }) => {
                     cloudinaryUploadVideo={cloudinaryUploadVideo}
                     cloudinaryUploadImage={cloudinaryUploadImage}
                     setImageSongCloudinary={setImageSongCloudinary}
+                    setDuration={setDuration}
                 />
                 <div className={Style.CreateItems_bottom_element}>
                     <div className={Style.CreateItems_bottom_element_titleWithTutorial}>

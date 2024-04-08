@@ -3,6 +3,7 @@ import { NavBar, Footer } from "../components/componentsIndex";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
 import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PolygonAmoyTestnet } from "@thirdweb-dev/chains";
 
 import {
   ThirdwebProvider,
@@ -74,7 +75,7 @@ _iub.csConfiguration = {
           walletConnect(),
           embeddedWallet()
         ]}
-        activeChain={process.env.ACTIVE_CHAIN}
+        activeChain={PolygonAmoyTestnet}
         clientId={process.env.THIRDWEB_PROJECT_ID}
         queryClient={queryClient}>
         <NFTMarketplaceProvider>

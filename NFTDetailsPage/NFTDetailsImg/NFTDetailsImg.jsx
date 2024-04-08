@@ -46,8 +46,9 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
         setOpenListItem(!openListItem);
     }
 
-    const transactionNFTMatic = () => {
-        buyNFTMatic(shownNft);
+    const setBuyItem = () => {
+        setOpenChangePrice(false); setOpenDelistItem(false); setOpenListItem(false);
+        setOpenBuy(!openBuy);
     }
 
     const freelyRetriveToken = () => {
@@ -194,7 +195,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                     </div>)
                                                     :
                                                     (<div>
-                                                        <SmartContractButton text="Collect Track" contractAddress={shownNft.isFirstSale ? shownNft.token_address : NFTMarketplaceAddress} action={claimTrack} toast="Token successfully purchased" />
+                                                        <SmartContractButton text="Collect Track" contractAddress={shownNft.isFirstSale ? shownNft.token_address : NFTMarketplaceAddress} action={claimTrack} />
                                                         {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
                                                             You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
                                                         </div>)}

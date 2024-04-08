@@ -1,0 +1,35 @@
+.BuyItem {
+    background-color: var(--background-grey2);
+    color: white
+}
+
+.BuyItem_bottom_middle {
+    text-align: center;
+    color: var(--background-grey3);
+}
+
+.BuyItem_bottom_item {
+    padding: 1rem 0;
+}
+
+.BuyItem_top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.BuyItem_top_title {
+    text-transform: uppercase;
+}
+
+.BuyItem_top_x {
+    cursor: pointer;
+}
+
+.BuyItem_bottom {
+    width: 95%;
+    margin: auto;
+}

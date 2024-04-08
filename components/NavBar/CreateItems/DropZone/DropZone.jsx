@@ -17,11 +17,24 @@ const DropZone = ({
     pinFileToIPFS,
     cloudinaryUploadVideo,
     cloudinaryUploadImage,
-    setImageSongCloudinary
+    setImageSongCloudinary,
+    setDuration
 }) => {
 
     const [audioLoading, setAudioLoading] = useState(false);
     const [imgLoading, setImgLoading] = useState(false);
+
+    function secondsToMMSS(secondsInput) {
+        const totalSeconds = Math.round(secondsInput); // Round the total seconds
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        // Convert minutes and seconds to two-digit format
+        const minutesStr = String(minutes).padStart(2, '0');
+        const secondsStr = String(seconds).padStart(2, '0');
+
+        return `${minutesStr}:${secondsStr}`;
+    }
 
     const onDropAudio = useCallback(async (file) => {
         setAudioLoading(20);
@@ -29,6 +42,9 @@ const DropZone = ({
         const response = await cloudinaryUploadVideo(file, user._id);
         setAudioLoading(80);
         console.log(response);
+        const duration = secondsToMMSS(response.duration);
+        console.log(duration);
+        setDuration(duration);
         const path = response.secure_url.replace(process.env.CLOUDINARY_URL, "");
         console.log("URL CLOUDINARY", path);
         setUrlCloudinary(path);
