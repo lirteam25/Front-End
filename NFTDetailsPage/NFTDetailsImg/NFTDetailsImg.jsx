@@ -153,7 +153,8 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                     {user.wallet && user.wallet == address.toLowerCase() ? (<div>
                                         {user.wallet == shownNft.owner_of ? (
                                             <div>
-                                                {shownNft.sellingQuantity >= shownNft.amount ? <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
+                                                {shownNft.sellingQuantity >= shownNft.amount ?
+                                                    <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
                                                     (<div>
                                                         <ActionButton action={setListItem} text={shownNft.sellingQuantity > 0 ? "List other tokens" : "LIST YOUR track"} />
                                                         {openListItem && <ListItem nft={shownNft} setOpenListItem={setOpenListItem} />}

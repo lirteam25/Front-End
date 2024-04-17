@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useAddress } from "@thirdweb-dev/react";
+import { useActiveAccount } from "thirdweb/react";
 
 import DOMPurify from 'dompurify';
 
@@ -11,7 +11,7 @@ import CreateSmartContract from './CreateSmartContract/CreateSmartContract';
 
 const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs }) => {
 
-    const address = useAddress();
+    const address = useActiveAccount()?.address;
     const [openRelease, setOpenRelease] = useState(true);
     const [openAbout, setOpenAbout] = useState(false);
     const [openCollectedItems, setOpenCollectedItems] = useState(false);

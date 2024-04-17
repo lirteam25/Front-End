@@ -2,6 +2,9 @@ import React, { useState, useContext } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import Switch from '@mui/material/Switch';
 import { CiSquareQuestion } from "react-icons/ci";
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { createThirdwebClient, getContract } from "thirdweb";
+
 
 //INTERNAL IMPORT
 import Style from "./CreateItems.module.css";
@@ -10,7 +13,7 @@ import { InfoButton, SmartContractButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
     const [description, setDescription] = useState(null);
@@ -28,7 +31,8 @@ const CreateItem = ({ closeCreateItems }) => {
 
     const [schedule, setSchedule] = useState(false);
 
-    const mintNFT = async (nftMintArtistContract) => {
+
+    const mintNFT = async (contractEditionDrop) => {
         let combinedDateISO;
         if (schedule) {
             const [year, month, day] = date.split('-');
@@ -40,7 +44,23 @@ const CreateItem = ({ closeCreateItems }) => {
         }
 
         closeCreateItems();
-        await createNFT(nftMintArtistContract, user.artist_name, song, price, urlPinata, urlCloudinary, imageSongPinata, imageSongCloudinary, description, supply, user.artist_royalties, combinedDateISO, duration, startPreview/* , user.contract_id */);
+        const transactionPrepared = await createNFT(contractEditionDrop, user.artist_name, song, price, urlPinata, imageSongPinata, description, supply, combinedDateISO);
+        console.log(transactionPrepared);
+        return transactionPrepared;
+    }
+
+    const afterMinting = async (receipt, contractEditionDrop) => {
+        let combinedDateISO;
+        if (schedule) {
+            const [year, month, day] = date.split('-');
+            const [hours, minutes] = hour.split(':');
+            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
+            console.log(combinedDateISO);
+        } else {
+            combinedDateISO = false;
+        }
+
+        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, user.artist_name, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
     }
 
     const numberInputOnWheelPreventChange = (e) => {
@@ -222,8 +242,10 @@ const CreateItem = ({ closeCreateItems }) => {
                 <div className={Style.CreateItems_bottom_btn}>
                     {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && supply && duration) ? (
 
-                        <SmartContractButton text="Create a digital collectible" contractAddress={user.artist_minting_contract}
+                        <SmartContractButton text="Create a digital collectible"
                             action={mintNFT}
+                            onTransactionConfirmed={afterMinting}
+                            addressEditionDrop={user.artist_minting_contract}
                         />
                     ) : (
                         <InfoButton text="Insert all data to mint tokens" />

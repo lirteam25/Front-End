@@ -9,15 +9,15 @@ import { NFTMintFactoryAddress, NFTMintFactoryABI } from "./../../../Context/Con
 
 const CreateSmartContract = ({ closeCreateSmartContract }) => {
 
-    const { user, createNFTMintSmartContract } = useContext(NFTMarketplaceContext);
+    const { user, createEditionDrop } = useContext(NFTMarketplaceContext);
 
     const [nameOfToken, setNameOfToken] = useState();
     const [symbolOfToken, setSymbolOfToken] = useState();
     const [royalties, setRoyalties] = useState();
 
-    const mintSmartContract = async (contract) => {
+    const mintSmartContract = async (editionDrop) => {
         closeCreateSmartContract();
-        await createNFTMintSmartContract(contract, nameOfToken, symbolOfToken, royalties, user);
+        await createEditionDrop(nameOfToken, symbolOfToken, royalties, user);
     };
 
     return (
@@ -128,7 +128,7 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                 </div>
                 <div className={`${Style.CreateSmartContract_bottom_95} ${Style.bottom}`}>
                     {nameOfToken && symbolOfToken && royalties ?
-                        <SmartContractButton text="Deploy contract" action={mintSmartContract} contractAddress={NFTMintFactoryAddress} ABI={NFTMintFactoryABI} />
+                        <SmartContractButton text="Deploy contract" action={mintSmartContract} onTransactionConfirmed={null} addressEditionDrop={null} />
                         :
                         <InfoButton text="CREATE SMART CONTRACT" fontSize="0.9rem" />
                     }
@@ -138,4 +138,4 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
     )
 }
 
-export default CreateSmartContract
+export default CreateSmartContract;

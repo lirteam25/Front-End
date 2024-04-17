@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import {
-    useContract,
-    NATIVE_TOKEN_ADDRESS
-} from "@thirdweb-dev/react";
-import axios from "axios";
-import { getAnalytics, logEvent } from "firebase/analytics";
-import { useAddress } from "@thirdweb-dev/react";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
-const FormData = require('form-data');
-import {
-    useConnect, metamaskWallet,
-    coinbaseWallet,
-    walletConnect,
-    embeddedWallet
-} from "@thirdweb-dev/react";
 
+import axios from "axios";
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { getAnalytics, logEvent } from "firebase/analytics";
+
+import { useActiveAccount } from "thirdweb/react";
+import { nextTokenIdToMint, setClaimConditions, lazyMint, uri } from "thirdweb/extensions/erc1155";
+import { prepareContractCall, createThirdwebClient, getContract, sendTransaction, readContract, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
+import { deployERC1155Contract } from "thirdweb/deploys";
+import { name, symbol } from "thirdweb/extensions/common";
+
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
+
+const FormData = require('form-data');
 //Internal Imports
-import { NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner } from "./Constants";
+import { NFTMintFactoryAddress, EditionDropABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -75,13 +73,6 @@ const deleteOnDB = async (url, token) => {
     return response.json();
 }
 
-const walletConfig = [
-    metamaskWallet(),
-    coinbaseWallet(),
-    walletConnect(),
-    embeddedWallet()
-];
-
 //Creates a Context object. 
 //When React renders a component that subscribes to this Context object it will read the current context value from the closest matching Provider above it in the tree.
 export const NFTMarketplaceContext = React.createContext();
@@ -114,8 +105,28 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const router = useRouter();
 
-    const address = useAddress();
-    const { data: NFTMintSample } = useContract(NFTMintSampleAddress);
+    const account = useActiveAccount();
+    const address = useActiveAccount()?.address;
+
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
+    });
+
+    const contractMarketplace = getContract({
+        client,
+        chain: polygonAmoy,
+        address: NFTMarketplaceAddress
+    })
+    const contractFactoryContract = getContract({
+        client,
+        chain: polygonAmoy,
+        address: NFTMintFactoryAddress
+    });
+    const contractEditionDropSample = getContract({
+        client,
+        chain: polygonAmoy,
+        address: NFTMintSampleAddress
+    });
 
 
     const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
@@ -293,60 +304,49 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     };
 
-    async function createNFTMintSmartContract(NFTMintFactoryContract, nameToken, symbolToken, royalties, user) {
+    async function createEditionDrop(nameToken, symbolToken, royalties, user) {
         await withWalletCheck(async (accessToken) => {
-            console.log(NFTMintFactoryContract, nameToken, symbolToken, royalties);
             setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
 
-            const _defaultAdmin = address;
-            const _name = nameToken;
-            const _symbol = symbolToken;
+            const defaultAdmin = address;
+            const description = "Smart Contract Representing Unpublished Musical Content"
+            const name = nameToken;
+            const symbol = symbolToken;
 
-            const _contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
+            const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
 
-            const _trustedForwarders = [];
-            const _primarySaleRecipient = address;
-            const _royaltyRecipient = address;
-            const _royaltyBps = royalties * 100;
-            const _platformFeeBps = user.artist_first_sale_fee * 100;
-            const _platformFeeRecipient = MarketplaceOwner;
+            const trustedForwarders = [];
+            const saleRecipient = address;
+            const royaltyRecipient = address;
+            const royaltyBps = royalties * 100;
+            const platformFeeBps = user.artist_first_sale_fee * 100;
+            const platformFeeRecipient = MarketplaceOwner;
 
-            console.log(_defaultAdmin, _name, _symbol, _contractURI, _trustedForwarders, _primarySaleRecipient, _royaltyRecipient, _royaltyBps, _platformFeeBps, _platformFeeRecipient)
+            console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
 
-            const initData = NFTMintSample.encoder.encode(
-                "initialize", [
-                _defaultAdmin,
-                _name,
-                _symbol,
-                _contractURI,
-                _trustedForwarders,
-                _primarySaleRecipient,
-                _royaltyRecipient,
-                _royaltyBps,
-                _platformFeeBps,
-                _platformFeeRecipient
-            ]
-            );
-            console.log(initData);
-
-            const prova = await NFTMintFactoryContract.call("createNFTMint", [initData]);
-            setLoading("The smart contract is being created.");
-
-            console.log(prova);
-            const events = prova.receipt.events;
-            let BeaconProxyAddress;
-            for (const element of events) {
-                let currentEvent = element;
-                // Check if the current object has the desired fragment.name
-                if (currentEvent.event && currentEvent.event === "NFTMintDeployed") {
-                    BeaconProxyAddress = currentEvent.args[0].toLowerCase();
-                    break;
+            const contractAddress = (await deployERC1155Contract({
+                chain: polygonAmoy,
+                client,
+                account,
+                type: "DropERC1155",
+                params: {
+                    contractURI,
+                    defaultAdmin,
+                    description,
+                    name,
+                    platformFeeBps,
+                    platformFeeRecipient,
+                    royaltyBps,
+                    royaltyRecipient,
+                    saleRecipient,
+                    symbol,
+                    trustedForwarders
                 }
-            };
+            })).toLowerCase();
 
-            console.log(BeaconProxyAddress);
+            console.log(contractAddress);
 
-            /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Mumbai" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
+            /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
 
             console.log(dataEnablingContractForPayments);
             const post = async (url, data = {}, token) => {
@@ -367,7 +367,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const contract_id = final.contractId
             console.log(contract_id); */
 
-            const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress, "artist_royalties": royalties/*, contract_id */ });
+            const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
             await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
                 .then((response) => {
                     console.log(response);
@@ -382,90 +382,108 @@ export const NFTMarketplaceProvider = ({ children }) => {
         })
     }
 
+    async function updateDBOnEditionDropCreation() {
+
+    }
+
     async function createNFT(
-        nftMintArtistContract, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, supply, royalties, launch_date, audioDuration, startPreview /*, contract_id */) {
+        contractEditionDrop, artist, song, formInputPrice, audioPinata, imageSongPinata, description, supply, launch_date) {
 
-        await withWalletCheck(async (accessToken) => {
-            setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
-            const nextTokenIdToMint = parseInt(await nftMintArtistContract.call("nextTokenIdToMint", []));
-            const metadatas = [{ name: song, description, image: imageSongPinata, audio: audioPinata }]
-            const prepareMint = await nftMintArtistContract.erc1155.lazyMint.prepare(metadatas);
-            console.log(prepareMint);
+        const transactionPrepared = await withWalletCheck(async (accessToken) => {
+            //setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
 
-            let encodedMint = prepareMint.encode()
+            console.log(contractEditionDrop);
+            const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop })
+            console.log(nextTokenId);
+
+            const lazyMintTransaction = lazyMint({
+                contract: contractEditionDrop,
+                nfts: [{ name: song, artist, description, image: imageSongPinata, audio: audioPinata }]
+            });
+
+            console.log(lazyMintTransaction);
+            let txLazyMintEncoded = await encode(lazyMintTransaction);
+            console.log(txLazyMintEncoded)
+
             const startingTime = launch_date ? launch_date : new Date();
-            const claimConditions = [
-                {
-                },
-                {
-                    startTime: startingTime,
-                    currencyAddress: NATIVE_TOKEN_ADDRESS,
-                    price: formInputPrice, // public sale price
-                    maxClaimableSupply: supply
-                }];
-
-            let preparedClaimCondition = await nftMintArtistContract.erc1155.claimConditions.set.prepare(nextTokenIdToMint, claimConditions, true);
-            let encodedClaimCondition = preparedClaimCondition.encode()
-
-            const transaction = await nftMintArtistContract.call("multicall", [[encodedMint, encodedClaimCondition]]);
-            setLoading("The tokens are being created.");
-            console.log(transaction);
-            const transactionHash = transaction.receipt.transactionHash;
-            const events = transaction.receipt.events;
-            let token_id;
-            let token_address;
-            for (const element of events) {
-                let currentEvent = element;
-                // Check if the current object has the desired fragment.name
-                if (currentEvent.event && currentEvent.event === "TokensLazyMinted") {
-                    token_id = parseInt(currentEvent.args[0]);
-                    token_address = currentEvent.address.toLowerCase();
-                    break;
-                }
-            };
-
-            const token_URI = await nftMintArtistContract.call("uri", [token_id]);
-            console.log(token_URI);
-
-            const symbol = await nftMintArtistContract.call("symbol", []);
-            const name = await nftMintArtistContract.call("name", []);
-            console.log(symbol, name);
-
-            //Post NFTInfo document
-            const endPreview = parseInt(startPreview) + 30;
-            const audioPreview = `/du_30,so_${startPreview},eo_${endPreview}` + audioCloudinary;
-            let dataTokenInfo;
-            if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
-            } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, "author_address": address.toLowerCase(), royalties, supply, "remaining_for_minting": supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
-            }
-            await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
-                console.log("response:", response);
+            const claimConditionsTransaction = setClaimConditions({
+                contract: contractEditionDrop,
+                tokenId: nextTokenId,
+                phases: [
+                    {
+                        startTime: startingTime,
+                        currencyAddress: NATIVE_TOKEN_ADDRESS,
+                        price: formInputPrice, // public sale price
+                        maxClaimableSupply: supply
+                    },
+                ],
             });
+            console.log(claimConditionsTransaction);
+            let txClaimConditionEncoded = await encode(claimConditionsTransaction);
+            console.log(txClaimConditionEncoded)
 
-            //Post Owners document
-            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address.toLowerCase(), "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
 
-            await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
-                console.log("response:", response);
+            console.log(account);
+            return prepareContractCall({
+                contract: contractEditionDrop,
+                method: resolveMethod("multicall"),
+                params: [[txLazyMintEncoded, txClaimConditionEncoded]]
             });
-
-            //Post Transaction document
-            const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
-            await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
-                console.log("response:", response);
-            });
-
-            const analytics = getAnalytics();
-            logEvent(analytics, 'create');
-
-            setOpenLoading(false);
-            setToast("Tokens successfully created");
-            setOpenToast(true);
-
-            router.push("/collection");
         })
+        console.log(transactionPrepared);
+        return transactionPrepared;
+    }
+
+    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
+
+        console.log(contractEditionDrop);
+        const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
+        const token_id = parseInt(nextTokenId) - 1;
+        const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
+        console.log(token_URI);
+
+        const transactionHash = receipt.transactionHash;
+
+        const token_address = contractEditionDrop.address.toLowerCase();
+
+        const token_symbol = await symbol({ contract: contractEditionDrop });
+        const token_name = await name({ contract: contractEditionDrop })
+
+        //Post NFTInfo document
+        const endPreview = parseInt(startPreview) + 30;
+        const audioPreview = `/du_30,so_${startPreview},eo_${endPreview}` + audioCloudinary;
+        let dataTokenInfo;
+        const accessToken = (await fetchUserInformation()).accessToken;
+        if (launch_date) {
+            dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+        } else {
+            dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
+        }
+        await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
+            console.log("response:", response);
+        });
+
+        //Post Owners document
+        const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address.toLowerCase(), "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+
+        await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
+            console.log("response:", response);
+        });
+
+        //Post Transaction document
+        const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
+        await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
+            console.log("response:", response);
+        });
+
+        const analytics = getAnalytics();
+        logEvent(analytics, 'create');
+
+        setOpenLoading(false);
+        setToast("Tokens successfully created");
+        setOpenToast(true);
+
+        router.push("/collection");
     }
 
     const SecondListing = async (NFTMarketplaceContract, nft, formInputPrice, amount) => {
@@ -1264,8 +1282,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 pinFileToIPFS,
                 cloudinaryUploadVideo,
                 cloudinaryUploadImage,
-                createNFTMintSmartContract,
+
+                createEditionDrop,
+                updateDBOnEditionDropCreation,
+
                 createNFT,
+                updateDBOnNFTCreation,
+
                 SecondListing,
                 fetchDiscoverNFTs,
                 fetchMyNFTs,

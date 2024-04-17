@@ -1,30 +1,42 @@
 import React, { useContext } from 'react';
-import { Web3Button, darkTheme } from "@thirdweb-dev/react";
+import { useActiveAccount, TransactionButton } from "thirdweb/react";
+import { createThirdwebClient, getContract } from "thirdweb";
+import { polygon, polygonAmoy } from "thirdweb/chains";
 
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
-const SmartContractButton = ({ text, contractAddress, action, ABI }) => {
+const SmartContractButton = ({ text, action, onTransactionConfirmed, addressEditionDrop }) => {
 
-    const customDarkTheme = darkTheme({
-        fontFamily: "Space Grotesk, sans-serif",
-        colors: {
-            modalBg: "#000000",
-            accentText: "var(--main-color)",
-            // ... etc
-        },
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
     });
+
+    const contractEditionDrop = addressEditionDrop ? getContract({
+        client,
+        chain: polygonAmoy,
+        address: addressEditionDrop
+    }) : null;
 
     const { handleMetaMaskErrors } = useContext(NFTMarketplaceContext);
 
     return (
-        <Web3Button
-            contractAddress={contractAddress}
-            contractAbi={ABI ? ABI : undefined}
-            action={async (contract) => { await action(contract) }}
+        <TransactionButton
+            transaction={async () => {
+                const tx = await action(contractEditionDrop);
+                console.log(tx);
+                return tx;
+            }}
+
+            onTransactionSent={(result) => {
+                console.log("Transaction submitted", result.transactionHash);
+            }}
+
+            onTransactionConfirmed={async (receipt) => {
+                await onTransactionConfirmed(receipt, contractEditionDrop);
+            }}
 
             onError={(error) => {
-                console.log(error);
-                handleMetaMaskErrors(error, "Something went wrong. Check if you have sufficient fund to perform the transaction. <br/>If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR");
+                console.error("Transaction error", error);
             }}
 
             style={{
@@ -40,36 +52,9 @@ const SmartContractButton = ({ text, contractAddress, action, ABI }) => {
                 border: "1px solid white"
             }}
 
-            connectWallet={{
-                style: {
-                    width: "100%",
-                    borderRadius: "0px",
-                    backgroundColor: "var(--main-color)",
-                    color: "white",
-                    padding: 0,
-                    padding: "0.3rem 0rem",
-                    textTransform: "uppercase",
-                    margin: 0,
-                    border: "1px solid white"
-                },
-                btnTitle: "connect wallet",
-                theme: { customDarkTheme },
-                welcomeScreen: {
-                    title: "LIR Music",
-                    subtitle: "Connect your wallet to LIR Music",
-                    img: {
-                        src: "https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg",
-                        width: 100,
-                        height: 100,
-                    },
-                },
-                termsOfServiceUrl: "https://www.iubenda.com/terms-and-conditions/94474485",
-                privacyPolicyUrl: "https://www.iubenda.com/privacy-policy/94474485"
-            }}
-
         >
             {text}
-        </Web3Button>
+        </TransactionButton>
     )
 }
 

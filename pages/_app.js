@@ -3,14 +3,9 @@ import { NavBar, Footer } from "../components/componentsIndex";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
 import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PolygonAmoyTestnet } from "@thirdweb-dev/chains";
 
 import {
-  ThirdwebProvider,
-  metamaskWallet,
-  coinbaseWallet,
-  walletConnect,
-  embeddedWallet
+  ThirdwebProvider
 } from "./../Context/ThirdwebProvider";
 
 import { useEffect } from 'react';
@@ -69,14 +64,6 @@ _iub.csConfiguration = {
   return (
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider
-        supportedWallets={[
-          metamaskWallet(),
-          coinbaseWallet(),
-          walletConnect(),
-          embeddedWallet()
-        ]}
-        activeChain={PolygonAmoyTestnet}
-        clientId={process.env.THIRDWEB_PROJECT_ID}
         queryClient={queryClient}>
         <NFTMarketplaceProvider>
           <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />

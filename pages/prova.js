@@ -1,48 +1,77 @@
 import React, { useContext } from 'react';
-import { CheckoutWithCard, useAddress } from '@thirdweb-dev/react';
+import { useActiveAccount, TransactionButton, ConnectButton } from "thirdweb/react";
+import { prepareContractCall, createThirdwebClient, getContract, sendTransaction, readContract, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { nextTokenIdToMint, setClaimConditions, lazyMint, uri } from "thirdweb/extensions/erc1155";
+import { createWallet, embeddedWallet } from "thirdweb/wallets";
+import { NFTMarketplaceContext } from './../Context/NFTMarketplaceContext';
+import { GoDotFill } from "react-icons/go";
+import { deployERC1155Contract } from "thirdweb/deploys";
+
+
+import { metamaskWallet } from "thirdweb/wallets";
+import { SmartContractButton } from "../components/componentsIndex";
+
 
 import Style from "../styles/discover.module.css";
-import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
-import { EditionDropABI } from '../Context/Constants';
+
+const wallets = [
+    embeddedWallet(),
+    createWallet("io.metamask"),
+    createWallet("com.coinbase.wallet"),
+    createWallet("me.rainbow"),
+];
 
 const prova = () => {
 
-    const address = useAddress();
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
+    });
 
-    const { user } = useContext(NFTMarketplaceContext);
+    const chain = polygonAmoy;
+
+    const contractEditionDrop = getContract({
+        client,
+        chain,
+        address: "0x277b3a556273162adc1a8d73c18f84a65fa26228"
+    });
+
+    const account = useActiveAccount();
+
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
-                {address &&
-                    <CheckoutWithCard
-                        clientId={process.env.THIRDWEB_PROJECT_ID}
-                        configs={{
-                            contractId: "8e78cdd7-e70f-44cb-b46b-17f1c839243f",
-                            walletAddress: address ?? '',
-                            contractArgs: {
-                                listings: [
-                                    { listingId: "19" },  // Add your listing IDs here
-                                    // Add more listing IDs as needed
-                                ]
+                <TransactionButton
+                    transaction={async () => {
+                        const contractAddress = await deployERC1155Contract({
+                            chain: polygonAmoy,
+                            client,
+                            account,
+                            type: "DropERC1155",
+                            params: {
+                                name: "MyEdition",
+                                description: "My edition contract",
+                                symbol: "ME",
                             }
+                        });
+                        return contractAddress;
+                    }}
 
-                        }}
-                        onPaymentSuccess={async (result) => {
-                            console.log(result);
-                        }}
-                        onError={(error) => {
-                            console.log(error);
-                        }}
-                        options={{
-                            colorBackground: '#111111',
-                            colorPrimary: '#D60B52',
-                            colorText: '#FFFFFF',
-                            borderRadius: 0,
-                            inputBackgroundColor: '#1B1B1B',
-                            inputBorderColor: '#767676',
-                        }}
-                    />
-                }
+                    onTransactionSent={async (result) => {
+                        console.log("Transaction submitted", result);
+                    }}
+
+                    onTransactionConfirmed={async (receipt) => {
+                        console.log("Transaction confirmed", receipt);
+                    }}
+
+                    onError={(error) => {
+                        console.error("Transaction error", error);
+                    }}
+
+                >
+                    Test Minting
+                </TransactionButton>
             </div>
         </div>
     )
