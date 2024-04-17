@@ -16,6 +16,7 @@ import {
     walletConnect,
     embeddedWallet
 } from "@thirdweb-dev/react";
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
 
 //Internal Imports
 import { NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner } from "./Constants";
@@ -163,8 +164,74 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     // Upload image to IPFS function. The input is a file (audio). 
-    const pinFileToIPFS = async (file, artist) => {
-        const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
+    const pinFileToIPFS = async (file, contractAddress, id, nftMintArtistContract) => {
+        try {
+            const nextTokenIdToMint = (await nftMintArtistContract.call("nextTokenIdToMint", [])).toString();
+            // Instead of just sending the file to our /api/files endoint we're going to encrypt it first
+            // Start by creating a new LitNodeClient
+            const litNodeClient = new LitJsSdk.LitNodeClient({
+              litNetwork: 'cayenne',
+            });
+            // then get the authSig
+            await litNodeClient.connect();
+            const authSig = await LitJsSdk.checkAndSignAuthMessage({
+              chain: 'amoy',
+              nonce: ''
+            });
+            // Here we can setup any access control conditions we want, such as must hold a specifc NFT, or have a certain amount of ETH
+            // Right now its blank so anyone can decrypt the file
+            const accs = [
+              {
+                  contractAddress: contractAddress, //'0x779ea3cDc91eaE5a51AB900EBF08f633997b4a41',
+                  standardContractType: 'ERC1155',
+                  chain: 'amoy',
+                  method: 'balanceOf',
+                  parameters: [':userAddress', nextTokenIdToMint], //tokenId
+                  returnValueTest: {
+                      comparator: '>',
+                      value: '0',
+                  },
+              },
+            ];
+            // Then we use our access controls and authSig to encrypt the file and zip it up with the metadata
+            const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({ 
+              accessControlConditions: accs,
+              authSig,
+              chain: 'amoy',
+              file: file,
+              litNodeClient: litNodeClient,
+              readme: "Use IPFS CID of this file to decrypt it"
+            });
+      
+            // Then we turn it into a file that will be accepted by the Pinata API
+            const encryptedBlob = new Blob([encryptedZip], { type: 'text/plain' })
+            const encryptedFile = new File([encryptedBlob], fileToUpload.name)
+      
+            // Finally we upload the file by passing it to our /api/files endpoint
+            // Keep in mind this works for smaller files and you may need to do a presigned JWT and upload from the client if you're dealing with larger files
+            // Read more about that here: https://www.pinata.cloud/blog/how-to-upload-to-ipfs-from-the-frontend-with-signed-jwts
+            const formData = new FormData();
+            formData.append("file", encryptedFile, { filename: encryptedFile.name });
+
+            const res = await fetch(
+            "https://api.pinata.cloud/pinning/pinFileToIPFS",
+            {
+                method: "POST",
+                headers: {
+                Authorization: `Bearer ${process.env.PINATA_JWT}`,
+                },
+                body: formData,
+            }
+            );
+            const ipfsHash = await res.text();
+            console.log(ipfsHash)
+            return ipfsHash
+          } catch (e) {
+            console.log(e);
+          }
+
+    };
+        /* const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 
         //making axios POST request to Pinata
         let data = new FormData();
@@ -173,8 +240,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const metadata = JSON.stringify({
             name: `${file.path}`,
             keyvalues: {
-                ArtistID: `${artist}`
-            },
+                exampleKey: 'Provina'
+            }
         });
         data.append('pinataMetadata', metadata);
 
@@ -204,8 +271,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 return {
                     message: error.message,
                 }
-            })
-    };
+            }) */
 
     const pinJSONToIPFS = async (JSONBody) => {
         const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
