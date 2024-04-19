@@ -1,13 +1,17 @@
 import React, { useState, useContext } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { CiSquareQuestion } from "react-icons/ci";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 
 import Style from "./CreateSmartContract.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { InfoButton, SmartContractButton } from '../../../components/componentsIndex';
+import { ActionButton, InfoButton, ButtonConnectWallet } from '../../../components/componentsIndex';
 import { NFTMintFactoryAddress, NFTMintFactoryABI } from "./../../../Context/Constants";
 
 const CreateSmartContract = ({ closeCreateSmartContract }) => {
+
+    const chainId = useActiveWalletChain()?.id;
+    const address = useActiveAccount()?.address;
 
     const { user, createEditionDrop } = useContext(NFTMarketplaceContext);
 
@@ -127,15 +131,15 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                     </div>
                 </div>
                 <div className={`${Style.CreateSmartContract_bottom_95} ${Style.bottom}`}>
-                    {nameOfToken && symbolOfToken && royalties ?
-                        <SmartContractButton text="Deploy contract" action={mintSmartContract} onTransactionConfirmed={null} addressEditionDrop={null} />
+                    {address && chainId == 80002 ? (<>{nameOfToken && symbolOfToken && royalties ?
+                        <ActionButton text="Deploy contract" action={mintSmartContract} />
                         :
-                        <InfoButton text="CREATE SMART CONTRACT" fontSize="0.9rem" />
-                    }
+                        <InfoButton text="INSERT ALL DATA TO CREATE SMART CONTRACT" fontSize="0.9rem" />
+                    }</>) : (<ButtonConnectWallet user={user} />)}
                 </div>
             </div>
         </div>
     )
 }
 
-export default CreateSmartContract;
+export default CreateSmartContract

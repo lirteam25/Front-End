@@ -6,7 +6,7 @@ import { InfoButton, SmartContractButton } from "./../../../components/component
 import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const ListItem = ({ nft, setOpenListItem }) => {
-    const { SecondListing } = useContext(NFTMarketplaceContext);
+    const { SecondListing, updateDBOnSecondListing } = useContext(NFTMarketplaceContext);
     const [price, setPrice] = useState(nft.sellingQuantity && nft.sellingQuantity > 0 ? nft.price : null);
     const [amount, setAmount] = useState(nft.sellingQuantity && nft.sellingQuantity > 0 ? nft.sellingQuantity : null);
 
@@ -18,9 +18,16 @@ const ListItem = ({ nft, setOpenListItem }) => {
 
     const secondListing = (contract) => {
         setOpenListItem(false);
-        SecondListing(
+        console.log(contract);
+        const tx = SecondListing(
             contract, nft, price, amount
-        )
+        );
+        return tx;
+    };
+
+    const updateDB = async (receipt, contract) => {
+        console.log(receipt);
+        await updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id)
     }
 
     return (
@@ -42,7 +49,7 @@ const ListItem = ({ nft, setOpenListItem }) => {
             <div className={Style.ListItem_button}>
                 {(price && price >= 0) ? (
                     (amount && amount <= nft.amount - nft.sellingQuantity && amount > 0) ? (
-                        < SmartContractButton contractAddress={NFTMarketplaceAddress} text="List tokens" action={secondListing} />)
+                        <SmartContractButton contractAddress={NFTMarketplaceAddress} text="List tokens" action={secondListing} onTransactionConfirmed={updateDB} />)
                         : (
                             <InfoButton text="Insert a valid amount" />))
                     : (

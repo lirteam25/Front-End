@@ -24,8 +24,8 @@ const MyProfile = () => {
     const [artistLastRelease, setArtistLastRelease] = useState(false);
     const [artistTokenInfos, setArtistTokenInfos] = useState([]);
 
-    const fetchOwnedNFTs = async (accessToken) => {
-        const MyNFTs = await fetchMyNFTs(accessToken);
+    const fetchOwnedNFTs = async () => {
+        const MyNFTs = await fetchMyNFTs();
         console.log("MyNFTs", MyNFTs);
         setMyNFTs(MyNFTs);
     }
@@ -40,7 +40,7 @@ const MyProfile = () => {
 
     useEffect(() => {
         if (user) {
-            fetchOwnedNFTs(user.accessToken);
+            fetchOwnedNFTs();
             if (user.wallet) { const walletNumber = renderString(user.wallet, 6); setUserWallet(walletNumber) };
             const formattedJoiningDate = formatDateToMonthYear(parseInt(user.reloadUserInfo.createdAt));
             setJoiningDate(formattedJoiningDate);

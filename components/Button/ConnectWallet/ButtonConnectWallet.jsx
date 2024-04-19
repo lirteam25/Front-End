@@ -1,11 +1,8 @@
-import React, { useContext } from 'react';
-import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import React from 'react';
+import { ConnectButton } from "thirdweb/react";
 import { createWallet, embeddedWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
-import { GoDotFill } from "react-icons/go";
-import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-
-import Style from "./Wallet.module.css";
+import { polygon, polygonAmoy } from "thirdweb/chains";
 
 const wallets = [
     embeddedWallet(),
@@ -15,19 +12,19 @@ const wallets = [
 ];
 
 
-const buttonConnectWallet = ({ user }) => {
-    const address = useActiveAccount()?.address;
+const buttonConnectWallet = () => {
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
-    const { renderString } = useContext(NFTMarketplaceContext)
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
 
     return (
         <ConnectButton
             wallets={wallets}
             client={client}
+            chain={chain}
             connectButton={{
                 label: "connect wallet",
                 style: {
@@ -42,6 +39,7 @@ const buttonConnectWallet = ({ user }) => {
                     border: "1px solid white"
                 }
             }}
+
             connectModal={{
                 termsOfServiceUrl: "https://www.iubenda.com/terms-and-conditions/94474485",
                 privacyPolicyUrl: "https://www.iubenda.com/privacy-policy/94474485",
@@ -55,29 +53,22 @@ const buttonConnectWallet = ({ user }) => {
                     },
                 }
             }}
-            detailsButton={{
-                render: () => (<div className={Style.navbar_container_right_yesUser_connect_wallet}>
-                    {user.wallet && address.toLocaleLowerCase() == user.wallet ? (
-                        <div className={Style.wallet_icon_wrapper}>
-                            <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }}>
-                                <GoDotFill color="green" size={15} />
-                                <div>
-                                    {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (<div className={Style.navbar_container_right_yesUser_connect_wallet_wrong}>
-                        <div className={Style.wallet_icon_wrapper}>
-                            <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }}>
-                                <GoDotFill className={Style.wallet_info_window_icon_wrong} />
-                                <div>
-                                    {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>)}
-                </div>)
+
+            switchButton={{
+                label: "switch network",
+                style: {
+                    width: "100%",
+                    borderRadius: "0px",
+                    backgroundColor: "var(--main-color)",
+                    color: "white",
+                    padding: 0,
+                    padding: "0.3rem 0rem",
+                    textTransform: "uppercase",
+                    margin: 0,
+                    border: "1px solid white"
+                }
             }}
+
         />
     )
 }

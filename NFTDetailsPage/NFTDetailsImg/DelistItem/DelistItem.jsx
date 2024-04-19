@@ -6,7 +6,7 @@ import { SmartContractButton, InfoButton } from '../../../components/componentsI
 import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const DelistItem = ({ nft, setOpenDelistItem }) => {
-    const { delistItem } = useContext(NFTMarketplaceContext);
+    const { delistItem, updateDBOnItemDelisting } = useContext(NFTMarketplaceContext);
 
     const [amount, setAmount] = useState(null);
 
@@ -18,7 +18,12 @@ const DelistItem = ({ nft, setOpenDelistItem }) => {
 
     const delist = (contract) => {
         setOpenDelistItem(false);
-        delistItem(contract, nft, amount)
+        const tx = delistItem(contract, nft, amount);
+        return tx;
+    }
+
+    const updateDB = async (receipt, contract) => {
+        await updateDBOnItemDelisting(receipt, nft, amount)
     }
 
     return (
@@ -32,11 +37,10 @@ const DelistItem = ({ nft, setOpenDelistItem }) => {
             </div>
             <div className={Style.ListItem_button}>
                 {(amount && amount <= nft.sellingQuantity && amount > 0) ? (
-                    <SmartContractButton text="delist tokens" action={delist} contractAddress={NFTMarketplaceAddress} />
+                    <SmartContractButton text="delist tokens" action={delist} contractAddress={NFTMarketplaceAddress} onTransactionConfirmed={updateDB} />
                 ) : (
                     <InfoButton text="Insert a valid amount" />)}
             </div>
-
         </div>
     )
 }

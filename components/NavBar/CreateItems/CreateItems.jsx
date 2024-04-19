@@ -245,7 +245,7 @@ const CreateItem = ({ closeCreateItems }) => {
                         <SmartContractButton text="Create a digital collectible"
                             action={mintNFT}
                             onTransactionConfirmed={afterMinting}
-                            addressEditionDrop={user.artist_minting_contract}
+                            contractAddress={user.artist_minting_contract}
                         />
                     ) : (
                         <InfoButton text="Insert all data to mint tokens" />

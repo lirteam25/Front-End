@@ -1,20 +1,22 @@
 import React, { useContext } from 'react';
-import { useActiveAccount, TransactionButton } from "thirdweb/react";
+import { TransactionButton } from "thirdweb/react";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
-const SmartContractButton = ({ text, action, onTransactionConfirmed, addressEditionDrop }) => {
+const SmartContractButton = ({ text, action, onTransactionConfirmed, contractAddress }) => {
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
-    const contractEditionDrop = addressEditionDrop ? getContract({
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
+
+    const contractEditionDrop = contractAddress ? getContract({
         client,
-        chain: polygonAmoy,
-        address: addressEditionDrop
+        chain,
+        address: contractAddress
     }) : null;
 
     const { handleMetaMaskErrors } = useContext(NFTMarketplaceContext);
@@ -32,11 +34,13 @@ const SmartContractButton = ({ text, action, onTransactionConfirmed, addressEdit
             }}
 
             onTransactionConfirmed={async (receipt) => {
+                console.log("Transaction Confirmed", receipt);
                 await onTransactionConfirmed(receipt, contractEditionDrop);
             }}
 
             onError={(error) => {
                 console.error("Transaction error", error);
+                handleMetaMaskErrors(error, "Something went wrong. Please try again.<br/>Check if you have enough funds. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_smartContract_interaction")
             }}
 
             style={{

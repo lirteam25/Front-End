@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, embeddedWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { GoDotFill } from "react-icons/go";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
+
 
 import Style from "./Wallet.module.css";
 
@@ -23,13 +24,20 @@ const NavBarConnectWallet = ({ user }) => {
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
-    const { renderString } = useContext(NFTMarketplaceContext)
+    const { renderString } = useContext(NFTMarketplaceContext);
+
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
+    const chainId = useActiveWalletChain()?.id;
+
+    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002
+
+    const switchChain = useSwitchActiveWalletChain();
 
     return (
         <ConnectButton
             wallets={wallets}
             client={client}
-            chain={polygonAmoy}
+            chain={chain}
             connectButton={{
                 label: "connect wallet",
                 style: {
@@ -59,49 +67,35 @@ const NavBarConnectWallet = ({ user }) => {
 
             detailsButton={{
                 render: () => (
-                    <div>
-                        {address ? (
-                            <div className={Style.navbar_container_right_yesUser_connect_wallet}>
-                                {user.wallet && address.toLocaleLowerCase() == user.wallet ? (
-                                    <div className={Style.wallet_icon_wrapper}>
-                                        <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }}>
-                                            <GoDotFill color="green" size={15} />
-                                            <div>
-                                                {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                            </div>
+                    <div>{chainId !== targetChainId ? (
+                        <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
+                            switch network
+                        </div>
+                    ) : (
+                        <div>
+                            {user.wallet && address.toLocaleLowerCase() == user.wallet ? (
+                                <div className={Style.wallet_icon_wrapper}>
+                                    <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }}>
+                                        <GoDotFill color="green" size={15} />
+                                        <div>
+                                            {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
                                         </div>
                                     </div>
-                                ) : (<div className={Style.navbar_container_right_yesUser_connect_wallet_wrong}>
-                                    <div className={Style.wallet_icon_wrapper}>
-                                        <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }}>
-                                            <GoDotFill className={Style.wallet_info_window_icon_wrong} />
-                                            <div>
-                                                {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                            </div>
+                                </div>
+                            ) : (
+                                <div className={Style.wallet_icon_wrapper}>
+                                    <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }}>
+                                        <GoDotFill className={Style.wallet_info_window_icon_wrong} />
+                                        <div>
+                                            {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
                                         </div>
                                     </div>
-                                </div>)}
-                            </div>
-                        ) : (
-                            <div>SWitch Network</div>
-                        )}
-                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}</div>
                 )
             }}
-
-            switchButton={{
-                label: "switch network",
-                style: {
-                    fontFamily: "Space Grotesk",
-                    fontSize: "1rem",
-                    borderRadius: "0px",
-                    backgroundColor: "transparent",
-                    color: "var(--main-color)",
-                    padding: 0,
-                    margin: 0
-                }
-            }}
-
         />
     )
 }

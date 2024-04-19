@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useAddress } from "@thirdweb-dev/react";
 import Image from "next/image";
+import { useActiveAccount } from "thirdweb/react";
 import Link from "next/link";
 
 //INTERNAL IMPORT
@@ -15,12 +15,18 @@ import { NFTMarketplaceAddress } from "../../Context/Constants";
 
 
 const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
-    const { setOpenRegister, nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, claimNFT, freeNFTTransfer, sendUserActivity, renderString } = useContext(NFTMarketplaceContext);
+    const { setOpenRegister, nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, claimNFT, freeNFTTransfer, sendUserActivity, renderString, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
 
-    const address = useAddress();
+    const address = useActiveAccount()?.address;
 
     const claimTrack = async (nftMintArtistContract) => {
-        await claimNFT(nftMintArtistContract, shownNft)
+        const tx = await claimNFT(nftMintArtistContract, shownNft);
+        console.log(tx);
+        return tx;
+    }
+
+    const updateDB = async (receipt, contract) => {
+        await updateDBafterPurchase(receipt, shownNft, address.toLowerCase())
     }
 
     const openLogin = () => {
@@ -196,7 +202,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                     </div>)
                                                     :
                                                     (<div>
-                                                        <SmartContractButton text="Collect Track" contractAddress={shownNft.isFirstSale ? shownNft.token_address : NFTMarketplaceAddress} action={claimTrack} />
+                                                        <SmartContractButton text="Collect Track" contractAddress={shownNft.isFirstSale ? shownNft.token_address : NFTMarketplaceAddress} action={claimTrack} onTransactionConfirmed={updateDB} />
                                                         {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
                                                             You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
                                                         </div>)}

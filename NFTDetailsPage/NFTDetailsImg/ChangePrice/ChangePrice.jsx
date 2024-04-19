@@ -6,7 +6,7 @@ import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const ChangePrice = ({ nft, setOpenChangePrice }) => {
-    const { changeNFTPrice } = useContext(NFTMarketplaceContext);
+    const { changeNFTPrice, updateDBOnPriceChange } = useContext(NFTMarketplaceContext);
     const [newPrice, setNewPrice] = useState("");
 
     const handleKeyPress = (e) => {
@@ -15,13 +15,18 @@ const ChangePrice = ({ nft, setOpenChangePrice }) => {
         }
     };
 
-    const changePrice = (contract) => {
+    const changePrice = async (contract) => {
         setOpenChangePrice(false);
-        changeNFTPrice(
+        const tx = await changeNFTPrice(
             contract,
             nft,
             newPrice
         )
+        return tx;
+    }
+
+    const updateDB = async (receipt, contractEditionDrop) => {
+        await updateDBOnPriceChange(receipt, newPrice, nft)
     }
 
     return (
@@ -36,7 +41,7 @@ const ChangePrice = ({ nft, setOpenChangePrice }) => {
             </div>
             <div className={Style.ListItem_button}>
                 {newPrice && newPrice >= 0 ?
-                    (<SmartContractButton contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress} action={changePrice} text="CHANGE PRICE" />) : (
+                    (<SmartContractButton onTransactionConfirmed={updateDB} contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress} action={changePrice} text="CHANGE PRICE" />) : (
                         <InfoButton text="Insert a valid price" />
                     )}
             </div>
