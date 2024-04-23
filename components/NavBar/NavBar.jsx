@@ -160,7 +160,7 @@ const NavBar = () => {
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
                         <Link id="discover" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} href={{ pathname: `collection` }}>collection</Link>
-                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://www.docs.lirmusic.com"}>docs</Link>
+                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
@@ -186,7 +186,7 @@ const NavBar = () => {
                                     <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
                                         <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>
                                             <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
-                                                <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
+                                                <Image src={images.user} alt="profile user" width={16} height={16} /> My Profile
                                             </Link>
                                             {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
                                                 <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile

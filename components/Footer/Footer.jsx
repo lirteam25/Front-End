@@ -33,11 +33,8 @@ const Footer = () => {
                 <div className={`${Style.footer_box_text} font-normal`}>
                     get in touch <a className={Style.mail} href="mailto:info@lirmusic.com">info@lirmusic.com</a>
                     <div className={Style.footer_box_text_bottom}>
-                        <Link className={Style.footer_box_1_item_about} href={{ pathname: `about-us` }}>
-                            about<br />
-                        </Link>
-                        <Link className={Style.footer_box_1_item} target="_blank" href={"https://www.docs.lirmusic.com"}>
-                            docs
+                        <Link className={Style.footer_box_1_item} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>
+                            info
                         </Link><br />
                         <Link className={Style.footer_box_1_item} target="_blank" href={"https://www.iubenda.com/privacy-policy/94474485"}>
                             privacy policy

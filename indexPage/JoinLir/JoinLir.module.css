@@ -8,8 +8,9 @@
 .JoinLir h2 {
     margin: 0;
     padding: 0;
+    line-height: 3.1rem;
     text-transform: uppercase;
-    text-align: center;
+    text-align: left;
 }
 
 .JoinLir h4 {
@@ -19,33 +20,22 @@
 }
 
 .JoinLir_grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin: 2rem 0;
+    margin-bottom: 1rem;
 }
 
-.JoinLir_grid_right,
-.JoinLir_grid_left {
-    text-align: center;
-    padding: 0 2rem;
-}
-
-.JoinLir_grid_left {
-    border-right: 1px solid white;
-}
-
-.JoinLir_grid_right_buttons,
-.JoinLir_grid_left_button {
+.JoinLir_buttons,
+.JoinLir_firstFeature {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
     margin-top: 1rem;
-    align-items: center;
+    align-items: left;
 }
 
-.JoinLir_grid_right_secondButton {
-    width: 20%;
+.JoinLir_secondFeature {
+    width: 200px;
 }
+
 
 @media screen and (max-width:480px) {
     .JoinLir {
