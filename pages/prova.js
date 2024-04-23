@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useActiveAccount, TransactionButton, ConnectButton } from "thirdweb/react";
+import { useActiveAccount, TransactionButton, ConnectButton, useDisconnect } from "thirdweb/react";
 import { prepareContractCall, createThirdwebClient, getContract, sendTransaction, readContract, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, setApprovalForAll } from "thirdweb/extensions/erc1155";
@@ -40,38 +40,17 @@ const prova = () => {
         address: "0x79b046BaEaBCeea366365B617E0086225F1d9873"
     })
 
+    const account = useActiveAccount();
+
+
     const accountAddress = useActiveAccount()?.address;
+
+    const { disconnect } = useDisconnect();
 
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
-                <TransactionButton
-                    transaction={async () => {
-                        const txListing = createListing({
-                            contract: contractMarketplace,
-                            assetContractAddress: "0x9288d930080f3b0144cc80199055ff9b0a11a212",
-                            tokenId: 1,
-                            quantity: 1,
-                            pricePerToken: "0.01"
-                        });
-                        return txListing;
-                    }}
-
-                    onTransactionSent={async (result) => {
-                        console.log("Transaction submitted", result);
-                    }}
-
-                    onTransactionConfirmed={async (receipt) => {
-                        console.log("Transaction confirmed", receipt);
-                    }}
-
-                    onError={(error) => {
-                        console.error("Transaction error", error);
-                    }}
-
-                >
-                    Test Listing
-                </TransactionButton>
+                <ButtonConnectWallet />
             </div>
         </div>
     )

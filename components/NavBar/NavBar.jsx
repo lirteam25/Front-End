@@ -3,65 +3,44 @@ import Image from "next/image";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from 'next/router';
+import { useActiveAccount } from "thirdweb/react";
 
 // Internal Imports
 import Style from "./NavBar.module.css";
 import images from "../../img";
 import { Error, Loading, FooterAudioPlayer, Notification, Toast, NavBarConnectWallet } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
-import Login from "./Login/Login";
-import Register from "./Register/Register";
-import ForgotPassword from "./ForgotPassword/ForgotPassword";
 import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
 import CreateItem from "./CreateItems/CreateItems";
+import SetUsername from "./SetUsername/SetUsername";
 
 //Context import
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const NavBar = () => {
-    const [forgotPassword, setForgotPassword] = useState(false);
     const [openSideBar, setOpenSideBar] = useState(false);
     const [openProfileTab, setOpenProfileTab] = useState(false);
 
     const { setOpenErrorAuth,
-        openRegister,
-        setOpenRegister,
-        openLogin,
-        setOpenLogin,
         openError,
         openLoading,
         openFooterAudio,
         user,
         openNotification,
         openToast,
+        openUsername, setOpenUsername,
         openArtistForm, setOpenArtistForm,
         openAccountSetting, setOpenAccountSetting,
         openArtistSettings, setOpenArtistSettings,
-        openCreateItem, setOpenCreateItem,
-        disconnectUser
+        openCreateItem, setOpenCreateItem
     } = useContext(NFTMarketplaceContext);
     const router = useRouter();
     const isIndexPage = router.pathname === '/';
 
     const closeProfileTab = () => {
         setOpenProfileTab(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeLogin = () => {
-        setOpenLogin(false);
-        setOpenErrorAuth(false);
-    };
-
-    const closeRegister = () => {
-        setOpenRegister(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeForgot = () => {
-        setForgotPassword(false);
         setOpenErrorAuth(false);
     }
 
@@ -164,47 +143,7 @@ const NavBar = () => {
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
-                    {/* Create button */}
-                    {user == null ? (
-                        <div className={Style.navbar_container_right_noUser}>
-                            <div id="logIn" onClick={() => setOpenLogin(true)} className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`}>
-                                log in
-                            </div>
-                            <div id="signUp" onClick={() => setOpenRegister(true)} className={`${!isIndexPage ? Style.red : Style.black}`}>
-                                sign up
-                            </div>
-                        </div>
-                    ) : (
-                        <div className={Style.navbar_container_right_yesUser}>
-                            <div className={Style.navbar_container_right_yesUser_connect}>
-                                <NavBarConnectWallet user={user} />
-                            </div>
-                            <div className={Style.navbar_container_right_yesUser_profile}>
-                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
-                                />
-                                {openProfileTab &&
-                                    <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
-                                        <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>
-                                            <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
-                                                <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
-                                            </Link>
-                                            {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
-                                                <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
-                                            </div>}
-                                            {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
-                                                <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
-                                            </div>}
-                                            <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
-                                                <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings
-                                            </div>
-                                            <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
-                                                <Image src={images.logout} alt="logout" width={16} height={16} /> log out
-                                            </div>
-                                        </div>
-                                    </div>}
-                            </div>
-                        </div>
-                    )}
+                    <NavBarConnectWallet openProfileTab={openProfileTab} setOpenProfileTab={setOpenProfileTab} closeProfileTab={closeProfileTab} />
                 </div>
             </div>
             <div className={Style.navbar_sidebar} onClick={() => setOpenSideBar(!openSideBar)}>
@@ -219,39 +158,21 @@ const NavBar = () => {
                 openSideBar && (
                     <div className={Style.overlay_sidebar}>
                         <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
-                            <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+                            <SideBar setOpenSideBar={setOpenSideBar} user={user} />
                         </div>
                     </div>
                 )
             }
 
-
             {
-                openLogin &&
-                <div className={Style.overlay} onMouseDown={() => closeLogin()}>
-                    <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
-                        <Login closeLogin={closeLogin} setOpenRegister={setOpenRegister} setForgotPassword={setForgotPassword} />
+                openUsername && (
+                    <div className={Style.overlay}>
+                        <div className={Style.navbar_openUsername}>
+                            <SetUsername />
+                        </div>
                     </div>
-                </div>
-            }
+                )}
 
-            {
-                openRegister &&
-                <div className={Style.overlay} onMouseDown={() => closeRegister()}>
-                    <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
-                        <Register setOpenLogin={setOpenLogin} closeRegister={closeRegister} />
-                    </div>
-                </div>
-            }
-
-            {
-                forgotPassword &&
-                <div className={Style.overlay} onMouseDown={() => closeForgot()}>
-                    <div className={Style.navbar_ForgotPassword} onMouseDown={(e) => e.stopPropagation()}>
-                        <ForgotPassword closeForgot={closeForgot} />
-                    </div>
-                </div>
-            }
             {
                 openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
                     <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>

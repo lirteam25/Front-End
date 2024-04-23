@@ -6,14 +6,15 @@ import axios from "axios";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
-import { useActiveAccount } from "thirdweb/react";
+import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
+import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing } from "thirdweb/extensions/erc1155";
 import { prepareContractCall, createThirdwebClient, getContract, sendTransaction, readContract, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
 import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
 import { deployERC1155Contract } from "thirdweb/deploys";
 import { name, symbol } from "thirdweb/extensions/common";
 
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
+import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 
 const FormData = require('form-data');
 //Internal Imports
@@ -79,6 +80,10 @@ const deleteOnDB = async (url, token) => {
 export const NFTMarketplaceContext = React.createContext();
 
 
+const auth = createAuth({
+    domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
+});
+
 // whatever data we are goin to pass inside here it will be available to the entire application. (we connected in _app.js)
 export const NFTMarketplaceProvider = ({ children }) => {
     const DBUrl = process.env.DB_URL;
@@ -101,19 +106,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [stopFooter, setStopFooter] = useState(false);
     const [stopAudioPlayer, setStopAudioPlayer] = useState(true);
+    const [openUsername, setOpenUsername] = useState(false);
 
     //We want to get the address of the wallet of who interact with the smart contract
 
     const router = useRouter();
 
     const account = useActiveAccount();
-    const address = useActiveAccount()?.address;
+    const activeWallet = useActiveWallet();
+    const { disconnect } = useDisconnect();
+    const address = account?.address;
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
-    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
 
     const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
         try {
@@ -878,87 +886,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         };
     };
 
-    //Sign Up with email and password
-    const signUp = async (username, email, password, confirmPassword) => {
-        if (password != confirmPassword) {
-            setOpenErrorAuth(true); setErrorAuth("Passwords are not equal");
-        } else {
-            try {
-                const auth = getAuth();
-                //Firebase account creation
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const analytics = getAnalytics();
-                logEvent(analytics, 'sign_up');
-                await updateProfile(userCredential.user, { displayName: username })
-                sendEmailVerification(auth.currentUser);
-
-                //MongoDB user instance creation & check wallet
-                saveUserDataInDB(userCredential.user.accessToken);
-                //the user has to verify its email before being able to log in
-                signOut(auth)
-                    .then(() => {
-                        setOpenRegister(false);
-                        setNotificationTitle("Confirm you Email");
-                        setNotificationText("Thank you for registering with us! To activate your account, please check your email inbox for a confirmation message.")
-                        setOpenNotification(true);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    }
-                    );
-            } catch (error) {
-                handleAuthFirebaseError(error, "Error during registration");
-            }
-        }
-    };
-
-    //Sign In with email and password
-    const signIn = async (email, password) => {
-        const auth = getAuth();
-        try {
-            //SignIn process
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const analytics = getAnalytics();
-            logEvent(analytics, 'login');
-            const UserFirebase = userCredential.user;
-            console.log(UserFirebase);
-
-            if (UserFirebase.emailVerified) {
-                //Check Wallet connected
-                if (address) {
-                    const DBUser = await userToWallet(UserFirebase.accessToken);
-                    console.log(DBUser);
-                    console.log(DBUser.wallet == null);
-                    if (DBUser.wallet == null) {
-                        const data = JSON.stringify({ 'wallet': address.toLowerCase() });
-                        console.log(data);
-                        console.log(UserFirebase.accessToken);
-                        const response = await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, UserFirebase.accessToken);
-                        console.log("Update Wallet:", response);
-                        if (response.status == "fail" && response.message == "Duplicate field value. Please use another value") {
-                            setNotificationTitle("WRONG WALLET CONNECTED")
-                            setNotificationText(`We were able to login into your account but the wallet connected ${renderString(address.toLowerCase(), 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(address.toLowerCase(), 5)} and the other account`)
-                            setOpenNotification(true);
-                        }
-                    }
-                }
-
-                await setUserAndCheckWallet();
-                setOpenLogin(false);
-            } else {
-                sendEmailVerification(auth.currentUser);
-                await signOut(auth);
-                setOpenLogin(false);
-                setNotificationTitle("Confirm you Email")
-                setNotificationText("You account has not been activated! To activate your account, please check your email inbox for a confirmation message.")
-                setOpenNotification(true);
-            };
-        } catch (error) {
-            console.log(error);
-            handleAuthFirebaseError(error, "Error during login");
-        }
-    };
-
     //Get who is currently connected
     const fetchUserInformation = () => {
         const auth = getAuth();
@@ -970,6 +897,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const disconnectUser = () => {
+        disconnect(activeWallet);
         const auth = getAuth();
         signOut(auth).then(() => {
             window.location.href = "./";
@@ -978,19 +906,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 console.error(error);
             }
             );
-    };
-
-    const forgotPassword = async (email) => {
-        const auth = getAuth();
-        sendPasswordResetEmail(auth, email)
-            .then(() => {
-                setNotificationTitle("Email sent")
-                setNotificationText("You correctly requested to change your password. Open your email box and follow the instruction to change your password");
-                setOpenNotification(true);
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error updating password");
-            });
     };
 
     //Given the Firebase token returns the saved DB user
@@ -1014,7 +929,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenToast(true);
 
                 setOpenAccountSetting(false);
-                setUserAndCheckWallet();
+                setOpenUsername(false);
+                /* setUserAndCheckWallet(); */
             });
         });
     };
@@ -1044,61 +960,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
     }
 
-    const updateUserPassword = async (currentPassword, newPassword, confirmNewPassword) => {
-        if (newPassword == confirmNewPassword) {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-            // Reauthenticate the user with their current password
-            reauthenticateWithCredential(user, credential)
-                .then(() => {
-                    // If reauthentication is successful, update the password
-                    updatePassword(user, newPassword)
-                        .then(() => {
-
-                            setToast("Password successfully updated");
-                            setOpenToast(true);
-
-                            setOpenAccountSetting(false);
-                        })
-                        .catch((error) => {
-                            handleAuthFirebaseError(error, "Error updating password");
-                        });
-                })
-                .catch((error) => {
-                    handleAuthFirebaseError(error, "Error re-authenticating user");
-                });
-        } else {
-            handleAuthFirebaseError("boh", "Passwords do not match");
-        }
-    };
-
-    const deleteUsersEmailPsw = (currentPassword) => {
+    const deleteUsers = () => {
         const auth = getAuth();
-        const user = auth.currentUser;
-        const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-        // Reauthenticate the user with their current password
-        reauthenticateWithCredential(user, credential)
-            .then(() => {
-                deleteOnDB(`${DBUrl}/api/v1/users/deleteMe`, user.accessToken).then((response) => {
-                    console.log(response);
-                });
-                deleteUser(user).then(() => {
+        createPayload().then((signatureResult) => {
+            signInOrUp(signatureResult).then((loggedInUser) => {
+                deleteUser(loggedInUser).then(() => {
 
                     setToast("Account successfully deleted");
                     setOpenToast(true);
                     setOpenAccountSetting(false);
                     window.location.reload();
-                }).catch((error) => {
-                    handleAuthFirebaseError(error, "Error deleting user");
-                });
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error re-authenticating user");
+                })
+                    .catch((error) => {
+                        handleAuthFirebaseError(error, "Error re-authenticating user");
+                    });
             });
-    };
+        });
+    }
 
     const unlinkWalletEmailPsw = (password) => {
         const auth = getAuth();
@@ -1176,37 +1054,60 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [notificationTitle, setNotificationTitle] = useState(null);
     const [notificationText, setNotificationText] = useState(null);
 
+    async function createPayload() {
+        const payload = await auth.generatePayload({ address: address, chainId: chain });
+        const signatureResult = await signLoginPayload({ account, payload });
+        console.log(signatureResult);
+        return signatureResult
+    }
 
-    const verifyWallet = async (wallet) => {
-        const identification = await fetchUserInformation();
-        if (user) {
-            if (!user.wallet) {
-                const data = JSON.stringify({ 'wallet': wallet });
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, identification.accessToken).then((response) => {
-                    console.log("Update Wallet:", response);
-                    if (response.status == "error" && response.error.codeName == "DuplicateKey") {
-                        setNotificationText(`The wallet ${renderString(wallet, 5)} is already linked to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet and the other account`);
-                        setNotificationTitle("Wallet already linked");
-                        setOpenNotification(true);
+    async function signInOrUp(signatureResult) {
+        const data = JSON.stringify({ "payload": signatureResult });
+        const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
+        const authFirebase = getAuth();
+        const userCredential = await signInWithCustomToken(authFirebase, response.token);
+        // On success, we have access to the user object.
+        const userFirebase = userCredential.user;
+        console.log(userFirebase);
+        return userFirebase;
+    }
+
+    /* useEffect(() => {
+        setUserAndCheckWallet();
+    }, []); */
+
+    async function setUserLogged() {
+        fetchUserInformation().then((userFirebase) => {
+            if (!userFirebase || userFirebase.uid.toLowerCase() != address.toLowerCase()) {
+                createPayload().then((signatureResult) => {
+                    signInOrUp(signatureResult).then((loggedInUser) => {
+                        userToWallet(loggedInUser.accessToken).then((UserDB) => {
+                            const userData = { ...loggedInUser, ...UserDB };
+                            setUser(userData);
+                            console.log("DB + Firebase:", userData);
+                            if (!loggedInUser.displayName) {
+                                setOpenUsername(true);
+                            }
+                        })
+                    });
+                })
+            } else {
+                userToWallet(userFirebase.accessToken).then((UserDB) => {
+                    const userData = { ...userFirebase, ...UserDB };
+                    setUser(userData);
+                    console.log("DB + Firebase:", userData);
+                    if (!userFirebase.displayName) {
+                        setOpenUsername(true);
                     }
-                });
-                setUserAndCheckWallet();
-            } else if (user.wallet != wallet) {
-                setNotificationText(`The wallet ${renderString(wallet, 5)} you are trying to connect is not the wallet linked to your account. Please connect  ${renderString(user.wallet, 5)} or delete the connection between this wallet and your account to add a new wallet`);
-                setNotificationTitle("Wallet already linked");
-                setOpenNotification(true);
+                })
             }
-        }
+        })
     }
 
     useEffect(() => {
-        setUserAndCheckWallet();
-    }, []);
-
-    useEffect(() => {
         if (address) {
-            verifyWallet(address.toLowerCase());
-        }
+            setUserLogged();
+        };
     }, [address])
 
     return (
@@ -1255,6 +1156,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 openNotification, setOpenNotification,
                 notificationTitle, setNotificationTitle,
                 notificationText, setNotificationText,
+                openUsername, setOpenUsername,
 
                 pinFileToIPFS,
                 cloudinaryUploadVideo,
@@ -1288,14 +1190,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 delistItem,
                 updateDBOnItemDelisting,
 
-                signUp,
-                signIn,
                 disconnectUser,
-                forgotPassword,
+
                 updateUserDisplayName,
                 updateUserInformations,
-                updateUserPassword,
-                deleteUsersEmailPsw,
+                deleteUsers,
                 unlinkWalletEmailPsw,
                 fetchTransactionsInfo,
                 renderString,

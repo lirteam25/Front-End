@@ -5,6 +5,9 @@ import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { GoDotFill } from "react-icons/go";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
+import images from "../../../img/index";
+import Image from 'next/image';
+import Link from 'next/link';
 
 
 import Style from "./Wallet.module.css";
@@ -16,7 +19,7 @@ const wallets = [
     createWallet("me.rainbow"),
 ];
 
-const NavBarConnectWallet = ({ user }) => {
+const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTab }) => {
 
     const address = useActiveAccount()?.address;
 
@@ -24,7 +27,7 @@ const NavBarConnectWallet = ({ user }) => {
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
-    const { renderString } = useContext(NFTMarketplaceContext);
+    const { renderString, user, disconnectUser, setOpenAccountSetting, setOpenCreateItem, setOpenArtistSettings } = useContext(NFTMarketplaceContext);
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
     const chainId = useActiveWalletChain()?.id;
@@ -39,7 +42,7 @@ const NavBarConnectWallet = ({ user }) => {
             client={client}
             chain={chain}
             connectButton={{
-                label: "connect wallet",
+                label: "login / sign up",
                 style: {
                     fontFamily: "Space Grotesk",
                     fontSize: "1rem",
@@ -47,7 +50,9 @@ const NavBarConnectWallet = ({ user }) => {
                     backgroundColor: "transparent",
                     color: "var(--main-color)",
                     padding: 0,
-                    margin: 0
+                    margin: 0,
+                    alignContent: "center",
+                    height: "60px",
                 }
             }}
 
@@ -67,33 +72,46 @@ const NavBarConnectWallet = ({ user }) => {
 
             detailsButton={{
                 render: () => (
-                    <div>{chainId !== targetChainId ? (
-                        <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
-                            switch network
-                        </div>
-                    ) : (
-                        <div>
-                            {user.wallet && address.toLocaleLowerCase() == user.wallet ? (
-                                <div className={Style.wallet_icon_wrapper}>
-                                    <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }}>
-                                        <GoDotFill color="green" size={15} />
-                                        <div>
-                                            {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                        </div>
+                    <div >
+                        {chainId !== targetChainId ? (
+                            <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
+                                switch network
+                            </div>
+                        ) : (
+                            <div className={Style.rightNetwork}>
+                                <div className={`${Style.rightNetwork_left} font-small`} style={{ cursor: "pointer" }}>
+                                    <GoDotFill color="green" size={15} />
+                                    <div>
+                                        {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className={Style.wallet_icon_wrapper}>
-                                    <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }}>
-                                        <GoDotFill className={Style.wallet_info_window_icon_wrong} />
-                                        <div>
-                                            {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
+                                <div className={Style.rightNetwork_right} onClick={(e) => { e.stopPropagation() }}>
+                                    <Image src={images[`utente_1`]} alt="profile user" width={30.5} height={30.5} onClick={() => { setOpenProfileTab(true); }}
+                                    />
+                                    {openProfileTab &&
+                                        <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
+                                            <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>
+                                                <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
+                                                    <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
+                                                </Link>
+                                                {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
+                                                    <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
+                                                </div>}
+                                                {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
+                                                    <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
+                                                </div>}
+                                                <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
+                                                    <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings
+                                                </div>
+                                                <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
+                                                    <Image src={images.logout} alt="logout" width={16} height={16} /> log out
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
-                            )}
-                        </div>
-                    )}</div>
+                            </div>
+                        )}</div>
                 )
             }}
         />

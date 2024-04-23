@@ -3,6 +3,8 @@ import { ConnectButton } from "thirdweb/react";
 import { createWallet, embeddedWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
+import { createAuth } from 'thirdweb/auth';
+
 
 const wallets = [
     embeddedWallet(),
@@ -20,13 +22,17 @@ const buttonConnectWallet = () => {
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
 
+    const auth = createAuth({
+        domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
+    });
+
     return (
         <ConnectButton
             wallets={wallets}
             client={client}
             chain={chain}
             connectButton={{
-                label: "connect wallet",
+                label: "login / sign up",
                 style: {
                     width: "100%",
                     borderRadius: "0px",
@@ -68,7 +74,6 @@ const buttonConnectWallet = () => {
                     border: "1px solid white"
                 }
             }}
-
         />
     )
 }
