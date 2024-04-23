@@ -158,15 +158,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         logEvent(analytics, `${event}`);
     }
 
-    //Check if wallet is connected to the application
-    const checkIfWalletConnected = async () => {
-        try {
-            if (address) { return address.toLocaleLowerCase() }
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
-        }
-    };
-
     // Upload image to IPFS function. The input is a file (audio). 
     const pinFileToIPFS = async (file, artist) => {
         const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
@@ -852,40 +843,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    const setUserAndCheckWallet = async () => {
-        checkIfWalletConnected().then((wallet) => {
-            fetchUserInformation().then((UserFirebase) => {
-                if (UserFirebase) {
-                    userToWallet(UserFirebase.accessToken).then((UserDB) => {
-                        const userData = { ...UserFirebase, ...UserDB };
-                        setUser(userData);
-                        console.log(userData);
-                        if (wallet && UserDB.wallet && wallet != UserDB.wallet) {
-                            setNotificationText(`The current connected wallet (${renderString(wallet, 5)}) does not match the one linked with you account (${renderString(UserDB.wallet, 5)}). <br/>Just one wallet can be linked with your account. In order to change your account linked wallet, go in <a href='./my-profile' style='color: var(--main-color)'>your profile</a>.`)
-                            setNotificationTitle("Wrong wallet connected");
-                            setOpenNotification(true);
-                        }
-                    });
-                };
-            });
-        });
-    };
-
-    //MongoDB user instance creation and check if any wallet is connected
-    const saveUserDataInDB = async (accessToken) => {
-        let data;
-        if (address) {
-            data = JSON.stringify({ 'wallet': address.toLowerCase() });
-        } else {
-            data = JSON.stringify({});
-        }
-        const response = await postOnDB(`${DBUrl}/api/v1/users`, data, accessToken);
-        console.log(response);
-        if (response.status == "success" && response.message == "A user with this wallet already exists, but the new user has been created without setting the wallet parameter.") {
-            alert(`We were able to create your account but the wallet connected ${renderString(address.toLowerCase(), 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(address.toLowerCase(), 5)} and the other account`);
-        };
-    };
-
     //Get who is currently connected
     const fetchUserInformation = () => {
         const auth = getAuth();
@@ -978,33 +935,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         });
     }
 
-    const unlinkWalletEmailPsw = (password) => {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        const credential = EmailAuthProvider.credential(user.email, password);
-        // Reauthenticate the user with their current password
-        reauthenticateWithCredential(user, credential)
-            .then(async () => {
-                const data = JSON.stringify({ "wallet": "undefined" });
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, user.accessToken)
-                    .then((response) => {
-                        console.log(response);
-
-                        setToast("Wallet successfully unlinked");
-                        setOpenToast(true);
-
-                        setOpenAccountSetting(false);
-                        window.location.reload();
-                    })
-                    .catch((error) => {
-                        handleAuthFirebaseError(error, "Error unlinking wallet");
-                    });
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error re-authenticating user");
-            });
-    };
-
     const fetchTransactionsInfo = async (token_id, token_address) => {
         const response = await getFromDB(`${DBUrl}/api/v1/transactions?token_id=${token_id}&token_address=${token_address}`);
         const transactions = response.data.transactions[0];
@@ -1039,8 +969,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const [user, setUser] = useState(null);
-    const [openRegister, setOpenRegister] = useState(false);
-    const [openLogin, setOpenLogin] = useState(false);
 
     const [openAccountSetting, setOpenAccountSetting] = useState(false);
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
@@ -1071,10 +999,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         console.log(userFirebase);
         return userFirebase;
     }
-
-    /* useEffect(() => {
-        setUserAndCheckWallet();
-    }, []); */
 
     async function setUserLogged() {
         fetchUserInformation().then((userFirebase) => {
@@ -1135,10 +1059,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 stopFooter,
                 setStopFooter,
                 user,
-                openRegister,
-                setOpenRegister,
-                openLogin,
-                setOpenLogin,
                 stopAudioPlayer,
                 setStopAudioPlayer,
 
@@ -1195,7 +1115,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 updateUserDisplayName,
                 updateUserInformations,
                 deleteUsers,
-                unlinkWalletEmailPsw,
                 fetchTransactionsInfo,
                 renderString,
                 sendUserActivity,
