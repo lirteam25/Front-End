@@ -57,26 +57,7 @@
         padding: 3rem 0;
     }
 
-    .JoinLir_grid_left {
-        border-right: none;
-    }
-
-    .JoinLir_grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    .JoinLir_grid_right_secondButton {
-        width: 100px;
-    }
-
-    .JoinLir_grid_right,
-    .JoinLir_grid_left {
-        padding: 0;
-    }
-
-    .JoinLir_grid_right_buttons,
-    .JoinLir_grid_left_button {
-        gap: 5rem;
+    .JoinLir h2 {
+        line-height: 2.4rem;
     }
 }
