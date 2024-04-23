@@ -233,7 +233,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            if (process.env.NODE_ENV == "production") {
+            if (process.env.ACTIVE_CHAIN == "polygon") {
                 data.append("upload_preset", "my-uploads");
             } else {
                 data.append("upload_preset", "test_uploads");
