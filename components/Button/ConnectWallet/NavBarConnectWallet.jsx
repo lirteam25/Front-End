@@ -5,6 +5,7 @@ import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { GoDotFill } from "react-icons/go";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
+import CircularProgress from '@mui/material/CircularProgress';
 import images from "../../../img/index";
 import Image from 'next/image';
 import Link from 'next/link';
@@ -72,7 +73,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
 
             detailsButton={{
                 render: () => (
-                    <div >
+                    <div>
                         {chainId !== targetChainId ? (
                             <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
                                 switch network
@@ -86,8 +87,8 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
                                     </div>
                                 </div>
                                 <div className={Style.rightNetwork_right} onClick={(e) => { e.stopPropagation() }}>
-                                    <Image src={images[`utente_1`]} alt="profile user" width={30.5} height={30.5} onClick={() => { setOpenProfileTab(true); }}
-                                    />
+                                    {user ? <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => { setOpenProfileTab(true); }}
+                                    /> : <CircularProgress size={20} variant="indeterminate" color="inherit" />}
                                     {openProfileTab &&
                                         <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
                                             <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>

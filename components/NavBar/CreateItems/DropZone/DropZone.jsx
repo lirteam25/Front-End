@@ -3,10 +3,6 @@ import { useDropzone } from "react-dropzone";
 import { AiOutlineUpload, AiOutlineCheck } from "react-icons/ai";
 import CircularProgress from '@mui/material/CircularProgress';
 import { CiSquareQuestion } from "react-icons/ci";
-import {
-    useContract,
-    NATIVE_TOKEN_ADDRESS
-} from "@thirdweb-dev/react";
 
 //INTRNAL IMPORT
 import Style from "./DropZone.module.css";
@@ -27,7 +23,6 @@ const DropZone = ({
 
     const [audioLoading, setAudioLoading] = useState(false);
     const [imgLoading, setImgLoading] = useState(false);
-    const { data: nftMintArtistContract } = useContract(user.artist_minting_contract);
 
     function secondsToMMSS(secondsInput) {
         const totalSeconds = Math.round(secondsInput); // Round the total seconds
@@ -53,7 +48,7 @@ const DropZone = ({
         const path = response.secure_url.replace(process.env.CLOUDINARY_URL, "");
         console.log("URL CLOUDINARY", path);
         setUrlCloudinary(path);
-        const urlAudio = await pinFileToIPFS(file[0], user.artist_minting_contract, user._id, nftMintArtistContract);
+        const urlAudio = await pinFileToIPFS(file[0], user);
         setUrlPinata(urlAudio);
         setAudioLoading(false);
         console.log(urlAudio);

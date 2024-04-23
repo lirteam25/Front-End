@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import Link from "next/link";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import Image from 'next/image';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useActiveAccount } from "thirdweb/react";
 
 
@@ -23,8 +24,8 @@ const SideBar = ({ setOpenSideBar, user }) => {
                     <div className={Style.sidebar_center_userIn}>
                         <div className={Style.sidebar_center_userIn_top}>
                             <Link className={Style.sidebar_center_userIn_top_left} onClick={() => setOpenSideBar(false)} href={{ pathname: "/my-profile" }}>
-                                <Image src={img[`utente_1`]} alt="user icon" width={32} heigh={32} />
-                                <div className={`${Style.sidebar_center_userIn_top_email}`}>DIsplay</div>
+                                {user ? <Image src={img[`utente_${user.picture}`]} alt="user icon" width={32} heigh={32} /> : <CircularProgress size={20} variant="indeterminate" color="inherit" />}
+                                <div className={`${Style.sidebar_center_userIn_top_email}`}>{user?.displayName}</div>
                             </Link>
                             <div onClick={() => setOpenAccountSetting(true)}>
                                 <Image src={img.settings} alt="setting icon" width={32} heigh={32} />
