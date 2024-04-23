@@ -992,6 +992,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     async function signInOrUp(signatureResult) {
         const data = JSON.stringify({ "payload": signatureResult });
         const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
+        console.log(response);
         const authFirebase = getAuth();
         const userCredential = await signInWithCustomToken(authFirebase, response.token);
         // On success, we have access to the user object.
@@ -1002,6 +1003,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     async function setUserLogged() {
         fetchUserInformation().then((userFirebase) => {
+            console.log("userFire: ", userFirebase)
             if (!userFirebase || userFirebase.uid.toLowerCase() != address.toLowerCase()) {
                 createPayload().then((signatureResult) => {
                     signInOrUp(signatureResult).then((loggedInUser) => {
@@ -1030,6 +1032,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     useEffect(() => {
         if (address) {
+            console.log(address);
             setUserLogged();
         };
     }, [address])
