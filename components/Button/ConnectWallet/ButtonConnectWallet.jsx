@@ -4,6 +4,7 @@ import { createWallet, embeddedWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
+import { InfoButton } from '../../componentsIndex';
 
 
 const wallets = [
@@ -58,6 +59,10 @@ const buttonConnectWallet = () => {
                         height: 100,
                     },
                 }
+            }}
+
+            detailsButton={{
+                render: () => (<InfoButton text="LOGGED IN" />)
             }}
 
             switchButton={{

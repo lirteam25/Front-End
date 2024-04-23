@@ -4,7 +4,6 @@
     padding: 4rem 0;
 }
 
-.JoinLir h3,
 .JoinLir h2 {
     margin: 0;
     padding: 0;
@@ -19,16 +18,11 @@
     text-align: center;
 }
 
-.JoinLir_grid {
-    margin-bottom: 1rem;
-}
-
-.JoinLir_buttons,
-.JoinLir_firstFeature {
+.JoinLir_buttons {
     display: flex;
     justify-content: flex-start;
     gap: 1rem;
-    margin-top: 1rem;
+    margin: 1rem 0;
     align-items: left;
 }
 
@@ -43,27 +37,17 @@
         padding: 2rem 0;
     }
 
-    .JoinLir_grid_left {
-        border-right: none;
+    .JoinLir h2 {
+        line-height: 1.4rem;
     }
 
-    .JoinLir_grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
+    .JoinLir_buttons {
+        display: block;
     }
 
-    .JoinLir_grid_right_secondButton {
-        width: 100px;
-    }
-
-    .JoinLir_grid_right,
-    .JoinLir_grid_left {
-        padding: 0;
-    }
-
-    .JoinLir_grid_right_buttons,
-    .JoinLir_grid_left_button {
-        gap: 2rem;
+    .JoinLir_secondFeature {
+        width: 180px;
+        padding: 0.5rem 0rem;
     }
 }
 
