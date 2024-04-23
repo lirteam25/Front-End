@@ -20,7 +20,7 @@ const SideBar = ({ setOpenSideBar, user }) => {
     return (
         <div className={Style.sidebar}>
             <div className={`${Style.sidebar_center} font-medium`}>
-                {account ? (
+                {account && user ? (
                     <div className={Style.sidebar_center_userIn}>
                         <div className={Style.sidebar_center_userIn_top}>
                             <Link className={Style.sidebar_center_userIn_top_left} onClick={() => setOpenSideBar(false)} href={{ pathname: "/my-profile" }}>
