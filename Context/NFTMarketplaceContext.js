@@ -159,15 +159,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     // Upload image to IPFS function. The input is a file (audio). 
-    const pinFileToIPFS = async (file, contractAddress, id, nftMintArtistContract) => {
-        try {
-            if (address) { return address.toLocaleLowerCase() }
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
-        }
-    };
-
-    // Upload image to IPFS function. The input is a file (audio). 
     const pinFileToIPFS = async (file, artist) => {
         const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 
@@ -178,8 +169,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const metadata = JSON.stringify({
             name: `${file.path}`,
             keyvalues: {
-                exampleKey: 'Provina'
-            }
+                ArtistID: `${artist}`
+            },
         });
         data.append('pinataMetadata', metadata);
 
