@@ -139,7 +139,7 @@ const NavBar = () => {
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
                         <Link id="discover" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} href={{ pathname: `collection` }}>collection</Link>
-                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://www.docs.lirmusic.com"}>docs</Link>
+                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>

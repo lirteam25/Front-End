@@ -17,36 +17,17 @@ const JoinLir = () => {
 
     return (
         <div className={Style.JoinLir}>
-            <h2 className='font-huge'>Generating <span className='bold'>new value</span> from music </h2>
+            <h2 className='font-huge'>Generate <span className='bold'>new value</span><br /> from music </h2>
             <div className={Style.JoinLir_grid}>
-                <div className={Style.JoinLir_grid_left}>
-                    <h3 className="font-huge" style={{ color: "var(--main-color)" }}>JOIN AS A <span className='bold'>FAN</span></h3>
-                    <h4 className="font-medium" >
-                        Collect limited editions tracks, not available elsewhere, and contribute in artists' success.</h4>
-                    <div className={Style.JoinLir_grid_left_button}>
-                        <div className={Style.JoinLir_grid_right_secondButton}>
-                            <ActionButton text="SIGN UP" action={register} />
-                        </div>
-                        <div>
-                            <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
-                        </div>
+                <div className={Style.JoinLir_buttons}>
+                    <div className={Style.JoinLir_secondFeature}>
+                        <ActionButton text="SIGN UP" action={register} />
                     </div>
-                </div>
-                <div className={Style.JoinLir_grid_right}>
-                    <h3 className="font-huge" style={{ color: "var(--main-color)" }}>JOIN AS AN <span className='bold'>ARTIST</span></h3>
-                    <h4 className="font-medium" >
-                        Engage your superfans and generate a new indipendent revenue stream.</h4>
-                    <div className={Style.JoinLir_grid_right_buttons}>
-                        <div className={Style.JoinLir_grid_right_secondButton}>
-                            <ActionButton text="APPLY" action={openForm} />
-                        </div>
-                        <div>
-                            <ExternalLinkButton text="learn more" path="https://www.docs.lirmusic.com" background="white" textColor="black" />
-                        </div>
+                    <div className={Style.JoinLir_secondFeature}>
+                        <ActionButton text="APPLY AS AN ARTIST" action={openForm} />
                     </div>
                 </div>
             </div>
-            <h2 className='font-huge'>Valuing <span className='bold'>music</span> properly</h2>
         </div>
     )
 }
