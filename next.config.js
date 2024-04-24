@@ -34,7 +34,8 @@ const nextConfig = {
     ALCHEMY_RPC_MAINNET: process.env.ALCHEMY_RPC_MAINNET,
     THIRDWEB_PROJECT_ID: process.env.THIRDWEB_PROJECT_ID,
     THIRDWEB_API_KEY: process.env.THIRDWEB_API_KEY,
-    ACTIVE_CHAIN: process.env.ACTIVE_CHAIN
+    ACTIVE_CHAIN: process.env.ACTIVE_CHAIN,
+    TRANSAK_API_KEY: process.env.TRANSAK_API_KEY
   }
 };
 
