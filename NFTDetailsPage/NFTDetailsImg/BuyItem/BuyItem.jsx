@@ -37,7 +37,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <InfoButton text="Pay with Credit Card" />
+                    <InfoButton text="Soon pay with Credit Card" />
                 </div>
             </div>
         </div>
