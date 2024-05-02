@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    if (process.env.ACTIVE_CHAIN == "polygon") {
+    if (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
       window.gtag("event", "page_view", {
         page_path: location.pathname + location.search + location.hash,
         page_search: location.search,
