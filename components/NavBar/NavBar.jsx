@@ -1,9 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { GoDotFill } from "react-icons/go";
 import { useRouter } from 'next/router';
-import { useActiveAccount } from "thirdweb/react";
 
 // Internal Imports
 import Style from "./NavBar.module.css";
@@ -30,7 +28,7 @@ const NavBar = () => {
         user,
         openNotification,
         openToast,
-        openUsername, setOpenUsername,
+        openUsername,
         openArtistForm, setOpenArtistForm,
         openAccountSetting, setOpenAccountSetting,
         openArtistSettings, setOpenArtistSettings,
@@ -69,48 +67,13 @@ const NavBar = () => {
             // Detect scroll event
             const handleScroll = () => {
                 const navbar = document.querySelector(`.${Style.navbar}`);
-                const signUp = document.getElementById("signUp");
-                const discover = document.getElementById("discover");
-                const docs = document.getElementById("docs");
-                const logIn = document.getElementById("logIn");
-                const wallet = document.getElementById("wallet");
                 const scrollPosition = window.scrollY;
                 if (scrollPosition >= (window.innerHeight - 60)) {
                     navbar.classList.add(Style.greyNavbar);
                     navbar.classList.remove(Style.transparentNavbar);
-
-
-                    signUp && signUp.classList.add(Style.red)
-                    signUp && signUp.classList.remove(Style.black)
-
-                    wallet && wallet.classList.add(Style.red)
-                    wallet && wallet.classList.remove(Style.black)
-
-                    discover.classList.remove(Style.black_hover);
-                    docs.classList.remove(Style.black_hover);
-                    logIn && logIn.classList.remove(Style.black_hover);
-
-                    discover.classList.add(Style.red_hover);
-                    docs.classList.add(Style.red_hover);
-                    logIn && logIn.classList.add(Style.red_hover);
-
                 } else if (!openSideBar) {
                     navbar.classList.add(Style.transparentNavbar);
                     navbar.classList.remove(Style.greyNavbar);
-
-                    signUp && signUp.classList.add(Style.black);
-                    signUp && signUp.classList.remove(Style.red);
-
-                    wallet && wallet.classList.add(Style.black);
-                    wallet && wallet.classList.remove(Style.red);
-
-                    discover.classList.add(Style.black_hover);
-                    docs.classList.add(Style.black_hover);
-                    logIn && logIn.classList.add(Style.black_hover);
-
-                    discover.classList.remove(Style.red_hover);
-                    docs.classList.remove(Style.red_hover);
-                    logIn && logIn.classList.remove(Style.red_hover);
                 }
             };
 
@@ -138,8 +101,8 @@ const NavBar = () => {
                         />
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
-                        <Link id="discover" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} href={{ pathname: `collection` }}>collection</Link>
-                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
+                        <Link id="discover" className={Style.red_hover} href={{ pathname: `collection` }}>collection</Link>
+                        <Link id="docs" className={Style.red_hover} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
@@ -210,7 +173,6 @@ const NavBar = () => {
             {openFooterAudio && <FooterAudioPlayer />}
             {openNotification && <Notification />}
             {openToast && <Toast />}
-
         </div >
     );
 }

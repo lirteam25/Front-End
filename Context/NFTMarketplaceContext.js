@@ -3,22 +3,22 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 
 import axios from "axios";
-import { polygon, polygonAmoy } from "thirdweb/chains";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
+import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
 import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
+import { polygon, polygonAmoy } from "thirdweb/chains";
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing } from "thirdweb/extensions/erc1155";
-import { prepareContractCall, createThirdwebClient, getContract, sendTransaction, readContract, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
 import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
 import { deployERC1155Contract } from "thirdweb/deploys";
 import { name, symbol } from "thirdweb/extensions/common";
 
-import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
+import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, deleteUser } from "firebase/auth";
 
 const FormData = require('form-data');
 //Internal Imports
-import { NFTMintFactoryAddress, EditionDropABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, MarketplaceOwner } from "./Constants";
+import { OldNFTMarketplaceAddress, OldNFTMarketplaceABI, MarketplaceOwner } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -123,22 +123,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
 
-    const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
-        try {
-            const provider = new ethers.BrowserProvider(walletProvider);
-            const signer = await provider.getSigner();
-            const contract = fetchContract(ContractAddress, ContractABI, signer);
-            console.log(contract);
-            return contract;
-        } catch (error) {
-            console.log(error);
-            handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
-        }
-    };
-
     const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
         try {
-            const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
+            const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
             const owner_privateKey = process.env.OWNER_PRIVATE_KEY;
             const signer = new ethers.Wallet(owner_privateKey, provider);
             const contract = fetchContract(ContractAddress, ContractABI, signer);
@@ -257,137 +244,119 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    async function withWalletCheck(fn) {
-        const identification = await fetchUserInformation();
-        const user = await userToWallet(identification.accessToken);
-        if (address && user.wallet !== address.toLowerCase()) {
-            setOpenLoading(false);
-            setNotificationText(`The wallet connected ${renderString(address.toLowerCase(), 5)} is not the same wallet connected to your account. Switch to ${user.address.toLowerCase()} to complete the transaction`);
-            setNotificationTitle("Wrong wallet connected");
-            setOpenNotification(true);
-        } else {
-            return fn();
-        }
-    };
-
     async function createEditionDrop(nameToken, symbolToken, royalties, user) {
-        await withWalletCheck(async () => {
-            //setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
+        //setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
 
-            const defaultAdmin = address;
-            const description = "Smart Contract Representing Unpublished Musical Content"
-            const name = nameToken;
-            const symbol = symbolToken;
+        const defaultAdmin = address;
+        const description = "Smart Contract Representing Unpublished Musical Content"
+        const name = nameToken;
+        const symbol = symbolToken;
 
-            const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
+        const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
 
-            const trustedForwarders = [];
-            const saleRecipient = address;
-            const royaltyRecipient = address;
-            const royaltyBps = royalties * 100;
-            const platformFeeBps = user.artist_first_sale_fee * 100;
-            const platformFeeRecipient = MarketplaceOwner;
+        const trustedForwarders = [];
+        const saleRecipient = address;
+        const royaltyRecipient = address;
+        const royaltyBps = royalties * 100;
+        const platformFeeBps = user.artist_first_sale_fee * 100;
+        const platformFeeRecipient = MarketplaceOwner;
 
-            console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
+        console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
 
-            const contractAddress = (await deployERC1155Contract({
-                chain,
-                client,
-                account,
-                type: "DropERC1155",
-                params: {
-                    contractURI,
-                    defaultAdmin,
-                    description,
-                    name,
-                    platformFeeBps,
-                    platformFeeRecipient,
-                    royaltyBps,
-                    royaltyRecipient,
-                    saleRecipient,
-                    symbol,
-                    trustedForwarders
-                }
-            })).toLowerCase();
-
-            console.log(contractAddress);
-
-            /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
-
-            console.log(dataEnablingContractForPayments);
-            const post = async (url, data = {}, token) => {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-secret-key': token,
-                    },
-                    body: data
-                });
-                return response.json()
+        const contractAddress = (await deployERC1155Contract({
+            chain,
+            client,
+            account,
+            type: "DropERC1155",
+            params: {
+                contractURI,
+                defaultAdmin,
+                description,
+                name,
+                platformFeeBps,
+                platformFeeRecipient,
+                royaltyBps,
+                royaltyRecipient,
+                saleRecipient,
+                symbol,
+                trustedForwarders
             }
+        })).toLowerCase();
 
-            const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
+        console.log(contractAddress);
 
-            console.log(final);
-            const contract_id = final.contractId
-            console.log(contract_id); */
+        /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
 
-            const accessToken = (await fetchUserInformation()).accessToken;
-            const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
-            await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
-                .then((response) => {
-                    console.log(response);
-                    setOpenLoading(false);
-                });
+        console.log(dataEnablingContractForPayments);
+        const post = async (url, data = {}, token) => {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-secret-key': token,
+                },
+                body: data
+            });
+            return response.json()
+        }
 
-            setOpenLoading(false);
-            setToast("Smart Contract successfully created");
-            setOpenToast(true);
-            window.location.reload()
-        })
+        const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
+
+        console.log(final);
+        const contract_id = final.contractId
+        console.log(contract_id); */
+
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
+        await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
+            .then((response) => {
+                console.log(response);
+                setOpenLoading(false);
+            });
+
+        setOpenLoading(false);
+        setToast("Smart Contract successfully created");
+        setOpenToast(true);
+        window.location.reload()
     }
 
     async function createNFT(
         contractEditionDrop, artist, song, formInputPrice, audioPinata, imageSongPinata, description, supply, launch_date) {
 
-        const transactionPrepared = await withWalletCheck(async () => {
-            //setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
+        //setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
 
-            console.log(contractEditionDrop);
-            const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop })
-            console.log(nextTokenId);
+        console.log(contractEditionDrop);
+        const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop })
+        console.log(nextTokenId);
 
-            const lazyMintTransaction = lazyMint({
-                contract: contractEditionDrop,
-                nfts: [{ name: song, artist, description, image: imageSongPinata, audio: audioPinata }]
-            });
-            console.log(lazyMintTransaction);
-            let txLazyMintEncoded = await encode(lazyMintTransaction);
+        const lazyMintTransaction = lazyMint({
+            contract: contractEditionDrop,
+            nfts: [{ name: song, artist, description, image: imageSongPinata, audio: audioPinata }]
+        });
+        console.log(lazyMintTransaction);
+        let txLazyMintEncoded = await encode(lazyMintTransaction);
 
-            const startingTime = launch_date ? launch_date : new Date();
-            const claimConditionsTransaction = setClaimConditions({
-                contract: contractEditionDrop,
-                tokenId: nextTokenId,
-                phases: [
-                    {
-                        startTime: startingTime,
-                        currencyAddress: NATIVE_TOKEN_ADDRESS,
-                        price: formInputPrice, // public sale price
-                        maxClaimableSupply: supply
-                    },
-                ],
-            });
-            console.log(claimConditionsTransaction);
-            let txClaimConditionEncoded = await encode(claimConditionsTransaction);
+        const startingTime = launch_date ? launch_date : new Date();
+        const claimConditionsTransaction = setClaimConditions({
+            contract: contractEditionDrop,
+            tokenId: nextTokenId,
+            phases: [
+                {
+                    startTime: startingTime,
+                    currencyAddress: NATIVE_TOKEN_ADDRESS,
+                    price: formInputPrice, // public sale price
+                    maxClaimableSupply: supply
+                },
+            ],
+        });
+        console.log(claimConditionsTransaction);
+        let txClaimConditionEncoded = await encode(claimConditionsTransaction);
 
-            return prepareContractCall({
-                contract: contractEditionDrop,
-                method: resolveMethod("multicall"),
-                params: [[txLazyMintEncoded, txClaimConditionEncoded]]
-            });
-        })
-        return transactionPrepared;
+        return prepareContractCall({
+            contract: contractEditionDrop,
+            method: resolveMethod("multicall"),
+            params: [[txLazyMintEncoded, txClaimConditionEncoded]]
+        });
     }
     async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
         try {
@@ -445,52 +414,44 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const SecondListing = async (NFTMarketplaceContract, nft, formInputPrice, amount) => {
-        const tx = await withWalletCheck(async () => {
-            try {
-                /* setOpenLoading(true); setLoading("The token listing producedure has started. Accept the transaction."); */
-                console.log(NFTMarketplaceContract);
-                let tx;
-                const totalQuantity = parseInt(nft.sellingQuantity) + parseInt(amount);
-                console.log(totalQuantity);
-                if (nft.sellingQuantity && nft.sellingQuantity > 0) {
-                    const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
-                    console.log(params);
-                    const date = new Date(params.startTimeInSeconds * 1000);
-                    console.log(date);
-                    //Call updateListing
-                    const listing = {
-                        assetContractAddress: nft.token_address,
-                        tokenId: nft.token_id,
-                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
-                        pricePerToken: formInputPrice,
-                        quantity: totalQuantity,
-                        isReservedListing: false,
-                        startTimestamp: date
-                    }
-                    tx = updateListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id, listing });
-                    setLoading("Tokens are being listed.");
-
-                } else {
-                    console.log("here");
-
-                    tx = createListing({
-                        contract: NFTMarketplaceContract,
-                        assetContractAddress: nft.token_address,
-                        tokenId: nft.token_id,
-                        quantity: amount,
-                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
-                        pricePerToken: formInputPrice,
-                        startTimestamp: new Date(),
-                        isReservedListing: false
-                    });
-                    console.log(tx);
-                }
-                return tx;
+        /* setOpenLoading(true); setLoading("The token listing producedure has started. Accept the transaction."); */
+        console.log(NFTMarketplaceContract);
+        let tx;
+        const totalQuantity = parseInt(nft.sellingQuantity) + parseInt(amount);
+        console.log(totalQuantity);
+        if (nft.sellingQuantity && nft.sellingQuantity > 0) {
+            const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
+            console.log(params);
+            const date = new Date(params.startTimeInSeconds * 1000);
+            console.log(date);
+            //Call updateListing
+            const listing = {
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: formInputPrice,
+                quantity: totalQuantity,
+                isReservedListing: false,
+                startTimestamp: date
             }
-            catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while listing the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_secondary_listing");
-            }
-        })
+            tx = updateListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id, listing });
+            setLoading("Tokens are being listed.");
+
+        } else {
+            console.log("here");
+
+            tx = createListing({
+                contract: NFTMarketplaceContract,
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                quantity: amount,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: formInputPrice,
+                startTimestamp: new Date(),
+                isReservedListing: false
+            });
+            console.log(tx);
+        }
         return tx;
     };
     async function updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id) {
@@ -600,40 +561,31 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     async function claimNFT(contract, nft) {
-        const tx = await withWalletCheck(async () => {
-            try {
-                /* setOpenLoading(true); setLoading("The token buying procedure has started. Accept the transaction."); */
-                //Smart contract transaction to buy the token
-                console.log(contract);
-                let tx;
+        /* setOpenLoading(true); setLoading("The token buying procedure has started. Accept the transaction."); */
+        //Smart contract transaction to buy the token
+        console.log(contract);
+        let tx;
 
-                if (nft.isFirstSale) {
-                    tx = claimTo({
-                        contract,
-                        to: address,
-                        tokenId: nft.token_id,
-                        quantity: 1,
-                    });
-                    setLoading("The token is being transferred.");
-                    console.log("transaction", tx);
-                } else {
+        if (nft.isFirstSale) {
+            tx = claimTo({
+                contract,
+                to: address,
+                tokenId: nft.token_id,
+                quantity: 1,
+            });
+            setLoading("The token is being transferred.");
+            console.log("transaction", tx);
+        } else {
 
-                    tx = await buyFromListing({
-                        contract,
-                        listingId: nft.listing_id,
-                        quantity: 1,
-                        recipient: address,
-                    });
-                    setLoading("The token is being transferred.");
-                    console.log("transaction", tx);
-                }
-
-                return tx;
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while buying the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_purchase");
-            }
-        });
-        console.log(tx);
+            tx = await buyFromListing({
+                contract,
+                listingId: nft.listing_id,
+                quantity: 1,
+                recipient: address,
+            });
+            setLoading("The token is being transferred.");
+            console.log("transaction", tx);
+        }
         return tx;
     };
     async function updateDBafterPurchase(receipt, seller, newBuyer) {
@@ -665,75 +617,69 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const freeNFTTransfer = async (nft) => {
-        await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
+        try {
+            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
 
-                const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
-                console.log(NFTMarketplace, gasPrice);
-                console.log(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase());
-                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase(),
-                    {
-                        gasPrice: gasPrice
-                    });
+            const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(OldNFTMarketplaceAddress, OldNFTMarketplaceABI);
+            console.log(NFTMarketplace, gasPrice);
+            console.log(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase());
+            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase(),
+                {
+                    gasPrice: gasPrice
+                });
 
-                console.log(transaction);
-                const trans = await transaction.wait();
-                console.log(trans);
+            console.log(transaction);
+            const trans = await transaction.wait();
+            console.log(trans);
 
-                await updateDBafterPurchase(nft, transaction, address.toLowerCase());
+            await updateDBafterPurchase(trans, nft, address.toLowerCase());
 
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
-            }
-        })
+        } catch (error) {
+            handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
+        }
     }
 
     async function changeNFTPrice(contract, nft, formInputPrice) {
-        const tx = await withWalletCheck(async () => {
-            /* setLoading("The change price procedure has started. Accept the transaction."); setOpenLoading(true); */
-            try {
-                console.log(contract);
-                /* setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction."); */
-                let tx;
-
-                if (nft.isFirstSale) {
-                    tx = setClaimConditions({
-                        contract,
-                        tokenId: nft.token_id,
-                        phases: [
-                            {
-                                maxClaimableSupply: nft.supply,
-                                currencyAddress: NATIVE_TOKEN_ADDRESS,
-                                price: formInputPrice,
-                                startTime: new Date(),
-                            },
-                        ],
-                    });
-                } else {
-                    const params = await getListing({ contract, listingId: nft.listing_id });
-                    const date = new Date(params.startTimeInSeconds * 1000);
-                    console.log(date);
-                    //Call updateListing
-                    const listing = {
-                        assetContractAddress: nft.token_address,
-                        tokenId: nft.token_id,
-                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
-                        pricePerToken: formInputPrice,
-                        quantity: nft.sellingQuantity,
-                        isReservedListing: false,
-                        startTimestamp: date
-                    }
-                    tx = updateListing({ contract, listingId: nft.listing_id, listing });
-                    setLoading("The price is being changed.");
+        /* setLoading("The change price procedure has started. Accept the transaction."); setOpenLoading(true); */
+        try {
+            console.log(contract);
+            /* setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction."); */
+            let tx;
+            if (nft.isFirstSale) {
+                tx = setClaimConditions({
+                    contract,
+                    tokenId: nft.token_id,
+                    phases: [
+                        {
+                            maxClaimableSupply: nft.supply,
+                            currencyAddress: NATIVE_TOKEN_ADDRESS,
+                            price: formInputPrice,
+                            startTime: new Date(),
+                        },
+                    ],
+                });
+            } else {
+                const params = await getListing({ contract, listingId: nft.listing_id });
+                const date = new Date(params.startTimeInSeconds * 1000);
+                console.log(date);
+                //Call updateListing
+                const listing = {
+                    assetContractAddress: nft.token_address,
+                    tokenId: nft.token_id,
+                    currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                    pricePerToken: formInputPrice,
+                    quantity: nft.sellingQuantity,
+                    isReservedListing: false,
+                    startTimestamp: date
                 }
-
-                return tx;
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
+                tx = updateListing({ contract, listingId: nft.listing_id, listing });
+                setLoading("The price is being changed.");
             }
-        })
-        return tx;
+
+            return tx;
+        } catch (error) {
+            handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
+        }
     };
     async function updateDBOnPriceChange(receipt, formInputPrice, nft) {
         try {
@@ -764,41 +710,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     async function delistItem(NFTMarketplaceContract, nft, amount) {
-        const tx = await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the transaction.");
-                let tx
-                if (amount >= nft.sellingQuantity) {
-                    tx = cancelListing({
-                        contract: NFTMarketplaceContract,
-                        listingId: nft.listing_id
-                    });
-                    setLoading("The token is being delisted.");
-                } else {
-                    const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
-                    const date = new Date(params.startTimeInSeconds * 1000);
-                    console.log(date);
-                    const newAmount = params.quantity - amount;
-                    //Call updateListing
-                    const listing = {
-                        assetContractAddress: nft.token_address,
-                        tokenId: nft.token_id,
-                        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
-                        pricePerToken: nft.price,
-                        quantity: newAmount,
-                        isReservedListing: false,
-                        startTimestamp: date
-                    }
-                    tx = updateListing({ contract, listingId: nft.listing_id, listing });
-                    setLoading("The price is being changed.");
+        try {
+            setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the transaction.");
+            let tx
+            if (amount >= nft.sellingQuantity) {
+                tx = cancelListing({
+                    contract: NFTMarketplaceContract,
+                    listingId: nft.listing_id
+                });
+                setLoading("The token is being delisted.");
+            } else {
+                const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
+                const date = new Date(params.startTimeInSeconds * 1000);
+                console.log(date);
+                const newAmount = params.quantity - amount;
+                //Call updateListing
+                const listing = {
+                    assetContractAddress: nft.token_address,
+                    tokenId: nft.token_id,
+                    currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                    pricePerToken: nft.price,
+                    quantity: newAmount,
+                    isReservedListing: false,
+                    startTimestamp: date
                 }
-
-                return tx;
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while delisting the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_delist");
+                tx = updateListing({ contract, listingId: nft.listing_id, listing });
+                setLoading("The price is being changed.");
             }
-        })
-        return tx;
+
+            return tx;
+        } catch (error) {
+            handleMetaMaskErrors(error, "Something went wrong while delisting the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_delist");
+        }
     };
     async function updateDBOnItemDelisting(receipt, nft, amount) {
         try {
@@ -988,7 +931,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         console.log(signatureResult);
         return signatureResult
     }
-
     async function signInOrUp(signatureResult) {
         const data = JSON.stringify({ "payload": signatureResult });
         const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
@@ -1000,23 +942,26 @@ export const NFTMarketplaceProvider = ({ children }) => {
         console.log(userFirebase);
         return userFirebase;
     }
+    async function completeLogin() {
+        createPayload().then((signatureResult) => {
+            signInOrUp(signatureResult).then((loggedInUser) => {
+                userToWallet(loggedInUser.accessToken).then((UserDB) => {
+                    const userData = { ...loggedInUser, ...UserDB };
+                    setUser(userData);
+                    console.log("DB + Firebase:", userData);
+                    if (!loggedInUser.displayName) {
+                        setOpenUsername(true);
+                    }
+                })
+            });
+        })
+    }
 
     async function setUserLogged() {
         fetchUserInformation().then((userFirebase) => {
             console.log("userFire: ", userFirebase)
             if (!userFirebase || userFirebase.uid.toLowerCase() != address.toLowerCase()) {
-                createPayload().then((signatureResult) => {
-                    signInOrUp(signatureResult).then((loggedInUser) => {
-                        userToWallet(loggedInUser.accessToken).then((UserDB) => {
-                            const userData = { ...loggedInUser, ...UserDB };
-                            setUser(userData);
-                            console.log("DB + Firebase:", userData);
-                            if (!loggedInUser.displayName) {
-                                setOpenUsername(true);
-                            }
-                        })
-                    });
-                })
+                completeLogin()
             } else {
                 userToWallet(userFirebase.accessToken).then((UserDB) => {
                     const userData = { ...userFirebase, ...UserDB };
@@ -1121,7 +1066,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 fetchTransactionsInfo,
                 renderString,
                 sendUserActivity,
-                downloadSong
+                downloadSong,
+                completeLogin
             }}
         >
             {children}

@@ -10,6 +10,7 @@ import { SmartContractButton, InfoButton, ActionButton, ButtonConnectWallet } fr
 import ChangePrice from "./ChangePrice/ChangePrice";
 import DelistItem from "./DelistItem/DelistItem";
 import ListItem from "./ListItem/ListItem";
+import BuyItem from "./BuyItem/BuyItem";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 import { NFTMarketplaceAddress } from "../../Context/Constants";
 
@@ -19,16 +20,6 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
 
     const address = useActiveAccount()?.address;
 
-    const claimTrack = async (nftMintArtistContract) => {
-        const tx = await claimNFT(nftMintArtistContract, shownNft);
-        console.log(tx);
-        return tx;
-    }
-
-    const updateDB = async (receipt, contract) => {
-        await updateDBafterPurchase(receipt, shownNft, address.toLowerCase())
-    }
-
     const openLogin = () => {
         setOpenRegister(true)
     }
@@ -36,19 +27,20 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
     const [openChangePrice, setOpenChangePrice] = useState(false);
     const [openDelistItem, setOpenDelistItem] = useState(false);
     const [openListItem, setOpenListItem] = useState(false);
+    const [openBuy, setOpenBuy] = useState(false)
 
     const setNewPrice = () => {
-        setOpenDelistItem(false); setOpenListItem(false);
+        setOpenDelistItem(false); setOpenListItem(false); setOpenBuy(false);
         setOpenChangePrice(!openChangePrice);
     }
 
     const setDelistItem = () => {
-        setOpenChangePrice(false); setOpenListItem(false);
+        setOpenChangePrice(false); setOpenListItem(false); setOpenBuy(false);
         setOpenDelistItem(!openDelistItem);
     }
 
     const setListItem = () => {
-        setOpenChangePrice(false); setOpenDelistItem(false);
+        setOpenChangePrice(false); setOpenDelistItem(false); setOpenBuy(false);
         setOpenListItem(!openListItem);
     }
 
@@ -153,76 +145,72 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
 
                 <div className={Style.NFTDetailsImg_description_info_actions}>
                     {shownNft.price !== 'undefined' ? (
-                        <div>{user ? (
-                            <div> {address ? (
-                                <div>
-                                    {user.wallet && user.wallet == address.toLowerCase() ? (<div>
-                                        {user.wallet == shownNft.owner_of ? (
-                                            <div>
-                                                {shownNft.sellingQuantity >= shownNft.amount ?
-                                                    <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
-                                                    (<div>
-                                                        <ActionButton action={setListItem} text={shownNft.sellingQuantity > 0 ? "List other tokens" : "LIST YOUR track"} />
-                                                        {openListItem && <ListItem nft={shownNft} setOpenListItem={setOpenListItem} />}
-                                                    </div>
-                                                    )}
-                                                {shownNft.sellingQuantity > 0 && (
-                                                    <div className={Style.NFTDetailsImg_description_info_button}>
-                                                        <div>
-                                                            <ActionButton action={setNewPrice} text="CHANGE PRICE" />
-                                                            {openChangePrice && <ChangePrice nft={shownNft} setOpenChangePrice={setOpenChangePrice} />}
-                                                        </div>
-                                                        {!shownNft.isFirstSale && <div>
-                                                            <ActionButton action={setDelistItem} text="DELIST" />
-                                                            {openDelistItem && <DelistItem nft={shownNft} setOpenDelistItem={setOpenDelistItem} />}
-                                                        </div>}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                {shownNft.price == 0 ?
-                                                    (<div>
-                                                        {userOwn.length != 0 ? (
-                                                            <div>
-                                                                <InfoButton text={`You have already colleted this track`} />
-                                                                <div className={`${Style.link_to_your_NFTPage} font-normal`}>
-                                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div>
-                                                                {timeRemaining ? (<div className={`${Style.timer} font-normal`}>
-                                                                    <span>{timeRemaining}</span>
-                                                                </div>) :
-                                                                    <ActionButton action={freelyRetriveToken} text="redeem the token for free" />}
-                                                            </div>
-                                                        )
-                                                        }
-                                                    </div>)
-                                                    :
-                                                    (<div>
-                                                        <SmartContractButton text="Collect Track" contractAddress={shownNft.isFirstSale ? shownNft.token_address : NFTMarketplaceAddress} action={claimTrack} onTransactionConfirmed={updateDB} />
-                                                        {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
-                                                            You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
-                                                        </div>)}
-                                                    </div>)}
+                        <div> {address && user ? (
+                            <div>
+                                {user.wallet == shownNft.owner_of ? (
+                                    <div>
+                                        {/* {shownNft.sellingQuantity >= shownNft.amount ?
+                                                <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
+                                                (<div>
+                                                    <ActionButton action={setListItem} text={shownNft.sellingQuantity > 0 ? "List other tokens" : "LIST YOUR track"} />
+                                                    {openListItem && <ListItem nft={shownNft} setOpenListItem={setOpenListItem} />}
+                                                </div>
+                                                )} */}
+                                        {user.role == "artist" ? (<InfoButton text={`You listed ${shownNft.sellingQuantity} tokens`} />) : (
+                                            <InfoButton text={`Secondary market function will be soon intregrated`} />
+                                        )}
+                                        {shownNft.sellingQuantity > 0 && (
+                                            <div className={Style.NFTDetailsImg_description_info_button}>
+                                                <div>
+                                                    <ActionButton action={setNewPrice} text="CHANGE PRICE" />
+                                                    {openChangePrice && <ChangePrice nft={shownNft} setOpenChangePrice={setOpenChangePrice} />}
+                                                </div>
+                                                {!shownNft.isFirstSale && <div>
+                                                    <ActionButton action={setDelistItem} text="DELIST" />
+                                                    {openDelistItem && <DelistItem nft={shownNft} setOpenDelistItem={setOpenDelistItem} />}
+                                                </div>}
                                             </div>
                                         )}
-                                    </div>) : (
-                                        <InfoButton text={`Connect ${renderString(user.wallet, 5)} wallet for actions`} />
-                                    )}
-                                </div>
-                            ) : (<ButtonConnectWallet user={user} />)}
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {shownNft.price == 0 ?
+                                            (<div>
+                                                {userOwn.length != 0 ? (
+                                                    <div>
+                                                        <InfoButton text={`You have already colleted this track`} />
+                                                        <div className={`${Style.link_to_your_NFTPage} font-normal`}>
+                                                            You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        {timeRemaining ? (<div className={`${Style.timer} font-normal`}>
+                                                            <span>{timeRemaining}</span>
+                                                        </div>) :
+                                                            <ActionButton action={freelyRetriveToken} text="redeem the token for free" />}
+                                                    </div>
+                                                )
+                                                }
+                                            </div>)
+                                            :
+                                            (<div>
+                                                <ActionButton action={setBuyItem} text="Collect Track" />
+                                                {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
+                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
+                                                </div>)}
+                                            </div>)}
+                                    </div>
+                                )}
                             </div>
-                        ) : (
-                            <ActionButton action={openLogin} text="Login or signup to collect" />
-                        )}</div>) : (<div>
-                            <InfoButton text="---" />
-                        </div>)}
+                        ) : (<ButtonConnectWallet />)}
+                        </div>
+                    ) : (<div>
+                        <InfoButton text="---" />
+                    </div>)}
                 </div>
             </div>
-            {<div className={Style.NFTDetailsImg_box}>
+            <div className={Style.NFTDetailsImg_box}>
                 {shownNft.imageSongCloudinary ? (
                     <div className={Style.NFTDetailsImg_box_img}>
                         <Image
@@ -241,7 +229,13 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                         </div>
                     </div>
                 ) : (<div className={Style.NFTDetailsImg_box_img} />)}
-            </div>}
+            </div>
+            {openBuy &&
+                <div className={Style.overlay} onMouseDown={() => setBuyItem()}>
+                    <div className={Style.navbar_Buy} onMouseDown={(e) => e.stopPropagation()}>
+                        <BuyItem nft={shownNft} setOpenBuy={setOpenBuy} />
+                    </div>
+                </div>}
         </div>
     )
 }

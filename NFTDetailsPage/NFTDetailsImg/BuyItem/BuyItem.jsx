@@ -1,48 +1,27 @@
-import React, { useState, useContext } from 'react';
-import { useAddress } from '@thirdweb-dev/react';
+import React, { useContext } from 'react';
+import { useActiveAccount } from "thirdweb/react";
 import { AiOutlineClose } from "react-icons/ai";
 
 import Style from "./BuyItem.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { SmartContractButton, LazyMintCreditCard } from '../../../components/componentsIndex';
-import { NFTMarketplaceAddress, NFTMarketplaceAddressContractId } from '../../../Context/Constants';
+import { NFTMarketplaceAddress } from '../../../Context/Constants';
+import { InfoButton, SmartContractButton } from '../../../components/componentsIndex';
 
 const BuyItem = ({ nft, setOpenBuy }) => {
-    const { user, claimNFT, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
+    const { claimNFT, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
 
-    const address = useAddress();
+    const address = useActiveAccount()?.address;
 
     const claimTrack = async (nftMintArtistContract) => {
         setOpenBuy(false);
-        await claimNFT(nftMintArtistContract, nft)
+        const tx = await claimNFT(nftMintArtistContract, nft);
+        console.log(tx);
+        return tx;
     }
 
-    const updateDB = async (response) => {
-        console.log(response);
-        const transactionId = response.transactionId;
-
-        const get = async (url, token) => {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    'x-secret-key': token,
-                    'Content-Type': 'application/json',
-                }
-            });
-            return response.json()
-        }
-
-        let final = await get(`https://payments.thirdweb.com/api/v1/transaction-status/${transactionId}`, process.env.THIRDWEB_API_KEY);
-        console.log(final);
-        const transactionHash = final.result.transactionHash || transactionId;
-        const transactionFrom = address.toLowerCase();
-        updateDBafterPurchase(nft, transactionHash, transactionFrom, user.accessToken);
-
+    const updateDB = async (receipt, contract) => {
+        await updateDBafterPurchase(receipt, nft, address.toLowerCase())
     }
-
-    const arg = { "tokenId": nft.token_id };
-
-    console.log(arg)
 
     return (
         <div className={Style.BuyItem}>
@@ -54,19 +33,13 @@ const BuyItem = ({ nft, setOpenBuy }) => {
             </div>
             <div className={Style.BuyItem_bottom}>
                 <div className={Style.BuyItem_bottom_item}>
-                    <SmartContractButton
-                        text="Collect Track With Crypto" contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress}
-                        action={claimTrack} />
+                    <SmartContractButton text="Pay with Crypto" contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress} action={claimTrack} onTransactionConfirmed={updateDB} />
                 </div>
-                <div className={`${Style.BuyItem_bottom_middle} font-small`}>or pay with credit card</div>
+                <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <LazyMintCreditCard
-                        contractId={nft.isFirstSale ? nft.contract_id : NFTMarketplaceAddressContractId}
-                        args={nft.isFirstSale ? { "tokenId": nft.token_id } : { "listings": [{ "listingId": nft.listing_id }] }}
-                        onSuccess={updateDB} />
+                    <InfoButton text="Pay with Credit Card" />
                 </div>
             </div>
-
         </div>
     )
 }

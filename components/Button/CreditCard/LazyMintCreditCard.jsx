@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { CheckoutWithCard, useAddress } from '@thirdweb-dev/react';
 
 
@@ -37,4 +37,4 @@ const CreditCard = ({ contractId, args, onSuccess }) => {
     )
 }
 
-export default CreditCard
+export default CreditCard */

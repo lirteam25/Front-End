@@ -1,11 +1,13 @@
-import React from 'react';
-import { ConnectButton } from "thirdweb/react";
+import React, { useContext } from 'react';
+import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, embeddedWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
 import { InfoButton } from '../../componentsIndex';
+import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
+import Style from "./Wallet.module.css";
 
 const wallets = [
     embeddedWallet(),
@@ -17,11 +19,19 @@ const wallets = [
 
 const buttonConnectWallet = () => {
 
+    const { user, completeLogin } = useContext(NFTMarketplaceContext);
+
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
+    const chainId = useActiveWalletChain()?.id;
+
+    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002
+
+    const switchChain = useSwitchActiveWalletChain();
+
 
     const auth = createAuth({
         domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
@@ -62,7 +72,23 @@ const buttonConnectWallet = () => {
             }}
 
             detailsButton={{
-                render: () => (<InfoButton text="LOGGED IN" />)
+                render: () => (
+                    <div>
+                        {chainId !== targetChainId ? (
+                            <div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
+                                switch network
+                            </div>
+                        ) : (
+                            <div>
+                                {user ? (
+                                    <div className={Style.rightNetwork}>
+                                        <InfoButton text="Connected" />
+                                    </div>) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
+                                        login
+                                    </div>)}
+                            </div>
+                        )}</div>
+                )
             }}
 
             switchButton={{
