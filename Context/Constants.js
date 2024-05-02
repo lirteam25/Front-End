@@ -1,21 +1,21 @@
-import nftMint from "./NFTMintUpgradable.json";
-
-export const NFTMintABI = nftMint.abi;
-
-const NFTMintSampleAddressNormCase = "0x1440e929fE5FfC51aa8e2E3f3eF4521fC412ADB2";
-const NFTMintSampleAddressNormCase_DEV = "0x7a3d52eba0477cfeaeb3742e13d89c6ba120fd5f";
-export const NFTMintSampleAddress = process.env.NODE_ENV == "production" ? NFTMintSampleAddressNormCase : NFTMintSampleAddressNormCase_DEV;
-
-import nftMarketplace from "./NFTMarketplaceUpgradableV2.json";
+//NFTMarketplace
+import oldNftMarketplace from "./NFTMarketplaceUpgradableV2.json";
 
 const NFTMarketplaceAddressNormCase = "0xBa7FB0f905dFC69bD144C6Cc2E763D28f62eFc4e";
-const NFTMarketplaceAddressNormCase_DEV = "0x014e12408911830d31a7846593f937b66b2caa46";
-export const NFTMarketplaceAddress = process.env.NODE_ENV == "production" ? NFTMarketplaceAddressNormCase.toLowerCase() : NFTMarketplaceAddressNormCase_DEV.toLocaleLowerCase();
-export const NFTMarketplaceABI = nftMarketplace.abi;
+const NFTMarketplaceAddressNormCase_DEV = "0x79b046BaEaBCeea366365B617E0086225F1d9873";
+export const NFTMarketplaceAddress = process.env.NODE_ENV == "polygon" ? NFTMarketplaceAddressNormCase.toLowerCase() : NFTMarketplaceAddressNormCase_DEV.toLocaleLowerCase();
 
-import nftMintFactory from "./NFTMintFactory.json";
+const NFTMarketplaceContractId = null;
+const NFTMarketplaceContractId_DEV = "8e78cdd7-e70f-44cb-b46b-17f1c839243f"
+export const NFTMarketplaceAddressContractId = process.env.NODE_ENV == "polygon" ? NFTMarketplaceContractId : NFTMarketplaceContractId_DEV;
 
-export const NFTMintFactoryABI = nftMintFactory.abi;
-const NFTMintFactoryNormCase = "0x298f6262aEf444403b56Ca88b8bC74bcF1Cd6249";
-const NFTMintFactoryNormCase_DEV = "0xC7A9074039C7ef74c8fb087dFA9546B4917510f7";
-export const NFTMintFactoryAddress = process.env.NODE_ENV == "production" ? NFTMintFactoryNormCase : NFTMintFactoryNormCase_DEV;
+const OldMarketplaceContractAddress = "0xBa7FB0f905dFC69bD144C6Cc2E763D28f62eFc4e";
+const OldMarketplaceContractAddress_DEV = "0x014e12408911830d31a7846593f937b66b2caa46";
+export const OldNFTMarketplaceAddress = process.env.NODE_ENV == "polygon" ? OldMarketplaceContractAddress : OldMarketplaceContractAddress_DEV;
+export const OldNFTMarketplaceABI = oldNftMarketplace.abi
+
+//Marketplace Owner
+export const MarketplaceOwner = "0x2d90fc78ad933717Bc4a31097fd845C478F9B204"
+
+import EditionDrop from "./EditionDrop.json";
+export const editionDropABI = EditionDrop.abi

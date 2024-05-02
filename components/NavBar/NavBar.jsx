@@ -1,71 +1,44 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { GoDotFill } from "react-icons/go";
 import { useRouter } from 'next/router';
-import { useWeb3Modal } from '@web3modal/ethers/react'
 
 // Internal Imports
 import Style from "./NavBar.module.css";
 import images from "../../img";
-import { Error, Loading, FooterAudioPlayer, Notification, Toast } from "../componentsIndex";
+import { Error, Loading, FooterAudioPlayer, Notification, Toast, NavBarConnectWallet } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
-import Login from "./Login/Login";
-import Register from "./Register/Register";
-import ForgotPassword from "./ForgotPassword/ForgotPassword";
 import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
 import CreateItem from "./CreateItems/CreateItems";
+import SetUsername from "./SetUsername/SetUsername";
 
 //Context import
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const NavBar = () => {
-    const [forgotPassword, setForgotPassword] = useState(false);
     const [openSideBar, setOpenSideBar] = useState(false);
     const [openProfileTab, setOpenProfileTab] = useState(false);
 
     const { setOpenErrorAuth,
-        openRegister,
-        setOpenRegister,
-        openLogin,
-        setOpenLogin,
         openError,
         openLoading,
         openFooterAudio,
-        currentAccount,
-        connectWallet,
         user,
-        renderString,
         openNotification,
         openToast,
+        openUsername,
         openArtistForm, setOpenArtistForm,
         openAccountSetting, setOpenAccountSetting,
         openArtistSettings, setOpenArtistSettings,
-        openCreateItem, setOpenCreateItem,
-        disconnectUser
+        openCreateItem, setOpenCreateItem
     } = useContext(NFTMarketplaceContext);
     const router = useRouter();
     const isIndexPage = router.pathname === '/';
 
     const closeProfileTab = () => {
         setOpenProfileTab(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeLogin = () => {
-        setOpenLogin(false);
-        setOpenErrorAuth(false);
-    };
-
-    const closeRegister = () => {
-        setOpenRegister(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeForgot = () => {
-        setForgotPassword(false);
         setOpenErrorAuth(false);
     }
 
@@ -89,55 +62,18 @@ const NavBar = () => {
         setOpenErrorAuth(false);
     }
 
-    const { open } = useWeb3Modal()
-
     useEffect(() => {
         if (isIndexPage) {
             // Detect scroll event
             const handleScroll = () => {
                 const navbar = document.querySelector(`.${Style.navbar}`);
-                const signUp = document.getElementById("signUp");
-                const discover = document.getElementById("discover");
-                const docs = document.getElementById("docs");
-                const logIn = document.getElementById("logIn");
-                const wallet = document.getElementById("wallet");
                 const scrollPosition = window.scrollY;
                 if (scrollPosition >= (window.innerHeight - 60)) {
                     navbar.classList.add(Style.greyNavbar);
                     navbar.classList.remove(Style.transparentNavbar);
-
-
-                    signUp && signUp.classList.add(Style.red)
-                    signUp && signUp.classList.remove(Style.black)
-
-                    wallet && wallet.classList.add(Style.red)
-                    wallet && wallet.classList.remove(Style.black)
-
-                    discover.classList.remove(Style.black_hover);
-                    docs.classList.remove(Style.black_hover);
-                    logIn && logIn.classList.remove(Style.black_hover);
-
-                    discover.classList.add(Style.red_hover);
-                    docs.classList.add(Style.red_hover);
-                    logIn && logIn.classList.add(Style.red_hover);
-
                 } else if (!openSideBar) {
                     navbar.classList.add(Style.transparentNavbar);
                     navbar.classList.remove(Style.greyNavbar);
-
-                    signUp && signUp.classList.add(Style.black);
-                    signUp && signUp.classList.remove(Style.red);
-
-                    wallet && wallet.classList.add(Style.black);
-                    wallet && wallet.classList.remove(Style.red);
-
-                    discover.classList.add(Style.black_hover);
-                    docs.classList.add(Style.black_hover);
-                    logIn && logIn.classList.add(Style.black_hover);
-
-                    discover.classList.remove(Style.red_hover);
-                    docs.classList.remove(Style.red_hover);
-                    logIn && logIn.classList.remove(Style.red_hover);
                 }
             };
 
@@ -165,79 +101,12 @@ const NavBar = () => {
                         />
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
-                        <Link id="discover" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} href={{ pathname: `collection` }}>collection</Link>
-                        <Link id="docs" className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`} target="_blank" href={"https://www.docs.lirmusic.com"}>docs</Link>
+                        <Link id="discover" className={Style.red_hover} href={{ pathname: `collection` }}>collection</Link>
+                        <Link id="docs" className={Style.red_hover} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
-                    {/* Create button */}
-                    {user == null ? (
-                        <div className={Style.navbar_container_right_noUser}>
-                            <div id="logIn" onClick={() => setOpenLogin(true)} className={`${!isIndexPage ? Style.red_hover : Style.black_hover}`}>
-                                log in
-                            </div>
-                            <div id="signUp" onClick={() => setOpenRegister(true)} className={`${!isIndexPage ? Style.red : Style.black}`}>
-                                sign up
-                            </div>
-                        </div>
-                    ) : (
-                        <div className={Style.navbar_container_right_yesUser}>
-                            <div className={Style.navbar_container_right_yesUser_connect}>
-                                {currentAccount == "" ? (
-                                    <div id="wallet" className={`${!isIndexPage ? Style.red : Style.black}`} onClick={() => connectWallet()}>
-                                        connect wallet
-                                    </div>
-                                ) : (
-                                    <div className={Style.navbar_container_right_yesUser_connect_wallet}>
-                                        {currentAccount == user.wallet ? (
-                                            <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
-                                                    <GoDotFill color="green" size={15} className={Style.wallet_info_window_icon} />
-                                                    <div>
-                                                        {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (<div className={Style.navbar_container_right_yesUser_connect_wallet_wrong}>
-                                            <div className={Style.wallet_icon_wrapper}>
-                                                <div className={`${Style.wallet_info_window_wrong} font-small`} style={{ cursor: "pointer" }} onClick={() => open({ view: 'Account' })}>
-                                                    <GoDotFill className={Style.wallet_info_window_icon_wrong} />
-                                                    <div>
-                                                        {renderString(currentAccount, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>)}
-                                    </div>
-                                )
-                                }
-                            </div>
-                            <div className={Style.navbar_container_right_yesUser_profile}>
-                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => setOpenProfileTab(true)} className={Style.navbar_container_right_yesUser_profile_icon}
-                                />
-                                {openProfileTab &&
-                                    <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
-                                        <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>
-                                            <Link onClick={() => setOpenProfileTab(false)} className={Style.profile_tab_element} href="./my-profile">
-                                                <Image src={images.user} alt="profile user" width={16} height={16} /> My collection
-                                            </Link>
-                                            {user.role == "artist" && !user.artist_name && !user.artist_photo && !user.artist_description && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenArtistSettings(true) }}>
-                                                <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
-                                            </div>}
-                                            {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
-                                                <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
-                                            </div>}
-                                            <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
-                                                <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings
-                                            </div>
-                                            <div className={Style.profile_tab_element} onClick={() => disconnectUser()}>
-                                                <Image src={images.logout} alt="logout" width={16} height={16} /> log out
-                                            </div>
-                                        </div>
-                                    </div>}
-                            </div>
-                        </div>
-                    )}
+                    <NavBarConnectWallet openProfileTab={openProfileTab} setOpenProfileTab={setOpenProfileTab} closeProfileTab={closeProfileTab} />
                 </div>
             </div>
             <div className={Style.navbar_sidebar} onClick={() => setOpenSideBar(!openSideBar)}>
@@ -252,39 +121,21 @@ const NavBar = () => {
                 openSideBar && (
                     <div className={Style.overlay_sidebar}>
                         <div className={`${Style.navbar_openSidebar} ${openSideBar ? 'open-sidebar-transition' : ''}`}>
-                            <SideBar setOpenSideBar={setOpenSideBar} user={user} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+                            <SideBar setOpenSideBar={setOpenSideBar} user={user} />
                         </div>
                     </div>
                 )
             }
 
-
             {
-                openLogin &&
-                <div className={Style.overlay} onMouseDown={() => closeLogin()}>
-                    <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
-                        <Login closeLogin={closeLogin} setOpenRegister={setOpenRegister} setForgotPassword={setForgotPassword} />
+                openUsername && (
+                    <div className={Style.overlay}>
+                        <div className={Style.navbar_openUsername}>
+                            <SetUsername />
+                        </div>
                     </div>
-                </div>
-            }
+                )}
 
-            {
-                openRegister &&
-                <div className={Style.overlay} onMouseDown={() => closeRegister()}>
-                    <div className={Style.navbar_Login} onMouseDown={(e) => e.stopPropagation()}>
-                        <Register setOpenLogin={setOpenLogin} closeRegister={closeRegister} />
-                    </div>
-                </div>
-            }
-
-            {
-                forgotPassword &&
-                <div className={Style.overlay} onMouseDown={() => closeForgot()}>
-                    <div className={Style.navbar_ForgotPassword} onMouseDown={(e) => e.stopPropagation()}>
-                        <ForgotPassword closeForgot={closeForgot} />
-                    </div>
-                </div>
-            }
             {
                 openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
                     <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
@@ -322,7 +173,6 @@ const NavBar = () => {
             {openFooterAudio && <FooterAudioPlayer />}
             {openNotification && <Notification />}
             {openToast && <Toast />}
-
         </div >
     );
 }

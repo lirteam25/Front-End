@@ -45,12 +45,9 @@
 }
 
 .sidebar_center_login {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     padding: 1.5rem 0rem;
     align-items: center;
     border-bottom: 1px solid var(--background-grey);
-    text-transform: uppercase;
 }
 
 .sidebar_center_login_login {

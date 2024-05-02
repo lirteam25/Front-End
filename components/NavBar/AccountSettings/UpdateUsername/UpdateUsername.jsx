@@ -30,8 +30,8 @@ const UpdateAccount = () => {
                     onChange={(e) => setNewUsername(e.target.value)}
                     onKeyDown={handleKeyPress} />
             </div>
-            {newUsername ? <ActionButton action={updUserInfo} text="CHANGE USERNAME" fontSize="0.9rem" /> :
-                <InfoButton text="CHANGE USERNAME" fontSize="0.9rem" />}
+            {newUsername ? <ActionButton action={updUserInfo} text={user.displayName ? "CHANGE USERNAME" : "CHOOSE YOUR USERNAME"} fontSize="0.9rem" /> :
+                <InfoButton text={user.displayName ? "CHANGE USERNAME" : "CHOOSE YOUR USERNAME"} fontSize="0.9rem" />}
         </div>
     )
 }

@@ -2,12 +2,13 @@ import React, { useState, useContext } from 'react';
 
 import Style from './ListItem.module.css';
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { InfoButton, ActionButton } from "./../../../components/componentsIndex";
+import { InfoButton, SmartContractButton } from "./../../../components/componentsIndex";
+import { NFTMarketplaceAddress } from '../../../Context/Constants';
 
 const ListItem = ({ nft, setOpenListItem }) => {
-    const { SecondListing } = useContext(NFTMarketplaceContext);
-    const [price, setPrice] = useState(null);
-    const [amount, setAmount] = useState(null);
+    const { SecondListing, updateDBOnSecondListing } = useContext(NFTMarketplaceContext);
+    const [price, setPrice] = useState(nft.sellingQuantity && nft.sellingQuantity > 0 ? nft.price : null);
+    const [amount, setAmount] = useState(nft.sellingQuantity && nft.sellingQuantity > 0 ? nft.sellingQuantity : null);
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && price && price >= 0 && amount && amount <= nft.amount - nft.sellingQuantity && amount > 0) {
@@ -15,11 +16,18 @@ const ListItem = ({ nft, setOpenListItem }) => {
         }
     };
 
-    const secondListing = () => {
+    const secondListing = (contract) => {
         setOpenListItem(false);
-        SecondListing(
-            nft, price, amount
-        )
+        console.log(contract);
+        const tx = SecondListing(
+            contract, nft, price, amount
+        );
+        return tx;
+    };
+
+    const updateDB = async (receipt, contract) => {
+        console.log(receipt);
+        await updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id)
     }
 
     return (
@@ -31,17 +39,17 @@ const ListItem = ({ nft, setOpenListItem }) => {
                     placeholder="price"
                     onChange={(e) => setPrice(e.target.value)}
                     onKeyDown={handleKeyPress} />
-                <input
+                {<input
                     className={Style.ListItem_input_input}
                     type="number"
                     placeholder="amount"
                     onChange={(e) => setAmount(e.target.value)}
-                    onKeyDown={handleKeyPress} />
+                    onKeyDown={handleKeyPress} />}
             </div>
             <div className={Style.ListItem_button}>
                 {(price && price >= 0) ? (
                     (amount && amount <= nft.amount - nft.sellingQuantity && amount > 0) ? (
-                        < ActionButton text="List tokens" action={secondListing} />)
+                        <SmartContractButton contractAddress={NFTMarketplaceAddress} text="List tokens" action={secondListing} onTransactionConfirmed={updateDB} />)
                         : (
                             <InfoButton text="Insert a valid amount" />))
                     : (

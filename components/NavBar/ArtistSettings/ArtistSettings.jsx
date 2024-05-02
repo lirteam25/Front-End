@@ -43,7 +43,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
     };
 
     const updateInformation = async () => {
-        await updateUserInformations(artistName, description, instagram, spotify, soundCloud, image, user.accessToken);
+        await updateUserInformations(artistName, description, instagram, spotify, soundCloud, image);
     }
 
     const decodeHtmlEntities = (html) => {

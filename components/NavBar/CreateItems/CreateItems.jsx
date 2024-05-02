@@ -2,27 +2,28 @@ import React, { useState, useContext } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import Switch from '@mui/material/Switch';
 import { CiSquareQuestion } from "react-icons/ci";
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { createThirdwebClient, getContract } from "thirdweb";
+
 
 //INTERNAL IMPORT
 import Style from "./CreateItems.module.css";
 import DropZone from "./DropZone/DropZone";
-import { InfoButton, ActionButton } from "../../componentsIndex";
+import { InfoButton, SmartContractButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, connectWallet, currentAccount } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
     const [description, setDescription] = useState(null);
-    const [royalties, setRoyalties] = useState(null);
     const [supply, setSupply] = useState(null);
-    const [amount, setAmount] = useState(null);
     const [date, setDate] = useState(null);
     const [hour, setHour] = useState(null);
 
     const [price, setPrice] = useState(null);
-    const [firstSaleFees, setFirstSaleFees] = useState(null);
     const [duration, setDuration] = useState(null);
+    const [startPreview, setStartPreview] = useState(null);
     const [urlPinata, setUrlPinata] = useState(null);
     const [urlCloudinary, setUrlCloudinary] = useState(null)
     const [imageSongPinata, setImageSongPinata] = useState(null);
@@ -30,37 +31,36 @@ const CreateItem = ({ closeCreateItems }) => {
 
     const [schedule, setSchedule] = useState(false);
 
-    const mintNFT = () => {
-        let combinedDateISOString;
+
+    const mintNFT = async (contractEditionDrop) => {
+        let combinedDateISO;
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-            const combinedDate = new Date(year, month - 1, day);
-            combinedDate.setHours(hours, minutes);
-            combinedDateISOString = combinedDate.toISOString();
+            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
+            console.log(combinedDateISO);
         } else {
-            combinedDateISOString = false;
+            combinedDateISO = false;
         }
 
         closeCreateItems();
+        const transactionPrepared = await createNFT(contractEditionDrop, user.artist_name, song, price, urlPinata, imageSongPinata, description, supply, combinedDateISO);
+        console.log(transactionPrepared);
+        return transactionPrepared;
+    }
 
-        createNFT(
-            user.artist_minting_contract,
-            user.artist_name,
-            song,
-            price,
-            urlPinata,
-            urlCloudinary,
-            imageSongPinata,
-            imageSongCloudinary,
-            description,
-            royalties,
-            user.artist_first_sale_fee,
-            supply,
-            amount,
-            combinedDateISOString,
-            duration
-        )
+    const afterMinting = async (receipt, contractEditionDrop) => {
+        let combinedDateISO;
+        if (schedule) {
+            const [year, month, day] = date.split('-');
+            const [hours, minutes] = hour.split(':');
+            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
+            console.log(combinedDateISO);
+        } else {
+            combinedDateISO = false;
+        }
+
+        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, user.artist_name, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
     }
 
     const numberInputOnWheelPreventChange = (e) => {
@@ -107,13 +107,12 @@ const CreateItem = ({ closeCreateItems }) => {
                     />
                 </div>
                 <div className={Style.CreateItems_bottom_element}>
-                    <label className='font-normal' htmlFor="duration">Track length</label>
+                    <label className='font-normal' htmlFor="duration">Track Preview</label>
                     <input
                         id="duration"
-                        type="text"
-                        pattern="\d{2}:\d{2}"
-                        placeholder="Track length. Suggested format: 03:21."
-                        onChange={(e) => setDuration(e.target.value)}
+                        type="number"
+                        placeholder="Insert the second at which the preview should start."
+                        onChange={(e) => setStartPreview(e.target.value)}
                     />
                 </div>
                 <DropZone
@@ -127,6 +126,7 @@ const CreateItem = ({ closeCreateItems }) => {
                     cloudinaryUploadVideo={cloudinaryUploadVideo}
                     cloudinaryUploadImage={cloudinaryUploadImage}
                     setImageSongCloudinary={setImageSongCloudinary}
+                    setDuration={setDuration}
                 />
                 <div className={Style.CreateItems_bottom_element}>
                     <div className={Style.CreateItems_bottom_element_titleWithTutorial}>
@@ -148,31 +148,6 @@ const CreateItem = ({ closeCreateItems }) => {
                         onWheel={numberInputOnWheelPreventChange}
                         placeholder="Track supply."
                         onChange={(e) => setSupply(parseInt(e.target.value))}
-                    />
-                </div>
-                <div className={Style.CreateItems_bottom_element}>
-                    <div className={Style.CreateItems_bottom_element_titleWithTutorial}>
-                        <label className='font-normal' htmlFor="amount">Selling Quantity</label>
-                        <div className={Style.CreateItems_bottom_element_titleWithTutorial_icon}>
-                            <CiSquareQuestion className={Style.CreateItems_bottom_element_titleWithTutorial_icon_icon} size={22} />
-                            <div className={`${Style.CreateItems_bottom_element_titleWithTutorial_icon_appear} font-small`}>
-                                <p>
-                                    The number of limited editions you aim to sell. <br />It is advisable to retain at least one of the created limited editions - e.g if your track has a supply of 100 editions, you may choose to sell 99 to keep one for your own collection.
-                                </p>
-                                <p>
-                                    <span style={{ color: "var(--main-color)" }}>IMPORTANT</span>: the selling quantity cannot exceed the supply
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <input
-                        id="amount"
-                        type="number"
-                        min="1"
-                        required
-                        onWheel={numberInputOnWheelPreventChange}
-                        placeholder="Supply quantity that you aim to sell."
-                        onChange={(e) => setAmount(parseInt(e.target.value))}
                     />
                 </div>
                 <div className={Style.CreateItems_bottom_element}>
@@ -204,7 +179,7 @@ const CreateItem = ({ closeCreateItems }) => {
 
                 <div className={Style.CreateItems_bottom_element}>
                     <div className={Style.CreateItems_bottom_element_titleWithTutorial}>
-                        <label className="font-normal" htmlFor="royalties">Royalties</label>
+                        <div className='font-normal'>Royalties: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_royalties}%</span></div>
                         <div className={Style.CreateItems_bottom_element_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateItems_bottom_element_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateItems_bottom_element_titleWithTutorial_icon_appear} font-small`}>
@@ -219,16 +194,6 @@ const CreateItem = ({ closeCreateItems }) => {
                             </div>
                         </div>
                     </div>
-                    <input
-                        id="royalties"
-                        type="number"
-                        min="0"
-                        max="20"
-                        required
-                        onWheel={numberInputOnWheelPreventChange}
-                        placeholder="Royalties percentage. The numer is already in percentage format - e.g. insert 10 for 10% royalties."
-                        onChange={(e) => setRoyalties(e.target.value)}
-                    />
                 </div>
 
                 <div className={Style.CreateItems_bottom_element}>
@@ -275,17 +240,16 @@ const CreateItem = ({ closeCreateItems }) => {
                 )}
 
                 <div className={Style.CreateItems_bottom_btn}>
-                    {currentAccount ? <div>
-                        {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && royalties && supply && amount && user.artist_first_sale_fee && duration) ? (
-                            <div>
-                                {(amount > supply) ? (<InfoButton text="The amount is higher than the supply" />) : (
-                                    <ActionButton action={mintNFT} text="Create tokens" />
-                                )
-                                }
-                            </div>
-                        ) : (<InfoButton text="Insert all data to mint tokens" />)}</div> : <div>
-                        <ActionButton action={connectWallet} text="connect your wallet" />
-                    </div>}
+                    {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && supply && duration) ? (
+
+                        <SmartContractButton text="Create a digital collectible"
+                            action={mintNFT}
+                            onTransactionConfirmed={afterMinting}
+                            contractAddress={user.artist_minting_contract}
+                        />
+                    ) : (
+                        <InfoButton text="Insert all data to mint tokens" />
+                    )}
                 </div>
             </div>
         </div>

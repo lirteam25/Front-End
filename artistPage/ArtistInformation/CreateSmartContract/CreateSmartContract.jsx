@@ -1,21 +1,27 @@
 import React, { useState, useContext } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { CiSquareQuestion } from "react-icons/ci";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 
 import Style from "./CreateSmartContract.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { ActionButton, InfoButton } from '../../../components/componentsIndex';
+import { ActionButton, InfoButton, ButtonConnectWallet } from '../../../components/componentsIndex';
+import { NFTMintFactoryAddress, NFTMintFactoryABI } from "./../../../Context/Constants";
 
 const CreateSmartContract = ({ closeCreateSmartContract }) => {
 
-    const { user, connectWallet, currentAccount, createNFTMintSmartContract } = useContext(NFTMarketplaceContext);
+    const chainId = useActiveWalletChain()?.id;
+    const address = useActiveAccount()?.address;
+
+    const { user, createEditionDrop } = useContext(NFTMarketplaceContext);
 
     const [nameOfToken, setNameOfToken] = useState();
     const [symbolOfToken, setSymbolOfToken] = useState();
+    const [royalties, setRoyalties] = useState();
 
-    const mintSmartContract = async () => {
+    const mintSmartContract = async (editionDrop) => {
         closeCreateSmartContract();
-        await createNFTMintSmartContract(nameOfToken, symbolOfToken, user.accessToken);
+        await createEditionDrop(nameOfToken, symbolOfToken, royalties, user);
     };
 
     return (
@@ -86,12 +92,50 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                     />
                 </div>
                 <div className={Style.CreateSmartContract_bottom_95}>
-                    {currentAccount ? <div>
-                        {nameOfToken && symbolOfToken ?
-                            <ActionButton action={mintSmartContract} text="CREATE SMART CONTRACT" fontSize="0.9rem" /> :
-                            <InfoButton text="CREATE SMART CONTRACT" fontSize="0.9rem" />
-                        }</div> : <ActionButton action={connectWallet} text="CONNECT WALLET" fontSize="0.9rem" />}
-
+                    <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial}>
+                        <label className='font-normal' htmlFor='token name'> Royaties</label>
+                        <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
+                            <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
+                            <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
+                                <p>
+                                    Royalties are a percentage of the resale value that goes to the original creator, providing ongoing compensation for their digital artworks.
+                                    This ensures artists receive a share of the profits each time their tracks are resold between different users.<br />
+                                    Normally this percentage varies between <span style={{ color: "var(--main-color)" }}>5%</span> to <span style={{ color: "var(--main-color)" }}>10%</span>
+                                </p>
+                                <p>
+                                    <span style={{ color: "var(--main-color)" }}>IMPORTANT</span>: The number is already in percentage format- e.g. insert 5 for 5% royalties.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <input
+                        className={Style.user_box_input_input}
+                        style={{ margin: "0.5rem 0rem" }}
+                        id="royalties"
+                        placeholder={"Royalties percentage. The numer is already in percentage format - e.g. insert 10 for 10% royalties."}
+                        onChange={(e) => setRoyalties(e.target.value)}
+                    />
+                </div>
+                <div className={Style.CreateSmartContract_bottom_95}>
+                    <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial}>
+                        <div className='font-normal' htmlFor='token name'> First sale fees: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_first_sale_fee}%</span></div>
+                        <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
+                            <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
+                            <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
+                                <p>
+                                    Platform's share when a user purchase your track. Cannot be manually modified. <br />
+                                    If it does not align with the agreed-upon terms or for any inquiries, please contact us at <a href="mailto:info@lirmusic.com" style={{ color: "var(--main-color)", textDecoration: "underline" }}>info@lirmusic.com</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className={`${Style.CreateSmartContract_bottom_95} ${Style.bottom}`}>
+                    {address && chainId == 80002 ? (<>{nameOfToken && symbolOfToken && royalties ?
+                        <ActionButton text="Deploy contract" action={mintSmartContract} />
+                        :
+                        <InfoButton text="INSERT ALL DATA TO CREATE SMART CONTRACT" fontSize="0.9rem" />
+                    }</>) : (<ButtonConnectWallet user={user} />)}
                 </div>
             </div>
         </div>

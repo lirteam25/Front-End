@@ -48,6 +48,7 @@
     grid-column: 3;
     height: inherit;
     align-items: center;
+    text-align: right;
 }
 
 .navbar_container_right_noUser {
@@ -94,85 +95,6 @@
 .navbar_container_right_noUser_register:hover {
     transition: 0.5s all;
     color: white;
-}
-
-.navbar_container_right_yesUser {
-    display: grid;
-    height: inherit;
-    align-items: center;
-    grid-template-columns: 1fr 2fr 1fr;
-}
-
-.navbar_container_right_yesUser_connect {
-    grid-column: 2 / 3;
-    text-align: right;
-}
-
-.navbar_container_right_yesUser_connect_button {
-    color: var(--main-color);
-    cursor: pointer;
-}
-
-.navbar_container_right_yesUser_connect_wallet {
-    grid-column: 2 / 3;
-}
-
-.navbar_container_right_yesUser_connect_wallet_right {
-    grid-column: 2 / 3;
-    font-family: "Space Mono", sans-serif;
-    align-items: right;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.navbar_container_right_yesUser_profile {
-    display: flex;
-    align-content: center;
-    grid-column: 3 / 3;
-    justify-content: flex-end;
-}
-
-.navbar_container_right_yesUser_profile_icon {
-    align-self: center;
-    cursor: pointer;
-}
-
-.wallet_icon_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    position: relative;
-}
-
-.wallet_info_window,
-.wallet_info_window_wrong {
-    font-family: "Space Mono", sans-serif;
-    padding: 0.2rem 0.4rem;
-    align-items: center;
-    display: flex;
-    gap: 5px;
-}
-
-.wallet_info_window_icon_wrong {
-    color: red;
-}
-
-
-.navbar_container_right_yesUser_connect_wallet_wrong {
-    grid-column: 2 / 3;
-    font-family: "Space Mono", sans-serif;
-    align-items: right;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.navbar_container_right_yesUser_connect_wallet_wrong_icon {
-    font-size: 35px;
-    color: var(--background-grey);
-}
-
-.navbar_container_right_profile_pic {
-    font-size: 35px;
 }
 
 .navbar_sidebar {
@@ -328,6 +250,7 @@ body.overlay-open {
     animation: slideInOther 0.3s ease-in-out;
 }
 
+.navbar_openUsername,
 .navbar_ArtistForm,
 .navbar_CreateItem,
 .navbar_ArtistSettings {
@@ -494,6 +417,7 @@ body.overlay-open {
         width: 90%;
     }
 
+    .navbar_openUsername,
     .navbar_AccountSetting,
     .navbar_ArtistSettings {
         top: 50%;

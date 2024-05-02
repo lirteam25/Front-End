@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import axios from "axios";
-import { useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider, useWeb3ModalError } from '@web3modal/ethers/react';
-import { getAnalytics, logEvent } from "firebase/analytics";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, updateProfile, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
-const FormData = require('form-data');
 
+import axios from "axios";
+import { getAnalytics, logEvent } from "firebase/analytics";
+
+import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
+import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
+import { createAuth, signLoginPayload } from 'thirdweb/auth';
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing } from "thirdweb/extensions/erc1155";
+import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
+import { deployERC1155Contract } from "thirdweb/deploys";
+import { name, symbol } from "thirdweb/extensions/common";
+
+import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, deleteUser } from "firebase/auth";
+
+const FormData = require('form-data');
 //Internal Imports
-import { NFTMintABI, NFTMintSampleAddress, NFTMarketplaceAddress, NFTMarketplaceABI, NFTMintFactoryABI, NFTMintFactoryAddress } from "./Constants";
+import { OldNFTMarketplaceAddress, OldNFTMarketplaceABI, MarketplaceOwner } from "./Constants";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -70,13 +80,14 @@ const deleteOnDB = async (url, token) => {
 export const NFTMarketplaceContext = React.createContext();
 
 
+const auth = createAuth({
+    domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
+});
+
 // whatever data we are goin to pass inside here it will be available to the entire application. (we connected in _app.js)
 export const NFTMarketplaceProvider = ({ children }) => {
     const DBUrl = process.env.DB_URL;
 
-    const { open } = useWeb3Modal();
-    const { address, isConnected } = useWeb3ModalAccount();
-    const { walletProvider } = useWeb3ModalProvider();
     // Open Error
     const [error, setError] = useState("");
     const [openError, setOpenError] = useState(false);
@@ -95,28 +106,26 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [stopFooter, setStopFooter] = useState(false);
     const [stopAudioPlayer, setStopAudioPlayer] = useState(true);
+    const [openUsername, setOpenUsername] = useState(false);
 
     //We want to get the address of the wallet of who interact with the smart contract
-    const [currentAccount, setCurrentAccount] = useState("");
 
     const router = useRouter();
 
-    const connectingWithSmartContract = async (ContractAddress, ContractABI) => {
-        try {
-            const provider = new ethers.BrowserProvider(walletProvider);
-            const signer = await provider.getSigner();
-            const contract = fetchContract(ContractAddress, ContractABI, signer);
-            console.log(contract);
-            return contract;
-        } catch (error) {
-            console.log(error);
-            handleMetaMaskErrors(error, "Something went wrong while connecting with the smart contract. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_contract")
-        }
-    };
+    const account = useActiveAccount();
+    const activeWallet = useActiveWallet();
+    const { disconnect } = useDisconnect();
+    const address = account?.address;
+
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
+    });
+
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
 
     const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
         try {
-            const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
+            const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_RPC_MAINNET);
             const owner_privateKey = process.env.OWNER_PRIVATE_KEY;
             const signer = new ethers.Wallet(owner_privateKey, provider);
             const contract = fetchContract(ContractAddress, ContractABI, signer);
@@ -129,41 +138,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const handleMetaMaskErrors = (error, string, event) => {
-        setOpenLoading(false);
         console.log(error);
-        console.log(error.code);
-        if (error.code == 4001 || error.code == "ACTION_REJECTED") {
-            setOpenError(true); setError(`User rejected the request. Please try again.`);
-        } else if (error.code == -32002) {
-            setOpenError(true); setError(`A MetaMask request has alreayd being throw. Please check MetaMask and accept the transaction.`);
-        }
-        else if (error.code == "CALL_EXCEPTION") {
-            setOpenError(true); setError(`${string} <br/><br/>Check if you have sufficient fund to perform the transaction.`);
-        } else {
-            setOpenError(true); setError(`${string}`);
-            const analytics = getAnalytics();
-            logEvent(analytics, `${event}`);
-        }
+        setOpenLoading(false);
+        setOpenError(true); setError(`${string}`);
+        const analytics = getAnalytics();
+        logEvent(analytics, `${event}`);
     }
-
-    //Check if wallet is connected to the application
-    const checkIfWalletConnected = async () => {
-        try {
-            if (isConnected) { return address.toLocaleLowerCase() }
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while checking the wallet connected. <br/>Please try to refresh the page. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_check_if_wallet_connected")
-        }
-    };
-
-
-    // Connect Wallet to the apllication function
-    const connectWallet = async () => {
-        try {
-            await open();
-        } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while connecting the wallet. <br/>Please try again to connect the wallet. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_connect_wallet");
-        }
-    };
 
     // Upload image to IPFS function. The input is a file (audio). 
     const pinFileToIPFS = async (file, artist) => {
@@ -210,29 +190,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
             })
     };
 
-    const pinJSONToIPFS = async (JSONBody) => {
-        const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
-        //making axios POST request to Pinata
-        return axios
-            .post(url, JSONBody, {
-                headers: {
-                    pinata_api_key: process.env.PINATA_API_KEY,
-                    pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY,
-                }
-            })
-            .then(function (response) {
-                const pinataURL = "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-                return (
-                    pinataURL
-                )
-            })
-    };
-
     const cloudinaryUploadVideo = async (file, artist) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            if (process.env.NODE_ENV == "production") {
+            if (process.env.ACTIVE_CHAIN == "polygon") {
                 data.append("upload_preset", "my-uploads");
             } else {
                 data.append("upload_preset", "test_uploads");
@@ -254,12 +216,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     };
 
-
     const cloudinaryUploadImage = async (file, artist) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            if (process.env.NODE_ENV == "production") {
+            if (process.env.ACTIVE_CHAIN == "polygon") {
                 data.append("upload_preset", "my-uploads");
             } else {
                 data.append("upload_preset", "test_uploads");
@@ -283,198 +244,243 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    async function withWalletCheck(fn) {
-        const identification = await fetchUserInformation();
-        const user = await userToWallet(identification.accessToken);
-        let connectedWallet = await checkIfWalletConnected();
-        if (!connectedWallet) {
-            connectWallet();
-            connectedWallet = await checkIfWalletConnected();
-        }
-        if (connectedWallet && user.wallet !== connectedWallet) {
-            setOpenLoading(false);
-            setNotificationText(`The wallet connected ${renderString(connectedWallet, 5)} is not the same wallet connected to your account. Switch to ${user.wallet} to complete the transaction`);
-            setNotificationTitle("Wrong wallet connected");
-            setOpenNotification(true);
-        } else {
-            return fn();
-        }
-    };
+    async function createEditionDrop(nameToken, symbolToken, royalties, user) {
+        setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
 
-    const createNFTMintSmartContract = async (nameToken, symbolToken, accessToken) => {
-        await withWalletCheck(async () => {
-            setLoading("The smart contract creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
-            try {
-                const NFTMintSample = await connectingWithSmartContract(NFTMintSampleAddress, NFTMintABI);
-                const connectedWallet = await checkIfWalletConnected();
-                const initData = NFTMintSample.interface.encodeFunctionData("initialize", [nameToken, symbolToken, connectedWallet]);
-                const NFTMintFactoryContract = await connectingWithSmartContract(NFTMintFactoryAddress, NFTMintFactoryABI);
-                const tx = await NFTMintFactoryContract.createNFTMint(initData);
-                setLoading("The smart contract is being created. Wait for the transaction to be completed."); setOpenLoading(true);
-                console.log(tx);
-                const result = await tx.wait();
-                console.log(result.logs);
-                const logs = result.logs;
-                let BeaconProxyAddress;
-                for (const element of logs) {
-                    let currentLog = element;
-                    // Check if the current object has the desired fragment.name
-                    if (currentLog.fragment && currentLog.fragment.name === "NFTMintDeployed") {
-                        BeaconProxyAddress = currentLog.args[0].toLowerCase();
-                        break; // Stop the loop since you found the desired object
-                    }
-                };
-                console.log(BeaconProxyAddress);
+        const defaultAdmin = address;
+        const description = "Smart Contract Representing Unpublished Musical Content"
+        const name = nameToken;
+        const symbol = symbolToken;
 
-                const [NFTMarketplaceContract, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
-                console.log(NFTMarketplaceContract);
-                const tx1 = await NFTMarketplaceContract.storeMintingContracts(BeaconProxyAddress, {
-                    gasPrice: gasPrice
-                });
-                const result2 = await tx1.wait();
-                console.log(result2);
+        const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
 
-                const data = JSON.stringify({ "artist_minting_contract": BeaconProxyAddress });
-                console.log(data);
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
-                    .then((response) => {
-                        console.log(response);
-                        setOpenLoading(false);
+        const trustedForwarders = [];
+        const saleRecipient = address;
+        const royaltyRecipient = address;
+        const royaltyBps = royalties * 100;
+        const platformFeeBps = user.artist_first_sale_fee * 100;
+        const platformFeeRecipient = MarketplaceOwner;
 
-                    });
+        console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
 
-                window.location.reload();
-                setToast("You successfully created your smart contract");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while creating the smart contracts. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
+        const contractAddress = (await deployERC1155Contract({
+            chain,
+            client,
+            account,
+            type: "DropERC1155",
+            params: {
+                contractURI,
+                defaultAdmin,
+                description,
+                name,
+                platformFeeBps,
+                platformFeeRecipient,
+                royaltyBps,
+                royaltyRecipient,
+                saleRecipient,
+                symbol,
+                trustedForwarders
             }
-        })
+        })).toLowerCase();
+
+        console.log(contractAddress);
+
+        /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
+
+        console.log(dataEnablingContractForPayments);
+        const post = async (url, data = {}, token) => {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-secret-key': token,
+                },
+                body: data
+            });
+            return response.json()
+        }
+
+        const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
+
+        console.log(final);
+        const contract_id = final.contractId
+        console.log(contract_id); */
+
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
+        await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
+            .then((response) => {
+                console.log(response);
+                setOpenLoading(false);
+            });
+
+        setOpenLoading(false);
+        setToast("Smart Contract successfully created");
+        setOpenToast(true);
+        window.location.reload()
     }
 
-    const createNFT = async (
-        nftMintAddress, artist, song, formInputPrice, audioPinata, audioCloudinary, imageSongPinata, imageSongCloudinary, description, royalties, firstSaleFees, supply, amount, launch_date, audioDuration
-    ) => {
-        await withWalletCheck(async () => {
-            setLoading("The token creating procedure has started. Accept the MetaMask transaction."); setOpenLoading(true);
-            //AGGIUNGI PINATAA
-            const data = { artist, song, "image": imageSongPinata, "audio": audioPinata, description, royalties };
-            const token_URI = await pinJSONToIPFS(data);
+    async function createNFT(
+        contractEditionDrop, artist, song, formInputPrice, audioPinata, imageSongPinata, description, supply, launch_date) {
 
-            try {
-                const price = ethers.parseUnits(formInputPrice.toString(), 18);
-                const NFTMintContract = await connectingWithSmartContract(nftMintAddress, NFTMintABI);
+        setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
 
-                //First smart contract transaction to create the token
-                console.log(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
-                const tokenCreation = await NFTMintContract.createAndListToken(token_URI, price, supply, amount, royalties, firstSaleFees, NFTMarketplaceAddress);
-                setOpenLoading(true); setLoading("The token is being created and the relative amount listed. Wait for the transaction to be completed.");
-                const tokenCreation1 = await tokenCreation.wait();
+        console.log(contractEditionDrop);
+        const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop })
+        console.log(nextTokenId);
 
-                const logs = tokenCreation1.logs;
-                console.log(logs);
-                let token_id;
-                for (const element of logs) {
-                    let currentLog = element;
-                    // Check if the current object has the desired fragment.name
-                    if (currentLog.fragment && currentLog.fragment.name === "TokenCreated") {
-                        token_id = Number(currentLog.args[0]);
-                        break; // Stop the loop since you found the desired object
-                    }
-                };
-                console.log(token_id);
+        const lazyMintTransaction = lazyMint({
+            contract: contractEditionDrop,
+            nfts: [{ name: song, artist, description, image: imageSongPinata, audio: audioPinata }]
+        });
+        console.log(lazyMintTransaction);
+        let txLazyMintEncoded = await encode(lazyMintTransaction);
 
+        const startingTime = launch_date ? launch_date : new Date();
+        const claimConditionsTransaction = setClaimConditions({
+            contract: contractEditionDrop,
+            tokenId: nextTokenId,
+            phases: [
+                {
+                    startTime: startingTime,
+                    currencyAddress: NATIVE_TOKEN_ADDRESS,
+                    price: formInputPrice, // public sale price
+                    maxClaimableSupply: supply
+                },
+            ],
+        });
+        console.log(claimConditionsTransaction);
+        let txClaimConditionEncoded = await encode(claimConditionsTransaction);
 
-                const transaction1 = tokenCreation1.hash;
-                const token_address = nftMintAddress;
-                const author_address = tokenCreation1.from.toLowerCase();
+        return prepareContractCall({
+            contract: contractEditionDrop,
+            method: resolveMethod("multicall"),
+            params: [[txLazyMintEncoded, txClaimConditionEncoded]]
+        });
+    }
+    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
+        try {
+            const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
+            const token_id = parseInt(nextTokenId) - 1;
+            const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
+            console.log(token_URI);
 
-                //Retreive the name and symbol of the token
-                const name = await NFTMintContract.viewName();
-                const symbol = await NFTMintContract.viewSymbol();
-                //Get Firebase Access Token
-                const identification = await fetchUserInformation();
+            const transactionHash = receipt.transactionHash;
 
-                //Post NFTInfo document
-                const audioPreview = "/du_30" + audioCloudinary;
-                let dataTokenInfo;
-                if (launch_date) {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice, launch_date });
-                } else {
-                    dataTokenInfo = JSON.stringify({ token_id, token_address, name, symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, token_URI, "launch_price": formInputPrice });
-                }
-                await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
+            const token_address = contractEditionDrop.address.toLowerCase();
 
-                //Post Owners document
-                const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": author_address, "amount": supply, "sellingQuantity": amount, "price": formInputPrice, date: new Date() });
+            const token_symbol = await symbol({ contract: contractEditionDrop });
+            const token_name = await name({ contract: contractEditionDrop })
 
-                await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
-
-                //Post Transaction document
-                const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply, amount], "transactions": [transaction1, transaction1], 'transactions_type': ["MINTING", "LISTING"], 'price': [0, formInputPrice] })
-                await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, identification.accessToken).then((response) => {
-                    console.log("response:", response);
-                });
-
-                const analytics = getAnalytics();
-                logEvent(analytics, 'create');
-
-                setOpenLoading(false);
-                setToast("Token successfully listed");
-                setOpenToast(true);
-                router.push("/collection");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while creating the tokens. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_create");
+            //Post NFTInfo document
+            const endPreview = parseInt(startPreview) + 30;
+            const audioPreview = `/du_30,so_${startPreview},eo_${endPreview}` + audioCloudinary;
+            let dataTokenInfo;
+            const accessToken = (await fetchUserInformation()).accessToken;
+            if (launch_date) {
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+            } else {
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
             }
-        })
+            await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
+                console.log("response:", response);
+            });
+
+            //Post Owners document
+            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address.toLowerCase(), "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+
+            await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
+                console.log("response:", response);
+            });
+
+            //Post Transaction document
+            const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
+            await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
+                console.log("response:", response);
+            });
+
+            const analytics = getAnalytics();
+            logEvent(analytics, 'create');
+
+            setOpenLoading(false);
+            setToast("Tokens successfully created");
+            setOpenToast(true);
+
+            router.push("/collection");
+        } catch (error) {
+            handleMetaMaskErrors(error, "You successfully create tokens but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_NFT_creation");
+        }
+    }
+
+    const SecondListing = async (NFTMarketplaceContract, nft, formInputPrice, amount) => {
+        /* setOpenLoading(true); setLoading("The token listing producedure has started. Accept the transaction."); */
+        console.log(NFTMarketplaceContract);
+        let tx;
+        const totalQuantity = parseInt(nft.sellingQuantity) + parseInt(amount);
+        console.log(totalQuantity);
+        if (nft.sellingQuantity && nft.sellingQuantity > 0) {
+            const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
+            console.log(params);
+            const date = new Date(params.startTimeInSeconds * 1000);
+            console.log(date);
+            //Call updateListing
+            const listing = {
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: formInputPrice,
+                quantity: totalQuantity,
+                isReservedListing: false,
+                startTimestamp: date
+            }
+            tx = updateListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id, listing });
+            setLoading("Tokens are being listed.");
+
+        } else {
+            console.log("here");
+
+            tx = createListing({
+                contract: NFTMarketplaceContract,
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                quantity: amount,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: formInputPrice,
+                startTimestamp: new Date(),
+                isReservedListing: false
+            });
+            console.log(tx);
+        }
+        return tx;
     };
-
-    const SecondListing = async (nft, formInputPrice, amount) => {
-        await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token listing producedure has started. Accept the MetaMask transaction.");
-                const price = ethers.parseUnits(formInputPrice.toString(), 18);
-                const NFTMintContract = await connectingWithSmartContract(nft.token_address, NFTMintABI);
-
-                //Smart contract transaction to list the token
-                const transaction = await NFTMintContract.secondaryListing(nft.token_id, amount, price, NFTMarketplaceAddress);
-                setOpenLoading(true); setLoading("The token is being listed. Wait for the transaction to be completed.");
-                await transaction.wait();
-                console.log(transaction);
-
-                const transactions = transaction.hash;
-                const newseller = transaction.from.toLowerCase();
-
-                const identification = await fetchUserInformation();
-                //Update transaction history
-                const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
-                await patchOnDB(
-                    `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, identification.accessToken).then((response) => {
-                        console.log(response);
-                    });
-                //Update token Owners
-                const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": newseller, "sellingQuantity": amount, "price": formInputPrice });
-                await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, identification.accessToken).then((response) => {
+    async function updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id) {
+        try {
+            //Update transaction history
+            const transactions = receipt.transactionHash;
+            const accessToken = (await fetchUserInformation()).accessToken;
+            const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
+            await patchOnDB(
+                `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
                     console.log(response);
                 });
+            //Update token Owners
+            const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address.toLowerCase(), listing_id, "sellingQuantity": amount, "price": formInputPrice });
+            await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
+                console.log(response);
+            });
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'secondary_listing');
+            const analytics = getAnalytics();
+            logEvent(analytics, 'secondary_listing');
 
-                setOpenLoading(false);
+            setOpenLoading(false);
 
-                setToast("Token successfully listed");
-                setOpenToast(true);
-                router.push("/my-profile");
-            }
-            catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while listing the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_secondary_listing");
-            }
-        })
-    };
+            setToast("Token successfully listed");
+            setOpenToast(true);
+            router.push("/my-profile");
+        } catch (error) {
+            handleMetaMaskErrors(error, "You successfully list tokens but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_secondary_listing");
+        }
+    }
 
     //Fetch NFT related to discover page.
     const fetchDiscoverNFTs = async () => {
@@ -485,11 +491,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     //Given a Firebase accessToken returns NFT related to my items.
-    const fetchMyNFTs = async (accessToken) => {
+    const fetchMyNFTs = async () => {
+        const accessToken = (await fetchUserInformation()).accessToken;
         const response = await getFromDB(`${DBUrl}/api/v1/nfts/ownersNFTInfo`, accessToken
         ).then((response) => { return response });
         console.log(response);
-        return response.data.NFTInfoOwned;
+        return response?.data?.NFTInfoOwned;
     };
 
     //Given the owner _id returns the related item.
@@ -506,7 +513,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response.data.owners;
     };
 
-    const fetchNFTOwners = async (token_id, token_address, accessToken) => {
+    const fetchNFTOwners = async (token_id, token_address) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
         const myNFTs = await fetchMyNFTs(accessToken);
         const filteredNFTs = myNFTs.filter(nft => {
             return nft.token_id === token_id && nft.token_address === token_address;
@@ -551,115 +559,126 @@ export const NFTMarketplaceProvider = ({ children }) => {
         setOpenToast(true);
     }
 
-    const buyNFTMatic = async (seller) => {
-        await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token buying producedure has started. Accept the MetaMask transaction.");
-                //Smart contract transaction to buy the token
-                const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-                const [roundId, startedAt,] = await NFTMarketplaceContract.getLatestPrice();
-                console.log(roundId);
-                const USDprice = ethers.parseEther(seller.price.toString());
-                const MaticPrice = await NFTMarketplaceContract.getLatestPriceGivenRound(roundId, USDprice);
-                console.log(MaticPrice);
-                console.log(seller.token_id, seller.token_address, seller.owner_of);
-                const transaction = await NFTMarketplaceContract.createMarketSaleMatic(
-                    seller.token_id, seller.token_address, seller.owner_of, roundId, startedAt,
-                    { value: MaticPrice }
-                );
-                setOpenLoading(true); setLoading("The token is being bought. Wait for the transaction to be completed.");
-                await transaction.wait();
-                console.log("transaction", transaction);
+    async function claimNFT(contract, nft) {
+        setOpenLoading(true); setLoading("The token buying procedure has started. Accept the transaction.");
+        let tx;
 
-                await updateDBafterPurchase(seller, transaction);
-
-                const analytics = getAnalytics();
-                logEvent(analytics, 'purchase');
-
-                setOpenLoading(false);
-                setToast("Token successfully purchased");
-                setOpenToast(true);
-                router.push("/my-profile");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while buying the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_purchase");
-            }
-        })
+        if (nft.isFirstSale) {
+            tx = claimTo({
+                contract,
+                to: address,
+                tokenId: nft.token_id,
+                quantity: 1,
+            });
+            console.log("transaction", tx);
+        } else {
+            tx = await buyFromListing({
+                contract,
+                listingId: nft.listing_id,
+                quantity: 1,
+                recipient: address,
+            });
+            console.log("transaction", tx);
+        }
+        return tx;
     };
+    async function updateDBafterPurchase(receipt, seller, newBuyer) {
+        try {
+            const transactions = receipt.transactionHash;
+            const accessToken = (await fetchUserInformation()).accessToken;
+            const buyer = newBuyer;
+            const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
+            await patchOnDB(
+                `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
+                    console.log(response);
+                });
+            const data2 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, "owner_of": seller.owner_of, "buyer": buyer });
+            await patchOnDB(
+                `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
+                    console.log(response);
+                });
 
-    const updateDBafterPurchase = async (seller, transaction, newBuyer) => {
-        const identification = await fetchUserInformation();
-        const transactions = transaction.hash;
-        const buyer = newBuyer || transaction.from.toLowerCase();
-        const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
-        await patchOnDB(
-            `${DBUrl}/api/v1/transactions/addTransaction`, data1, identification.accessToken).then((response) => {
-                console.log(response);
-            });
-        const data2 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, "owner_of": seller.owner_of, "buyer": buyer });
-        await patchOnDB(
-            `${DBUrl}/api/v1/owners/nftSold`, data2, identification.accessToken).then((response) => {
-                console.log(response);
-            });
+            const analytics = getAnalytics();
+            logEvent(analytics, 'purchase');
+
+            setOpenLoading(false);
+            setToast("Token successfully purchased");
+            setOpenToast(true);
+            router.push("/my-profile");
+        } catch (error) {
+            handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
+        }
     };
 
     const freeNFTTransfer = async (nft) => {
-        await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed.");
+        try {
+            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
 
-                const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(NFTMarketplaceAddress, NFTMarketplaceABI);
-                console.log(NFTMarketplace, gasPrice);
-                console.log(nft.token_id, nft.token_address, nft.owner_of, currentAccount);
-                const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, currentAccount,
-                    {
-                        gasPrice: gasPrice
-                    });
+            const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(OldNFTMarketplaceAddress, OldNFTMarketplaceABI);
+            console.log(NFTMarketplace, gasPrice);
+            console.log(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase());
+            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase(),
+                {
+                    gasPrice: gasPrice
+                });
 
-                console.log(transaction);
-                const trans = await transaction.wait();
-                console.log(trans);
+            console.log(transaction);
+            const trans = await transaction.wait();
+            console.log(trans);
 
-                await updateDBafterPurchase(nft, transaction, currentAccount);
+            await updateDBafterPurchase(trans, nft, address.toLowerCase());
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'retrieve');
-
-                setOpenLoading(false);
-
-                setToast("Token successfully transferred");
-                setOpenToast(true);
-                router.push("/my-profile");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
-            }
-        })
+        } catch (error) {
+            handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
+        }
     }
 
-    const changeNFTPrice = async (nft, formInputPrice) => {
-
+    async function changeNFTPrice(contract, nft, formInputPrice) {
+        setLoading("The change price procedure has started. Accept the transaction."); setOpenLoading(true);
+        let tx;
+        if (nft.isFirstSale) {
+            tx = setClaimConditions({
+                contract,
+                tokenId: nft.token_id,
+                phases: [
+                    {
+                        maxClaimableSupply: nft.supply,
+                        currencyAddress: NATIVE_TOKEN_ADDRESS,
+                        price: formInputPrice,
+                        startTime: new Date(),
+                    },
+                ],
+            });
+        } else {
+            const params = await getListing({ contract, listingId: nft.listing_id });
+            const date = new Date(params.startTimeInSeconds * 1000);
+            console.log(date);
+            //Call updateListing
+            const listing = {
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: formInputPrice,
+                quantity: nft.sellingQuantity,
+                isReservedListing: false,
+                startTimestamp: date
+            }
+            tx = updateListing({ contract, listingId: nft.listing_id, listing });
+        }
+        return tx;
+    };
+    async function updateDBOnPriceChange(receipt, formInputPrice, nft) {
         try {
-            setOpenLoading(true); setLoading("The token changing price producedure has started. Accept the MetaMask transaction.");
-            const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-            const price = ethers.parseUnits(formInputPrice, 18);
-
-            //Smart contract transaction to change token price
-            const transaction = await NFTMarketplaceContract.changePrice(nft.token_id, nft.token_address, price);
-            console.log(transaction);
-            setOpenLoading(true); setLoading("The price is being changed. Wait for the transaction to be completed.");
-            await transaction.wait();
-            console.log(transaction);
-            const transactions = transaction.hash;
-
-            //Update transaction history
-            const identification = await fetchUserInformation();
+            const transactions = receipt.transactionHash;
+            const accessToken = (await fetchUserInformation()).accessToken;
             const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "PRICE CHANGE", "price": formInputPrice, 'quantity': nft.sellingQuantity });
             await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
+                `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, accessToken).then((response) => {
                     console.log(response);
                 });
             //Update Owners selling price
             const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, 'price': formInputPrice });
-            await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, identification.accessToken).then((response) => {
+            await patchOnDB(`${DBUrl}/api/v1/owners/updatePrice`, data, accessToken).then((response) => {
                 console.log(response);
             });
 
@@ -672,49 +691,68 @@ export const NFTMarketplaceProvider = ({ children }) => {
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
-            handleMetaMaskErrors(error, "Something went wrong while changing the token price. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
+            handleMetaMaskErrors(error, "You successfully changed the token price, but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
         }
+    }
 
+    async function delistItem(NFTMarketplaceContract, nft, amount) {
+        setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the transaction.");
+        let tx
+        if (amount >= nft.sellingQuantity) {
+            tx = cancelListing({
+                contract: NFTMarketplaceContract,
+                listingId: nft.listing_id
+            });
+            setLoading("The token is being delisted.");
+        } else {
+            const params = await getListing({ contract: NFTMarketplaceContract, listingId: nft.listing_id });
+            const date = new Date(params.startTimeInSeconds * 1000);
+            console.log(date);
+            const newAmount = params.quantity - amount;
+            //Call updateListing
+            const listing = {
+                assetContractAddress: nft.token_address,
+                tokenId: nft.token_id,
+                currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+                pricePerToken: nft.price,
+                quantity: newAmount,
+                isReservedListing: false,
+                startTimestamp: date
+            }
+            tx = updateListing({ contract, listingId: nft.listing_id, listing });
+            setLoading("The price is being changed.");
+        }
+        return tx;
     };
-
-    const delistItem = async (nft, amount) => {
-        await withWalletCheck(async () => {
-            try {
-                setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the MetaMask transaction.");
-                const NFTMarketplaceContract = await connectingWithSmartContract(NFTMarketplaceAddress, NFTMarketplaceABI);
-                //Smart contract transaction to delist
-                const transaction = await NFTMarketplaceContract.delistTokens(nft.token_id, nft.token_address, amount);
-                setOpenLoading(true); setLoading("The token is being delisted. Wait for the transaction to be completed.");
-                await transaction.wait();
-                setOpenLoading(false);
-                const transactions = transaction.hash;
-                //Update transaction hystory
-
-                const identification = await fetchUserInformation();
-                const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "DELISTING", "price": nft.price, 'quantity': amount });
-                await patchOnDB(
-                    `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, identification.accessToken).then((response) => {
-                        console.log(response);
-                    });
-                //Update Owners selling quantity
-                const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, "amount": amount });
-                await patchOnDB(`${DBUrl}/api/v1/owners/delistItems`, data, identification.accessToken).then((response) => {
+    async function updateDBOnItemDelisting(receipt, nft, amount) {
+        try {
+            const transactions = receipt.transactionHash;
+            //Update transaction hystory
+            const accessToken = (await fetchUserInformation()).accessToken;
+            const transactionData = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "DELISTING", "price": nft.price, 'quantity': amount });
+            await patchOnDB(
+                `${DBUrl}/api/v1/transactions/addTransaction`, transactionData, accessToken).then((response) => {
                     console.log(response);
                 });
 
-                const analytics = getAnalytics();
-                logEvent(analytics, 'delist');
+            //Update Owners selling quantity
+            const data = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": nft.owner_of, "amount": amount });
+            await patchOnDB(`${DBUrl}/api/v1/owners/delistItems`, data, accessToken).then((response) => {
+                console.log(response);
+            });
 
-                setOpenLoading(false);
+            const analytics = getAnalytics();
+            logEvent(analytics, 'delist');
 
-                setToast("Tokens successfully delisted");
-                setOpenToast(true);
-                router.push("/my-profile");
-            } catch (error) {
-                handleMetaMaskErrors(error, "Something went wrong while delisting the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_delist");
-            }
-        })
-    };
+            setOpenLoading(false);
+
+            setToast("Tokens successfully delisted");
+            setOpenToast(true);
+            router.push("/my-profile");
+        } catch (error) {
+            handleMetaMaskErrors(error, "Tokens were delisted but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_delisting");
+        }
+    }
 
     //Function to handle Authentication Firebase Errors
     const handleAuthFirebaseError = (error, string) => {
@@ -729,120 +767,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    const setUserAndCheckWallet = async () => {
-        checkIfWalletConnected().then((wallet) => {
-            fetchUserInformation().then((UserFirebase) => {
-                if (UserFirebase) {
-                    userToWallet(UserFirebase.accessToken).then((UserDB) => {
-                        const userData = { ...UserFirebase, ...UserDB };
-                        setUser(userData);
-                        if (wallet && UserDB.wallet && wallet != UserDB.wallet) {
-                            setNotificationText(`The current connected wallet (${renderString(wallet, 5)}) does not match the one linked with you account (${renderString(UserDB.wallet, 5)}). <br/>Just one wallet can be linked with your account. In order to change your account linked wallet, go in <a href='./my-profile' style='color: var(--main-color)'>your profile</a>.`)
-                            setNotificationTitle("Wrong wallet connected");
-                            setOpenNotification(true);
-                        }
-                    });
-                };
-            });
-        });
-    };
-
-    //MongoDB user instance creation and check if any wallet is connected
-    const saveUserDataInDB = async (accessToken) => {
-        let data;
-        if (currentAccount) {
-            data = JSON.stringify({ 'wallet': currentAccount });
-        } else {
-            data = JSON.stringify({});
-        }
-        const response = await postOnDB(`${DBUrl}/api/v1/users`, data, accessToken);
-        console.log(response);
-        if (response.status == "success" && response.message == "A user with this wallet already exists, but the new user has been created without setting the wallet parameter.") {
-            alert(`We were able to create your account but the wallet connected ${renderString(currentAccount, 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(currentAccount, 5)} and the other account`);
-        };
-    };
-
-    //Sign Up with email and password
-    const signUp = async (username, email, password, confirmPassword) => {
-        if (password != confirmPassword) {
-            setOpenErrorAuth(true); setErrorAuth("Passwords are not equal");
-        } else {
-            try {
-                const auth = getAuth();
-                //Firebase account creation
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const analytics = getAnalytics();
-                logEvent(analytics, 'sign_up');
-                await updateProfile(userCredential.user, { displayName: username })
-                sendEmailVerification(auth.currentUser);
-
-                //MongoDB user instance creation & check wallet
-                saveUserDataInDB(userCredential.user.accessToken);
-                //the user has to verify its email before being able to log in
-                signOut(auth)
-                    .then(() => {
-                        setOpenRegister(false);
-                        setNotificationTitle("Confirm you Email");
-                        setNotificationText("Thank you for registering with us! To activate your account, please check your email inbox for a confirmation message.")
-                        setOpenNotification(true);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    }
-                    );
-            } catch (error) {
-                handleAuthFirebaseError(error, "Error during registration");
-            }
-        }
-    };
-
-    //Sign In with email and password
-    const signIn = async (email, password) => {
-        const auth = getAuth();
-        try {
-            //SignIn process
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const analytics = getAnalytics();
-            logEvent(analytics, 'login');
-            const UserFirebase = userCredential.user;
-            console.log(UserFirebase);
-
-            if (UserFirebase.emailVerified) {
-                //Check Wallet connected
-                if (currentAccount) {
-                    const DBUser = await userToWallet(UserFirebase.accessToken);
-                    console.log(DBUser);
-                    console.log(DBUser.wallet == null);
-                    if (DBUser.wallet == null) {
-                        const data = JSON.stringify({ 'wallet': currentAccount });
-                        console.log(data);
-                        console.log(UserFirebase.accessToken);
-                        const response = await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, UserFirebase.accessToken);
-                        console.log("Update Wallet:", response);
-                        if (response.status == "fail" && response.message == "Duplicate field value. Please use another value") {
-                            setNotificationTitle("WRONG WALLET CONNECTED")
-                            setNotificationText(`We were able to login into your account but the wallet connected ${renderString(currentAccount, 5)} is already connected to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet ${renderString(currentAccount, 5)} and the other account`)
-                            setOpenNotification(true);
-                        }
-                    }
-                }
-
-                await setUserAndCheckWallet();
-                setOpenLogin(false);
-            } else {
-                sendEmailVerification(auth.currentUser);
-                await signOut(auth);
-                setOpenLogin(false);
-                setNotificationTitle("Confirm you Email")
-                setNotificationText("You account has not been activated! To activate your account, please check your email inbox for a confirmation message.")
-                setOpenNotification(true);
-            };
-        } catch (error) {
-            console.log(error);
-            handleAuthFirebaseError(error, "Error during login");
-        }
-    };
-
     //Get who is currently connected
     const fetchUserInformation = () => {
         const auth = getAuth();
@@ -854,9 +778,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const disconnectUser = () => {
+        disconnect(activeWallet);
         const auth = getAuth();
         signOut(auth).then(() => {
-            window.location.href = "./";
+            setUser(null);
         })
             .catch((error) => {
                 console.error(error);
@@ -864,22 +789,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             );
     };
 
-    const forgotPassword = async (email) => {
-        const auth = getAuth();
-        sendPasswordResetEmail(auth, email)
-            .then(() => {
-                setNotificationTitle("Email sent")
-                setNotificationText("You correctly requested to change your password. Open your email box and follow the instruction to change your password");
-                setOpenNotification(true);
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error updating password");
-            });
-    };
-
     //Given the Firebase token returns the saved DB user
-    const userToWallet = async (token) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/users/getMe`, token);
+    const userToWallet = async (accessToken) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/getMe`, accessToken);
         console.log(response.data.user);
         return response.data.user;
     };
@@ -898,12 +810,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenToast(true);
 
                 setOpenAccountSetting(false);
-                setUserAndCheckWallet();
+                setOpenUsername(false);
+                /* setUserAndCheckWallet(); */
             });
         });
     };
 
-    const updateUserInformations = async (artist_name, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo, accessToken) => {
+    const updateUserInformations = async (artist_name, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
         const dataObject = {
             artist_name,
             artist_description,
@@ -927,88 +841,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
     }
 
-    const updateUserPassword = async (currentPassword, newPassword, confirmNewPassword) => {
-        if (newPassword == confirmNewPassword) {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-            // Reauthenticate the user with their current password
-            reauthenticateWithCredential(user, credential)
-                .then(() => {
-                    // If reauthentication is successful, update the password
-                    updatePassword(user, newPassword)
-                        .then(() => {
-
-                            setToast("Password successfully updated");
-                            setOpenToast(true);
-
-                            setOpenAccountSetting(false);
-                        })
-                        .catch((error) => {
-                            handleAuthFirebaseError(error, "Error updating password");
-                        });
-                })
-                .catch((error) => {
-                    handleAuthFirebaseError(error, "Error re-authenticating user");
-                });
-        } else {
-            handleAuthFirebaseError("boh", "Passwords do not match");
-        }
-    };
-
-    const deleteUsersEmailPsw = (currentPassword) => {
+    const deleteUsers = () => {
         const auth = getAuth();
-        const user = auth.currentUser;
-        const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-        // Reauthenticate the user with their current password
-        reauthenticateWithCredential(user, credential)
-            .then(() => {
-                deleteOnDB(`${DBUrl}/api/v1/users/deleteMe`, user.accessToken).then((response) => {
-                    console.log(response);
-                });
-                deleteUser(user).then(() => {
+        createPayload().then((signatureResult) => {
+            signInOrUp(signatureResult).then((loggedInUser) => {
+                deleteUser(loggedInUser).then(() => {
 
                     setToast("Account successfully deleted");
                     setOpenToast(true);
                     setOpenAccountSetting(false);
                     window.location.reload();
-                }).catch((error) => {
-                    handleAuthFirebaseError(error, "Error deleting user");
-                });
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error re-authenticating user");
-            });
-    };
-
-    const unlinkWalletEmailPsw = (password) => {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        const credential = EmailAuthProvider.credential(user.email, password);
-        // Reauthenticate the user with their current password
-        reauthenticateWithCredential(user, credential)
-            .then(async () => {
-                const data = JSON.stringify({ "wallet": "undefined" });
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, user.accessToken)
-                    .then((response) => {
-                        console.log(response);
-
-                        setToast("Wallet successfully unlinked");
-                        setOpenToast(true);
-
-                        setOpenAccountSetting(false);
-                        window.location.reload();
-                    })
+                })
                     .catch((error) => {
-                        handleAuthFirebaseError(error, "Error unlinking wallet");
+                        handleAuthFirebaseError(error, "Error re-authenticating user");
                     });
-            })
-            .catch((error) => {
-                handleAuthFirebaseError(error, "Error re-authenticating user");
             });
-    };
+        });
+    }
 
     const fetchTransactionsInfo = async (token_id, token_address) => {
         const response = await getFromDB(`${DBUrl}/api/v1/transactions?token_id=${token_id}&token_address=${token_address}`);
@@ -1044,8 +893,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const [user, setUser] = useState(null);
-    const [openRegister, setOpenRegister] = useState(false);
-    const [openLogin, setOpenLogin] = useState(false);
 
     const [openAccountSetting, setOpenAccountSetting] = useState(false);
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
@@ -1059,45 +906,67 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [notificationTitle, setNotificationTitle] = useState(null);
     const [notificationText, setNotificationText] = useState(null);
 
-
-    const verifyWallet = async (wallet) => {
-        const identification = await fetchUserInformation();
-        if (user) {
-            if (!user.wallet) {
-                const data = JSON.stringify({ 'wallet': wallet });
-                await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, identification.accessToken).then((response) => {
-                    console.log("Update Wallet:", response);
-                    if (response.status == "error" && response.error.codeName == "DuplicateKey") {
-                        setNotificationText(`The wallet ${renderString(wallet, 5)} is already linked to another account. One wallet can only be connected to one account. Consequently, connect a new wallet or delete the connection between this wallet and the other account`);
-                        setNotificationTitle("Wallet already linked");
-                        setOpenNotification(true);
+    async function createPayload() {
+        const payload = await auth.generatePayload({ address: address, chainId: chain });
+        const signatureResult = await signLoginPayload({ account, payload });
+        console.log(signatureResult);
+        return signatureResult
+    }
+    async function signInOrUp(signatureResult) {
+        const data = JSON.stringify({ "payload": signatureResult });
+        const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
+        console.log(response);
+        const authFirebase = getAuth();
+        const userCredential = await signInWithCustomToken(authFirebase, response.token);
+        // On success, we have access to the user object.
+        const userFirebase = userCredential.user;
+        console.log(userFirebase);
+        return userFirebase;
+    }
+    async function completeLogin() {
+        createPayload().then((signatureResult) => {
+            signInOrUp(signatureResult).then((loggedInUser) => {
+                userToWallet(loggedInUser.accessToken).then((UserDB) => {
+                    const userData = { ...loggedInUser, ...UserDB };
+                    setUser(userData);
+                    console.log("DB + Firebase:", userData);
+                    if (!loggedInUser.displayName) {
+                        setOpenUsername(true);
                     }
-                });
-                setUserAndCheckWallet();
-            } else if (user.wallet != wallet) {
-                setNotificationText(`The wallet ${renderString(wallet, 5)} you are trying to connect is not the wallet linked to your account. Please connect  ${renderString(user.wallet, 5)} or delete the connection between this wallet and your account to add a new wallet`);
-                setNotificationTitle("Wallet already linked");
-                setOpenNotification(true);
+                })
+            });
+        })
+    }
+
+    async function setUserLogged() {
+        fetchUserInformation().then((userFirebase) => {
+            console.log("userFire: ", userFirebase)
+            if (!userFirebase || userFirebase.uid.toLowerCase() != address.toLowerCase()) {
+                completeLogin()
+            } else {
+                userToWallet(userFirebase.accessToken).then((UserDB) => {
+                    const userData = { ...userFirebase, ...UserDB };
+                    setUser(userData);
+                    console.log("DB + Firebase:", userData);
+                    if (!userFirebase.displayName) {
+                        setOpenUsername(true);
+                    }
+                })
             }
-        }
+        })
     }
 
     useEffect(() => {
-        setUserAndCheckWallet();
-    }, []);
-
-    useEffect(() => {
         if (address) {
-            setCurrentAccount(address.toLowerCase());
-            verifyWallet(address.toLowerCase());
-        } else {
-            setCurrentAccount("")
+            console.log(address);
+            setUserLogged();
         };
-    }, [isConnected, address])
+    }, [address])
 
     return (
         <NFTMarketplaceContext.Provider
             value={{
+                handleMetaMaskErrors,
                 error,
                 setError,
                 openError,
@@ -1118,12 +987,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setCurrentIndex,
                 stopFooter,
                 setStopFooter,
-                currentAccount,
                 user,
-                openRegister,
-                setOpenRegister,
-                openLogin,
-                setOpenLogin,
                 stopAudioPlayer,
                 setStopAudioPlayer,
 
@@ -1141,14 +1005,20 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 openNotification, setOpenNotification,
                 notificationTitle, setNotificationTitle,
                 notificationText, setNotificationText,
+                openUsername, setOpenUsername,
 
-                connectWallet,
                 pinFileToIPFS,
                 cloudinaryUploadVideo,
                 cloudinaryUploadImage,
-                createNFTMintSmartContract,
+
+                createEditionDrop,
+
                 createNFT,
+                updateDBOnNFTCreation,
+
                 SecondListing,
+                updateDBOnSecondListing,
+
                 fetchDiscoverNFTs,
                 fetchMyNFTs,
                 fetchNFTOwner,
@@ -1159,23 +1029,26 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 fetchTopCollectors,
                 fetchSupporters,
                 sendArtistForm,
-                buyNFTMatic,
+                claimNFT,
                 freeNFTTransfer,
+                updateDBafterPurchase,
+
                 changeNFTPrice,
+                updateDBOnPriceChange,
+
                 delistItem,
-                signUp,
-                signIn,
+                updateDBOnItemDelisting,
+
                 disconnectUser,
-                forgotPassword,
+
                 updateUserDisplayName,
                 updateUserInformations,
-                updateUserPassword,
-                deleteUsersEmailPsw,
-                unlinkWalletEmailPsw,
+                deleteUsers,
                 fetchTransactionsInfo,
                 renderString,
                 sendUserActivity,
-                downloadSong
+                downloadSong,
+                completeLogin
             }}
         >
             {children}

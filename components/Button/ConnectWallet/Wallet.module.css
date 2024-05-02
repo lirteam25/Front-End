@@ -1,0 +1,90 @@
+.switch_network {
+    color: var(--main-color);
+    cursor: pointer;
+    align-items: center;
+    display: grid;
+    height: 60px;
+}
+
+.rightNetwork {
+    display: grid;
+    height: 60px;
+    align-items: center;
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+.rightNetwork_left {
+    grid-column: 2/3;
+    display: flex;
+    justify-content: right;
+    gap: 5px;
+    font-family: "Space Mono";
+    align-items: center;
+}
+
+.rightNetwork_right {
+    display: flex;
+    align-content: center;
+    grid-column: 3 / 3;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+.overlay_transparent {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: default;
+}
+
+.profile_tab {
+    position: absolute;
+    background-color: var(--background-dark-color);
+    border-top: 1px solid var(--background-grey);
+    border-left: 1px solid var(--background-grey);
+    border-right: 1px solid var(--background-grey);
+    right: 0%;
+    top: 59px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.profile_tab_element {
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.profile_tab_element:hover {
+    background-color: var(--background-grey2);
+}
+
+@keyframes fadeIn {
+    from {
+        transform: translateY(-15px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login_Button {
+    width: 100%;
+    border-radius: 0px;
+    background-color: var(--main-color);
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    padding: 0.3rem 0rem;
+    text-transform: uppercase;
+    margin: 0;
+    border: 1px solid white
+}
