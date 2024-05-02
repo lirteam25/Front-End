@@ -75,7 +75,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
                 render: () => (
                     <div>
                         {chainId !== targetChainId ? (
-                            <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
+                            <div className={`${Style.switch_network} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(chain); }}>
                                 switch network
                             </div>
                         ) : (
