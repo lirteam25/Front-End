@@ -100,15 +100,13 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
             <div className={Style.ArtistInformation_bottom}>
                 {openRelease && <div>
                     {myArtistProfile && <div>
-                        {!address ? <ButtonConnectWallet user={user} /> :
+                        {address ?
                             <div>
-                                {address.toLowerCase() == user.wallet ?
-                                    <div>
-                                        {user.artist_minting_contract ?
-                                            <ActionButton text="create a new digital collectible" action={openCrtItem} fontSize="0.9rem" /> :
-                                            <ActionButton text="create your unique smart contract" action={openSmartCnt} fontSize="0.9rem" />}
-                                    </div> : <InfoButton text={`The wallet connected ${renderString(address, 5)}... is not the one connected to your account`} />}
-                            </div>
+                                {user.artist_minting_contract ?
+                                    <ActionButton text="create a new digital collectible" action={openCrtItem} fontSize="0.9rem" /> :
+                                    <ActionButton text="create your unique smart contract" action={openSmartCnt} fontSize="0.9rem" />}
+
+                            </div> : <ButtonConnectWallet user={user} />
                         }
                     </div>}
                     <SongDisplay myNFTs={tokenInfos} artist={true} />

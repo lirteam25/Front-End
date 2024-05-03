@@ -57,7 +57,7 @@ const NFTDetails = () => {
     useEffect(() => {
         if (!router.isReady) return;
         const { token_id = "", token_address = "", } = router.query;
-        if (user?.wallet) {
+        if (user?.uid) {
             fetchNFTOwners(token_id, token_address).then((items) => {
                 console.log("I own:", items[0]);
                 if (items.length > 0 && items[0].amount > 0) {

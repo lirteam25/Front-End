@@ -3,7 +3,7 @@ import oldNftMarketplace from "./NFTMarketplaceUpgradableV2.json";
 
 const NFTMarketplaceAddressNormCase = "0xBa7FB0f905dFC69bD144C6Cc2E763D28f62eFc4e";
 const NFTMarketplaceAddressNormCase_DEV = "0x79b046BaEaBCeea366365B617E0086225F1d9873";
-export const NFTMarketplaceAddress = process.env.NODE_ENV == "polygon" ? NFTMarketplaceAddressNormCase.toLowerCase() : NFTMarketplaceAddressNormCase_DEV.toLocaleLowerCase();
+export const NFTMarketplaceAddress = process.env.NODE_ENV == "polygon" ? NFTMarketplaceAddressNormCase : NFTMarketplaceAddressNormCase_DEV;
 
 const NFTMarketplaceContractId = null;
 const NFTMarketplaceContractId_DEV = "8e78cdd7-e70f-44cb-b46b-17f1c839243f"

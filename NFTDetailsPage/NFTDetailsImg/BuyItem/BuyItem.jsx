@@ -20,7 +20,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
     }
 
     const updateDB = async (receipt, contract) => {
-        await updateDBafterPurchase(receipt, nft, address.toLowerCase())
+        await updateDBafterPurchase(receipt, nft, address)
     }
 
     return (

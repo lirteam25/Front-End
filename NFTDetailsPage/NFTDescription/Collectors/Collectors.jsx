@@ -41,7 +41,7 @@ const Collectors = ({ supporters }) => {
                                 <div className={Style.Collectors_box}>
                                     <Image src={img[`utente_${el.picture}`]} alt="profile user" />
                                     <div className={`${Style.Collectors_displayOnHover} font-small`}>
-                                        <div className={Style.Collectors_displayOnHover_box}>{el.displayName}</div>
+                                        <div className={Style.Collectors_displayOnHover_box}>{el.display_name}</div>
                                     </div>
                                 </div>
                             </SwiperSlide>

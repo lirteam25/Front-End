@@ -85,7 +85,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
                                         <div className={`${Style.rightNetwork_left} font-small`} style={{ cursor: "pointer" }}>
                                             <GoDotFill color="green" size={15} />
                                             <div>
-                                                {renderString(address.toLowerCase(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
+                                                {renderString(address, 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span>
                                             </div>
                                         </div>
                                         <div className={Style.rightNetwork_right} onClick={(e) => { e.stopPropagation() }}>

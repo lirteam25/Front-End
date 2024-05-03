@@ -245,79 +245,84 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     async function createEditionDrop(nameToken, symbolToken, royalties, user) {
-        setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
+        try {
+            setLoading("The smart contract creating procedure has started. Accept the transaction."); setOpenLoading(true);
 
-        const defaultAdmin = address;
-        const description = "Smart Contract Representing Unpublished Musical Content"
-        const name = nameToken;
-        const symbol = symbolToken;
+            const defaultAdmin = address;
+            const description = "Smart Contract Representing Unpublished Musical Content"
+            const name = nameToken;
+            const symbol = symbolToken;
 
-        const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
+            const contractURI = { "artist name": user.artist_name, "artist description": user.artist_description };
 
-        const trustedForwarders = [];
-        const saleRecipient = address;
-        const royaltyRecipient = address;
-        const royaltyBps = royalties * 100;
-        const platformFeeBps = user.artist_first_sale_fee * 100;
-        const platformFeeRecipient = MarketplaceOwner;
+            const trustedForwarders = [];
+            const saleRecipient = address;
+            const royaltyRecipient = address;
+            const royaltyBps = royalties * 100;
+            const platformFeeBps = user.artist_first_sale_fee * 100;
+            const platformFeeRecipient = MarketplaceOwner;
 
-        console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
+            console.log(defaultAdmin, name, symbol, contractURI, trustedForwarders, saleRecipient, royaltyRecipient, royaltyBps, platformFeeBps, platformFeeRecipient)
 
-        const contractAddress = (await deployERC1155Contract({
-            chain,
-            client,
-            account,
-            type: "DropERC1155",
-            params: {
-                contractURI,
-                defaultAdmin,
-                description,
-                name,
-                platformFeeBps,
-                platformFeeRecipient,
-                royaltyBps,
-                royaltyRecipient,
-                saleRecipient,
-                symbol,
-                trustedForwarders
+            const contractAddress = (await deployERC1155Contract({
+                chain,
+                client,
+                account,
+                type: "DropERC1155",
+                params: {
+                    contractURI,
+                    defaultAdmin,
+                    description,
+                    name,
+                    platformFeeBps,
+                    platformFeeRecipient,
+                    royaltyBps,
+                    royaltyRecipient,
+                    saleRecipient,
+                    symbol,
+                    trustedForwarders
+                }
+            }));
+
+            console.log(contractAddress);
+
+            /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
+    
+            console.log(dataEnablingContractForPayments);
+            const post = async (url, data = {}, token) => {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-secret-key': token,
+                    },
+                    body: data
+                });
+                return response.json()
             }
-        })).toLowerCase();
+    
+            const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
+    
+            console.log(final);
+            const contract_id = final.contractId
+            console.log(contract_id); */
 
-        console.log(contractAddress);
+            const accessToken = (await fetchUserInformation()).accessToken;
+            const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
+            await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
+                .then((response) => {
+                    console.log(response);
+                    setOpenLoading(false);
+                });
 
-        /* const dataEnablingContractForPayments = JSON.stringify({ "chain": process.env.ACTIVE_CHAIN == "mumbai" ? "Amoy" : "Polygon", "contractAddress": BeaconProxyAddress, "contractType": "THIRDWEB", "contractDefinition": EditionDropABI });
-
-        console.log(dataEnablingContractForPayments);
-        const post = async (url, data = {}, token) => {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-secret-key': token,
-                },
-                body: data
-            });
-            return response.json()
+            setOpenLoading(false);
+            setToast("Smart Contract successfully created");
+            setOpenToast(true);
+            window.location.reload()
+        } catch (error) {
+            console.error("Transaction error", error);
+            handleMetaMaskErrors(error, "Something went wrong. Please try again.<br/>Check if you have enough funds. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_smartContract_interaction")
         }
-
-        const final = await post("https://payments.thirdweb.com/api/2022-08-12/register-contract", dataEnablingContractForPayments, process.env.THIRDWEB_API_KEY);
-
-        console.log(final);
-        const contract_id = final.contractId
-        console.log(contract_id); */
-
-        const accessToken = (await fetchUserInformation()).accessToken;
-        const data = JSON.stringify({ "artist_minting_contract": contractAddress, "artist_royalties": royalties/* , contract_id  */ });
-        await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
-            .then((response) => {
-                console.log(response);
-                setOpenLoading(false);
-            });
-
-        setOpenLoading(false);
-        setToast("Smart Contract successfully created");
-        setOpenToast(true);
-        window.location.reload()
     }
 
     async function createNFT(
@@ -367,7 +372,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             const transactionHash = receipt.transactionHash;
 
-            const token_address = contractEditionDrop.address.toLowerCase();
+            const token_address = contractEditionDrop.address;
 
             const token_symbol = await symbol({ contract: contractEditionDrop });
             const token_name = await name({ contract: contractEditionDrop })
@@ -378,16 +383,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
             let dataTokenInfo;
             const accessToken = (await fetchUserInformation()).accessToken;
             if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
             } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address.toLowerCase(), royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
             }
             await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
                 console.log("response:", response);
             });
 
             //Post Owners document
-            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address.toLowerCase(), "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address, "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
 
             await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
                 console.log("response:", response);
@@ -464,7 +469,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     console.log(response);
                 });
             //Update token Owners
-            const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address.toLowerCase(), listing_id, "sellingQuantity": amount, "price": formInputPrice });
+            const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address, listing_id, "sellingQuantity": amount, "price": formInputPrice });
             await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
                 console.log(response);
             });
@@ -616,8 +621,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(OldNFTMarketplaceAddress, OldNFTMarketplaceABI);
             console.log(NFTMarketplace, gasPrice);
-            console.log(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase());
-            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address.toLowerCase(),
+            console.log(nft.token_id, nft.token_address, nft.owner_of, address);
+            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address,
                 {
                     gasPrice: gasPrice
                 });
@@ -626,7 +631,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const trans = await transaction.wait();
             console.log(trans);
 
-            await updateDBafterPurchase(trans, nft, address.toLowerCase());
+            await updateDBafterPurchase(trans, nft, address);
 
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
@@ -796,24 +801,21 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response.data.user;
     };
 
-    const updateUserDisplayName = async (username) => {
-        const auth = getAuth();
+    const updateUserDisplayName = async (display_name) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
 
-        return new Promise((resolve, reject) => {
-            onAuthStateChanged(auth, async (user) => {
-                const response = await updateProfile(user, {
-                    displayName: username
-                });
-                resolve(response);
+        const data = JSON.stringify({ display_name });
+        await patchOnDB(`${DBUrl}/api/v1/users/updateMe`, data, accessToken)
+            .then((response) => {
+                console.log(response);
 
-                setToast("Username successfully updated");
+                setToast("Informations successfully updated");
                 setOpenToast(true);
 
-                setOpenAccountSetting(false);
+                setOpenArtistSettings(false);
                 setOpenUsername(false);
                 setUserLogged();
             });
-        });
     };
 
     const updateUserInformations = async (artist_name, artist_email, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo) => {
@@ -931,27 +933,29 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     const userData = { ...loggedInUser, ...UserDB };
                     setUser(userData);
                     console.log("DB + Firebase:", userData);
-                    if (!loggedInUser.displayName) {
-                        setOpenUsername(true);
-                    }
+                    console.log(UserDB.display_name);
+                    checkIfHasDisplayName(userData);
                 })
             });
         })
+    }
+    async function checkIfHasDisplayName(user) {
+        if (!user.display_name) {
+            setOpenUsername(true);
+        }
     }
 
     async function setUserLogged() {
         fetchUserInformation().then((userFirebase) => {
             console.log("userFire: ", userFirebase)
-            if (!userFirebase || userFirebase.uid.toLowerCase() != address.toLowerCase()) {
+            if (!userFirebase || userFirebase.uid != address) {
                 completeLogin()
             } else {
                 userToWallet(userFirebase.accessToken).then((UserDB) => {
                     const userData = { ...userFirebase, ...UserDB };
                     setUser(userData);
                     console.log("DB + Firebase:", userData);
-                    if (!userFirebase.displayName) {
-                        setOpenUsername(true);
-                    }
+                    checkIfHasDisplayName(userData)
                 })
             }
         })

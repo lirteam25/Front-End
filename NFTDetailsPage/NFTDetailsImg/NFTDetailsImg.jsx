@@ -152,7 +152,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                     {shownNft.price !== 'undefined' ? (
                         <div> {address && user && chainId == targetChainId ? (
                             <div>
-                                {user.wallet == shownNft.owner_of ? (
+                                {user.uid == shownNft.owner_of ? (
                                     <div>
                                         {/* {shownNft.sellingQuantity >= shownNft.amount ?
                                                 <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
