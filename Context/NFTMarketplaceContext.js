@@ -693,7 +693,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         } catch (error) {
             handleMetaMaskErrors(error, "You successfully changed the token price, but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_change_price");
         }
-    }
+    };
 
     async function delistItem(NFTMarketplaceContract, nft, amount) {
         setOpenLoading(true); setLoading("The token delisting producedure has started. Accept the transaction.");
@@ -752,7 +752,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         } catch (error) {
             handleMetaMaskErrors(error, "Tokens were delisted but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_delisting");
         }
-    }
+    };
 
     //Function to handle Authentication Firebase Errors
     const handleAuthFirebaseError = (error, string) => {
@@ -811,15 +811,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
                 setOpenAccountSetting(false);
                 setOpenUsername(false);
-                /* setUserAndCheckWallet(); */
+                setUserLogged();
             });
         });
     };
 
-    const updateUserInformations = async (artist_name, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo) => {
+    const updateUserInformations = async (artist_name, artist_email, artist_description, artist_instagram, artist_spotify, artist_soundcloud, artist_photo) => {
         const accessToken = (await fetchUserInformation()).accessToken;
         const dataObject = {
             artist_name,
+            artist_email,
             artist_description,
             artist_instagram,
             artist_spotify,
@@ -837,7 +838,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenToast(true);
 
                 setOpenArtistSettings(false);
-                setUserAndCheckWallet();
+                setUserLogged();
             });
     }
 

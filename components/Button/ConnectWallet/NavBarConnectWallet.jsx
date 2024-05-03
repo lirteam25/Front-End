@@ -33,7 +33,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy
     const chainId = useActiveWalletChain()?.id;
 
-    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002
+    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002;
 
     const switchChain = useSwitchActiveWalletChain();
 

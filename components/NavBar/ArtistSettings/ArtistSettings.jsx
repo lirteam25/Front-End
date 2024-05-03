@@ -13,6 +13,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
     const { user, updateUserInformations, openErrorAuth, cloudinaryUploadImage } = useContext(NFTMarketplaceContext);
 
     const [artistName, setArtistName] = useState();
+    const [artistEmail, setArtistEmail] = useState();
     const [image, setImage] = useState();
     const [imgLoading, setImgLoading] = useState(false);
     const [description, setDescription] = useState();
@@ -43,7 +44,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
     };
 
     const updateInformation = async () => {
-        await updateUserInformations(artistName, description, instagram, spotify, soundCloud, image);
+        await updateUserInformations(artistName, artistEmail, description, instagram, spotify, soundCloud, image);
     }
 
     const decodeHtmlEntities = (html) => {
@@ -57,7 +58,7 @@ const ArtistSettings = ({ closeArtistSettings }) => {
         <div className={Style.ArtistSettings}>
             <div className={`${Style.ArtistSettings_top} font-normal`}>
                 <div className={Style.ArtistSettings_top_title}>
-                    {user.artist_name && user.artist_photo && user.artist_description ? "Edit your profile" : "Create your profile"}
+                    {user.artist_name && user.artist_photo && user.artist_description ? "Edit your profile" : "Create your artist profile"}
                 </div>
                 <AiOutlineClose className={Style.ArtistSettings_top_x} onClick={closeArtistSettings} />
             </div>
@@ -66,14 +67,26 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                     <div className={Style.ArtistSettings_bottom_ArtistName}>
                         <div className={Style.ArtistSettings_bottom_ArtistName_95}>
                             <div className='font-normal'>
-                                Insert Your Artist Name
+                                Artist Name
                             </div>
                             <input
                                 className={Style.user_box_input_input}
                                 style={{ margin: "0.5rem 0rem" }}
                                 type="name"
-                                placeholder={"Carefull! Your artist name once saved cannot be changed"}
+                                placeholder={"Carefull! Your artist name once saved cannot be manually changed"}
                                 onChange={(e) => setArtistName(e.target.value)}
+                            />
+                        </div>
+                        <div className={Style.ArtistSettings_bottom_ArtistName_95}>
+                            <div className='font-normal'>
+                                Email
+                            </div>
+                            <input
+                                className={Style.user_box_input_input}
+                                style={{ margin: "0.5rem 0rem" }}
+                                type="email"
+                                placeholder={"Carefull! Your email once saved cannot be manually changed"}
+                                onChange={(e) => setArtistEmail(e.target.value)}
                             />
                         </div>
                     </div>}
@@ -161,9 +174,9 @@ const ArtistSettings = ({ closeArtistSettings }) => {
                         {image || description || instagram || spotify || soundCloud ?
                             <ActionButton action={updateInformation} text="UPDATE INFORMATION" fontSize="0.9rem" /> :
                             <InfoButton text="UPDATE INFORMATION" fontSize="0.9rem" />}</div> : <div>
-                        {artistName && description && image ?
+                        {artistName && description && image && artistEmail ?
                             <ActionButton action={updateInformation} text="CREATE PROFILE" fontSize="0.9rem" /> :
-                            <InfoButton text="artist name, picture and description are required" fontSize="0.9rem" />}
+                            <InfoButton text="name, email, picture and description are required" fontSize="0.9rem" />}
                     </div>}
 
                 </div>
