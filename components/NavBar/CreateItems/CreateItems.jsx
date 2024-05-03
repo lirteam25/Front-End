@@ -2,8 +2,6 @@ import React, { useState, useContext } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import Switch from '@mui/material/Switch';
 import { CiSquareQuestion } from "react-icons/ci";
-import { polygon, polygonAmoy } from "thirdweb/chains";
-import { createThirdwebClient, getContract } from "thirdweb";
 
 
 //INTERNAL IMPORT

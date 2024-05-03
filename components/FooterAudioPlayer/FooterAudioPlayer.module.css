@@ -130,6 +130,7 @@
     border: none;
     color: white;
     display: flex;
+    cursor: pointer;
 }
 
 .play,
