@@ -35,14 +35,14 @@ const UserProfileCard = ({ user, userWallet, joiningDate }) => {
     }
 
     const handleCopyClick = () => {
-        copyToClipboard(user.wallet);
+        copyToClipboard(user.uid);
     };
 
     return (
         <div className={Style.AuthorProfileCard}>
             <div className={Style.AuthorProfileCard_box} >
                 <div className={Style.AuthorProfileCard_box_right}>
-                    <h1 className="font-large">{user ? user.displayName : ("----")}</h1>
+                    <h1 className="font-large">{user ? user.display_name : ("----")}</h1>
                 </div>
                 <div className={Style.AuthorProfileCard_box_left}>
                     {userWallet ? (<div className={`${Style.AuthorProfileCard_box_left_box} font-small`} onClick={handleCopyClick}>

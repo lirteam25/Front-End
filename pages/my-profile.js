@@ -41,7 +41,7 @@ const MyProfile = () => {
     useEffect(() => {
         if (user) {
             fetchOwnedNFTs();
-            if (user.wallet) { const walletNumber = renderString(user.wallet, 6); setUserWallet(walletNumber) };
+            if (user.uid) { const walletNumber = renderString(user.uid, 6); setUserWallet(walletNumber) };
             const formattedJoiningDate = formatDateToMonthYear(parseInt(user.reloadUserInfo.createdAt));
             setJoiningDate(formattedJoiningDate);
             if (user.role == "artist") {

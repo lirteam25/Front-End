@@ -20,7 +20,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
     }
 
     const updateDB = async (receipt, contract) => {
-        await updateDBafterPurchase(receipt, nft, address.toLowerCase())
+        await updateDBafterPurchase(receipt, nft, address)
     }
 
     return (
@@ -37,7 +37,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <InfoButton text="Soon pay with Credit Card" />
+                    <InfoButton text="Pay with Credit Card Coming Soon" />
                 </div>
             </div>
         </div>

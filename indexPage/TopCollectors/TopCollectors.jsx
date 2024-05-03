@@ -32,7 +32,7 @@ const TopCollectors = ({ collectors }) => {
                                     {String(i + 1).padStart(2, '0')}
                                 </div>
                                 <div>
-                                    {el.displayName}
+                                    {el.display_name}
                                 </div>
                                 <div >
                                     {el.count}

@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
+import { useActiveWalletChain } from "thirdweb/react";
 import { useActiveAccount } from "thirdweb/react";
 import Link from "next/link";
 
@@ -110,6 +111,10 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
         return () => clearInterval(timerInterval);
     }, [shownNft]);
 
+    const chainId = useActiveWalletChain()?.id;
+
+    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002;
+
     return (
         <div className={Style.NFTDetailsImg}>
             <div className={Style.NFTDetailsImg_description}>
@@ -145,9 +150,9 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
 
                 <div className={Style.NFTDetailsImg_description_info_actions}>
                     {shownNft.price !== 'undefined' ? (
-                        <div> {address && user ? (
+                        <div> {address && user && chainId == targetChainId ? (
                             <div>
-                                {user.wallet == shownNft.owner_of ? (
+                                {user.uid == shownNft.owner_of ? (
                                     <div>
                                         {/* {shownNft.sellingQuantity >= shownNft.amount ?
                                                 <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
