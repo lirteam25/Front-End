@@ -3,6 +3,8 @@ import { useDropzone } from "react-dropzone";
 import { AiOutlineUpload, AiOutlineCheck } from "react-icons/ai";
 import CircularProgress from '@mui/material/CircularProgress';
 import { CiSquareQuestion } from "react-icons/ci";
+import { createThirdwebClient, getContract } from "thirdweb";
+import { polygonAmoy, polygon } from "thirdweb/chains";
 
 //INTRNAL IMPORT
 import Style from "./DropZone.module.css";
@@ -15,6 +17,7 @@ const DropZone = ({
     imageSongPinata,
     setImageSongPinata,
     pinFileToIPFS,
+    pinAndEncryptFileToIPFS,
     cloudinaryUploadVideo,
     cloudinaryUploadImage,
     setImageSongCloudinary,
@@ -36,6 +39,19 @@ const DropZone = ({
         return `${minutesStr}:${secondsStr}`;
     }
 
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
+    });
+
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
+
+    const contractEditionDrop = getContract({
+        client,
+        chain,
+        address: user.artist_minting_contract
+    })
+
+
     const onDropAudio = useCallback(async (file) => {
         setAudioLoading(20);
         console.log(file);
@@ -48,7 +64,7 @@ const DropZone = ({
         const path = response.secure_url.replace(process.env.CLOUDINARY_URL, "");
         console.log("URL CLOUDINARY", path);
         setUrlCloudinary(path);
-        const urlAudio = await pinFileToIPFS(file[0], user);
+        const urlAudio = await pinAndEncryptFileToIPFS(file[0], user.artist_minting_contract, user.artist_name, user._id, contractEditionDrop);
         setUrlPinata(urlAudio);
         setAudioLoading(false);
         console.log(urlAudio);
