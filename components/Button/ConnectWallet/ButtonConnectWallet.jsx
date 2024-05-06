@@ -81,11 +81,10 @@ const buttonConnectWallet = () => {
                         ) : (
                             <div>
                                 {user ? (
-                                    <div className={Style.rightNetwork}>
-                                        <InfoButton text="Connected" />
-                                    </div>) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                        login
-                                    </div>)}
+                                    <InfoButton text="Connected" />
+                                ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
+                                    login
+                                </div>)}
                             </div>
                         )}</div>
                 )
