@@ -25,7 +25,7 @@ const SideBar = ({ setOpenSideBar, user }) => {
                         <div className={Style.sidebar_center_userIn_top}>
                             <Link className={Style.sidebar_center_userIn_top_left} onClick={() => setOpenSideBar(false)} href={{ pathname: "/my-profile" }}>
                                 {user ? <Image src={img[`utente_${user.picture}`]} alt="user icon" width={32} heigh={32} /> : <CircularProgress size={20} variant="indeterminate" color="inherit" />}
-                                <div className={`${Style.sidebar_center_userIn_top_email}`}>{user?.displayName}</div>
+                                <div className={`${Style.sidebar_center_userIn_top_email}`}>{user?.display_name}</div>
                             </Link>
                             <div onClick={() => setOpenAccountSetting(true)}>
                                 <Image src={img.settings} alt="setting icon" width={32} heigh={32} />
