@@ -11,6 +11,7 @@ import { NFTMintFactoryAddress, NFTMintFactoryABI } from "./../../../Context/Con
 const CreateSmartContract = ({ closeCreateSmartContract }) => {
 
     const chainId = useActiveWalletChain()?.id;
+    const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002
     const address = useActiveAccount()?.address;
 
     const { user, createEditionDrop } = useContext(NFTMarketplaceContext);
@@ -131,7 +132,7 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                     </div>
                 </div>
                 <div className={`${Style.CreateSmartContract_bottom_95} ${Style.bottom}`}>
-                    {address && chainId == 80002 ? (<>{nameOfToken && symbolOfToken && royalties ?
+                    {address && chainId == targetChainId ? (<>{nameOfToken && symbolOfToken && royalties ?
                         <ActionButton text="Deploy contract" action={mintSmartContract} />
                         :
                         <InfoButton text="INSERT ALL DATA TO CREATE SMART CONTRACT" fontSize="0.9rem" />
