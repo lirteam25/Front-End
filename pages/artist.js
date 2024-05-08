@@ -13,7 +13,6 @@ const Artist = () => {
 
     const { fetchArtistNFT, fetchArtistName } = useContext(NFTMarketplaceContext);
     const [tokenInfos, setTokenInfos] = useState([]);
-    const [lastRelease, setLastRelease] = useState([]);
     const [artist, setArtist] = useState([]);
 
 
@@ -21,7 +20,6 @@ const Artist = () => {
         if (!router.isReady) return;
         const { cnt = "" } = router.query;
         fetchArtistNFT(cnt).then((result) => {
-            setLastRelease(result[0]);
             setTokenInfos(result);
         });
         fetchArtistName(cnt).then((response) => {
@@ -35,7 +33,7 @@ const Artist = () => {
         <div className={Style.Vh_artist}>
             <NextSeo title="Artist | LIR" description="Explore the unique creations of one artist. Immerse yourself in their exclusive music digital collectibles and dive into the artistic world they've crafted." />
             <div className={Style.artist}>
-                <ArtistProfileCard artist={artist} lastRelease={lastRelease} />
+                <ArtistProfileCard artist={artist} />
                 <div className={Style.artist_bottom}>
                     <ArtistInformation tokenInfos={tokenInfos} artistDescription={artist.artist_description} />
                 </div>

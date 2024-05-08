@@ -93,7 +93,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                             <div>
                                 {myNFTs.length == 0 ? (
                                     <div className={`${Style.display_song_noSong} font-normal`}>
-                                        {user.artist_minting_contract ?
+                                        {user?.artist_minting_contract ?
                                             <div>No track released. <br /><a className={Style.display_song_noSong_link} href='https://lirmusic.notion.site/Release-limited-editions-tracks-80d1f16f4d894f2983a58b047eb35e83' target='_blank'>How to release a track?</a></div> :
                                             <div>Create a smart contract to start releasing. <br /><a className={Style.display_song_noSong_link} href='https://lirmusic.notion.site/Create-a-smart-contract-ca49f55ef3f24695873b8f90ff38fadf' target='_blank'>What is a smart contract?</a></div>}
                                     </div>) : (
