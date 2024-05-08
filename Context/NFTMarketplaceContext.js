@@ -193,7 +193,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const pinAndEncryptFileToIPFS = async (fileToUpload, contractAddress, artistName, id, nftMintArtistContract) => {
         try {
-            // const nextTokenIdToMint = (await nftMintArtistContract.call("nextTokenIdToMint", [])).toString();
+            const tokenId = process.env.ACTIVE_CHAIN == "polygon" ? (await nextTokenIdToMint({ contract: nftMintArtistContract })).toString() : '0';
+
             // Instead of just sending the file to our /api/files endoint we're going to encrypt it first
             // Start by creating a new LitNodeClient
             const litNodeClient = new LitJsSdk.LitNodeClient({
@@ -202,18 +203,18 @@ export const NFTMarketplaceProvider = ({ children }) => {
             // then get the authSig
             await litNodeClient.connect();
             const authSig = await LitJsSdk.checkAndSignAuthMessage({
-                chain: 'sepolia',
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
                 nonce: ''
             });
             // Here we can setup any access control conditions we want, such as must hold a specifc NFT, or have a certain amount of ETH
             // Right now its blank so anyone can decrypt the file
             const accs = [
                 {
-                    contractAddress: "0xc9Ded40852af6957a226b37FccA2DDA12E452d9D", //contractAddress,
+                    contractAddress: process.env.ACTIVE_CHAIN == "polygon" ? contractAddress : "0xc9Ded40852af6957a226b37FccA2DDA12E452d9D", //contractAddress,
                     standardContractType: 'ERC1155',
-                    chain: 'sepolia',
+                    chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
                     method: 'balanceOf',
-                    parameters: [':userAddress', "0"], //tokenId
+                    parameters: [':userAddress', tokenId],
                     returnValueTest: {
                         comparator: '>',
                         value: '0',
@@ -224,7 +225,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({
                 accessControlConditions: accs,
                 authSig,
-                chain: 'sepolia',
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
                 file: fileToUpload,
                 litNodeClient: litNodeClient,
                 readme: "Use IPFS CID of this file to decrypt it"
@@ -240,10 +241,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const formData = new FormData();
             const name = artistName + " - " + encryptedFile.name
             const metadata = JSON.stringify({
-                name: `${name}`,
-                keyvalues: {
-                    exampleKey: 'Provina'
-                }
+                name: `${name}`
             });
             console.log(name)
             formData.append("file", encryptedFile, { filename: name });
@@ -282,7 +280,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
             await litNodeClient.connect();
             const authSig = await LitJsSdk.checkAndSignAuthMessage({
-                chain: 'sepolia'
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
             });
             console.log("Decryption starts...")
             // Then we simpyl extract the file and metadata from the zip

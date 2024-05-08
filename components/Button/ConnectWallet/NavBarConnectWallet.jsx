@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
-import { createWallet, embeddedWallet } from "thirdweb/wallets";
+import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { GoDotFill } from "react-icons/go";
@@ -14,11 +14,14 @@ import Link from 'next/link';
 import Style from "./Wallet.module.css";
 
 const wallets = [
-    embeddedWallet(),
+    inAppWallet(),
     createWallet("io.metamask"),
-    createWallet("com.coinbase.wallet"),
-    createWallet("me.rainbow"),
 ];
+
+const recommendedWallets = [
+    inAppWallet()
+]
+
 
 const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTab }) => {
 
@@ -42,6 +45,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
             wallets={wallets}
             client={client}
             chain={chain}
+            recommendedWallets={recommendedWallets}
             connectButton={{
                 label: "login / sign up",
                 style: {
