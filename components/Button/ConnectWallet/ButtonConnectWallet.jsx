@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
-import { createWallet, embeddedWallet } from "thirdweb/wallets";
+import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
@@ -10,12 +10,13 @@ import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import Style from "./Wallet.module.css";
 
 const wallets = [
-    embeddedWallet(),
+    inAppWallet(),
     createWallet("io.metamask"),
-    createWallet("com.coinbase.wallet"),
-    createWallet("me.rainbow"),
 ];
 
+const recommendedWallets = [
+    inAppWallet()
+]
 
 const buttonConnectWallet = () => {
 
@@ -42,6 +43,7 @@ const buttonConnectWallet = () => {
             wallets={wallets}
             client={client}
             chain={chain}
+            recommendedWallets={recommendedWallets}
             connectButton={{
                 label: "login / sign up",
                 style: {

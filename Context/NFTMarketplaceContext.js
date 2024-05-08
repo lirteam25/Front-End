@@ -16,6 +16,7 @@ import { name, symbol } from "thirdweb/extensions/common";
 
 import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, deleteUser } from "firebase/auth";
 
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
 const FormData = require('form-data');
 //Internal Imports
 import { OldNFTMarketplaceAddress, OldNFTMarketplaceABI, MarketplaceOwner } from "./Constants";
@@ -188,6 +189,120 @@ export const NFTMarketplaceProvider = ({ children }) => {
                     message: error.message,
                 }
             })
+    };
+
+    const pinAndEncryptFileToIPFS = async (fileToUpload, contractAddress, artistName, id, nftMintArtistContract) => {
+        try {
+            const tokenId = process.env.ACTIVE_CHAIN == "polygon" ? (await nextTokenIdToMint({ contract: nftMintArtistContract })).toString() : '0';
+
+            // Instead of just sending the file to our /api/files endoint we're going to encrypt it first
+            // Start by creating a new LitNodeClient
+            const litNodeClient = new LitJsSdk.LitNodeClient({
+                litNetwork: 'cayenne',
+            });
+            // then get the authSig
+            await litNodeClient.connect();
+            const authSig = await LitJsSdk.checkAndSignAuthMessage({
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
+                nonce: ''
+            });
+            // Here we can setup any access control conditions we want, such as must hold a specifc NFT, or have a certain amount of ETH
+            // Right now its blank so anyone can decrypt the file
+            const accs = [
+                {
+                    contractAddress: process.env.ACTIVE_CHAIN == "polygon" ? contractAddress : "0xc9Ded40852af6957a226b37FccA2DDA12E452d9D", //contractAddress,
+                    standardContractType: 'ERC1155',
+                    chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
+                    method: 'balanceOf',
+                    parameters: [':userAddress', tokenId],
+                    returnValueTest: {
+                        comparator: '>',
+                        value: '0',
+                    },
+                },
+            ];
+            // Then we use our access controls and authSig to encrypt the file and zip it up with the metadata
+            const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({
+                accessControlConditions: accs,
+                authSig,
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
+                file: fileToUpload,
+                litNodeClient: litNodeClient,
+                readme: "Use IPFS CID of this file to decrypt it"
+            });
+
+            // Then we turn it into a file that will be accepted by the Pinata API
+            const encryptedBlob = new Blob([encryptedZip], { type: 'text/plain' })
+            const encryptedFile = new File([encryptedBlob], fileToUpload.name)
+
+            // Finally we upload the file by passing it to our /api/files endpoint
+            // Keep in mind this works for smaller files and you may need to do a presigned JWT and upload from the client if you're dealing with larger files
+            // Read more about that here: https://www.pinata.cloud/blog/how-to-upload-to-ipfs-from-the-frontend-with-signed-jwts
+            const formData = new FormData();
+            const name = artistName + " - " + encryptedFile.name
+            const metadata = JSON.stringify({
+                name: `${name}`
+            });
+            console.log(name)
+            formData.append("file", encryptedFile, { filename: name });
+            formData.append("pinataMetadata", metadata);
+
+            const res = await fetch(
+                "https://api.pinata.cloud/pinning/pinFileToIPFS",
+                {
+                    method: "POST",
+                    headers: {
+                        pinata_api_key: process.env.PINATA_API_KEY,
+                        pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY
+                    },
+                    body: formData,
+                }
+            );
+            const ipfsHash = await res.text();
+            console.log(ipfsHash)
+            return ipfsHash
+        } catch (e) {
+            console.log(e);
+        }
+
+    };
+
+    const decryptFile = async (fileToDecrypt) => {
+        try {
+            // First we fetch the file from IPFS using the CID and our Gateway URL, then turn it into a blob
+            console.log("Fetching the file...")
+            const fileRes = await fetch(`${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${fileToDecrypt}?pinataGatewayToken=${process.env.PINATA_GATEWAY_TOKEN}`)
+            const file = await fileRes.blob()
+            // We recreated the litNodeClient and the authSig
+            console.log('Starting the client...')
+            const litNodeClient = new LitJsSdk.LitNodeClient({
+                litNetwork: 'cayenne',
+            });
+            await litNodeClient.connect();
+            const authSig = await LitJsSdk.checkAndSignAuthMessage({
+                chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
+            });
+            console.log("Decryption starts...")
+            // Then we simpyl extract the file and metadata from the zip
+            // We could do more with this, like try to display it in the app UI if we wanted to
+            const { decryptedFile, metadata } = await LitJsSdk.decryptZipFileWithMetadata({
+                file: file,
+                litNodeClient: litNodeClient,
+                authSig: authSig,
+            })
+            console.log("Download...")
+            // After we have our dcypted file we can download it
+            const blob = new Blob([decryptedFile], { type: 'application/octet-stream' });
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = metadata.name;  // Use the metadata to get the file name and type
+            downloadLink.click();
+
+        } catch (error) {
+            alert("Trouble decrypting file")
+            console.log(error)
+        }
+
     };
 
     const cloudinaryUploadVideo = async (file, artist) => {
@@ -1013,6 +1128,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 openUsername, setOpenUsername,
 
                 pinFileToIPFS,
+                pinAndEncryptFileToIPFS,
+                decryptFile,
                 cloudinaryUploadVideo,
                 cloudinaryUploadImage,
 

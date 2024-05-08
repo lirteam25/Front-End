@@ -11,7 +11,7 @@ import { InfoButton, SmartContractButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, pinAndEncryptFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation } = useContext(NFTMarketplaceContext);
 
     const [song, setSong] = useState(null);
     const [description, setDescription] = useState(null);
@@ -121,6 +121,7 @@ const CreateItem = ({ closeCreateItems }) => {
                     imageSongPinata={imageSongPinata}
                     setImageSongPinata={setImageSongPinata}
                     pinFileToIPFS={pinFileToIPFS}
+                    pinAndEncryptFileToIPFS={pinAndEncryptFileToIPFS}
                     cloudinaryUploadVideo={cloudinaryUploadVideo}
                     cloudinaryUploadImage={cloudinaryUploadImage}
                     setImageSongCloudinary={setImageSongCloudinary}
