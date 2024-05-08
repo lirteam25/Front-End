@@ -109,7 +109,7 @@ const CreateItem = ({ closeCreateItems }) => {
                     <input
                         id="duration"
                         type="number"
-                        placeholder="Insert the second at which the preview should start."
+                        placeholder="The preview is 30s. Insert the second at which the preview should start (E.g 01:03 => 63s)."
                         onChange={(e) => setStartPreview(e.target.value)}
                     />
                 </div>
@@ -185,10 +185,7 @@ const CreateItem = ({ closeCreateItems }) => {
                                 <p>
                                     Royalties are a percentage of the resale value that goes to the original creator, providing ongoing compensation for their digital artworks.
                                     This ensures artists receive a share of the profits each time their tracks are resold between different users.<br />
-                                    Normally this percentage varies between <span style={{ color: "var(--main-color)" }}>5%</span> to <span style={{ color: "var(--main-color)" }}>10%</span>
-                                </p>
-                                <p>
-                                    <span style={{ color: "var(--main-color)" }}>IMPORTANT</span>: The number is already in percentage format- e.g. insert 5 for 5% royalties.
+                                    <br />This percentage is setted at <span style={{ color: "var(--main-color)" }}>5%</span> by default
                                 </p>
                             </div>
                         </div>
@@ -197,7 +194,7 @@ const CreateItem = ({ closeCreateItems }) => {
 
                 <div className={Style.CreateItems_bottom_element}>
                     <div className={Style.CreateItems_bottom_element_titleWithTutorial}>
-                        <div className='font-normal'>First sale fees: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_first_sale_fee}%</span></div>
+                        <div className='font-normal'>First sale fee: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_first_sale_fee}%</span></div>
                         <div className={Style.CreateItems_bottom_element_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateItems_bottom_element_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateItems_bottom_element_titleWithTutorial_icon_appear} font-small`}>
@@ -241,13 +238,13 @@ const CreateItem = ({ closeCreateItems }) => {
                 <div className={Style.CreateItems_bottom_btn}>
                     {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && supply && duration) ? (
 
-                        <SmartContractButton text="Create a digital collectible"
+                        <SmartContractButton text="Create your limited edition track"
                             action={mintNFT}
                             onTransactionConfirmed={afterMinting}
                             contractAddress={user.artist_minting_contract}
                         />
                     ) : (
-                        <InfoButton text="Insert all data to mint tokens" />
+                        <InfoButton text="Insert all data" />
                     )}
                 </div>
             </div>

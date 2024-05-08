@@ -32,6 +32,15 @@
     color: var(--grey);
 }
 
+.display_song_noSong_link {
+    color: var(--main-color);
+}
+
+.display_song_noSong_link:hover {
+    color: var(--main-color);
+    text-decoration: underline;
+}
+
 .display_song_noSong_discover {
     color: var(--main-color);
 }

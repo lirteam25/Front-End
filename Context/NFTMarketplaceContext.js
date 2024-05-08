@@ -309,7 +309,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            if (process.env.ACTIVE_CHAIN == "polygon") {
+            if (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
                 data.append("upload_preset", "my-uploads");
             } else {
                 data.append("upload_preset", "test_uploads");
@@ -335,7 +335,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         try {
             const data = new FormData();
             data.append("file", file[0]);
-            if (process.env.ACTIVE_CHAIN == "polygon") {
+            if (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
                 data.append("upload_preset", "my-uploads");
             } else {
                 data.append("upload_preset", "test_uploads");
@@ -902,6 +902,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         const auth = getAuth();
         signOut(auth).then(() => {
             setUser(null);
+            router.push("/");
         })
             .catch((error) => {
                 console.error(error);

@@ -11,7 +11,7 @@ import img from "./../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const SongDisplay = ({ myNFTs, artist }) => {
-    const { downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity, setOpenCreateItems } = useContext(NFTMarketplaceContext);
+    const { user, downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity } = useContext(NFTMarketplaceContext);
 
     const [isDownloading, setIsDownloading] = useState(false);
     const [indexDownload, setIndexDownload] = useState();
@@ -93,7 +93,9 @@ const SongDisplay = ({ myNFTs, artist }) => {
                             <div>
                                 {myNFTs.length == 0 ? (
                                     <div className={`${Style.display_song_noSong} font-normal`}>
-                                        No exclusive musical content created.
+                                        {user.artist_minting_contract ?
+                                            <div>No track released. <br /><a className={Style.display_song_noSong_link} href='https://lirmusic.notion.site/Release-limited-editions-tracks-80d1f16f4d894f2983a58b047eb35e83' target='_blank'>How to release a track?</a></div> :
+                                            <div>Create a smart contract to start releasing. <br /><a className={Style.display_song_noSong_link} href='https://lirmusic.notion.site/Create-a-smart-contract-ca49f55ef3f24695873b8f90ff38fadf' target='_blank'>What is a smart contract?</a></div>}
                                     </div>) : (
                                     myNFTs.map((el, i) => (
                                         <div className={`${Style.display_song_box} ${(currentIndex == 0 && JSON.stringify(nft) === JSON.stringify(myNFTs.slice(i, i + 1)) && !stopFooter && Style.background_grey)}`}
@@ -228,7 +230,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                 <div>
                                     {myNFTs.length == 0 ? (
                                         <div className={`${Style.display_song_noSong} font-normal`}>
-                                            No exclusive musical content collected.<br />Visit <Link href={"./collection"} className={Style.display_song_noSong_discover}>discover</Link> to start collecting.
+                                            No track collected.<br />Visit <Link href={"./collection"} className={Style.display_song_noSong_discover}>collection</Link> and start collecting.
                                         </div>) : (
                                         myNFTs.map((el, i) => (
                                             <div className={`${Style.display_song_box_download} ${currentIndex == i && nft == myNFTs && !stopFooter && Style.background_grey}`}

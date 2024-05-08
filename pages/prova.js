@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useActiveAccount } from "thirdweb/react";
 import { toTokens, estimateGas, createThirdwebClient, getContract, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
 import { polygonAmoy } from "thirdweb/chains";
@@ -18,11 +18,12 @@ export const ESTIMATED_GAS_FEE_OFFSET = 0.0001;
 import Style from "../styles/discover.module.css";
 import { Transak } from '@transak/transak-sdk';
 import { verifyContract } from "thirdweb/contract"
+import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
 
 
 const prova = () => {
 
-    useEffect(() => {
+    /* useEffect(() => {
         settingGeration().then((settings) => {
             const transak = new Transak(settings);
 
@@ -58,7 +59,7 @@ const prova = () => {
                 subscribeToWebsockets(orderId);
             });
         })
-    }, []);
+    }, []); */
 
 
     const client = createThirdwebClient({
@@ -155,9 +156,12 @@ const prova = () => {
         return settings
     }
 
+    const { setOpenLoading } = useContext(NFTMarketplaceContext);
+
     return (
         <div className={Style.vh_discover}>
             <div className={Style.discover}>
+                <button onClick={() => setOpenLoading(true)} />
             </div>
         </div>
     )
