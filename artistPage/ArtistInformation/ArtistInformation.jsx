@@ -102,9 +102,9 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
                     {myArtistProfile && <div>
                         {address ?
                             <div>
-                                {user.artist_minting_contract ?
-                                    <ActionButton text="create a new digital collectible" action={openCrtItem} fontSize="0.9rem" /> :
-                                    <ActionButton text="create your unique smart contract" action={openSmartCnt} fontSize="0.9rem" />}
+                                {user?.artist_minting_contract ?
+                                    <ActionButton text="Create your limited edition track" action={openCrtItem} fontSize="0.9rem" /> :
+                                    <ActionButton text="create your smart contract" action={openSmartCnt} fontSize="0.9rem" />}
 
                             </div> : <ButtonConnectWallet user={user} />
                         }

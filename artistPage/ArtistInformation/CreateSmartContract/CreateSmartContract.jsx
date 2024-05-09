@@ -18,7 +18,7 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
 
     const [nameOfToken, setNameOfToken] = useState();
     const [symbolOfToken, setSymbolOfToken] = useState();
-    const [royalties, setRoyalties] = useState();
+    const royalties = 5;
 
     const mintSmartContract = async (editionDrop) => {
         closeCreateSmartContract();
@@ -58,9 +58,9 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                                 <p>
                                     To digitize music collecting, tokens are employed and their transactions are recorded on the blockchain to identify those who can access the audio file.
                                     Tokens on the blockchain are given names and symbols. <br />
-                                    You can choose your token's name. Once you selected, it will be shared in all your collections. It is suggested to use your artist name plus "token".
+                                    You can choose your token's name. Once selected, it will be shared in all your collections. It is suggested to use your artist name plus "token".
                                 </p>
-                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Artist name: "Pink Floyd" ={'>'} <span style={{ color: "var(--main-color)" }}>Token name</span>: "Pink Floyd Token".</p>
+                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Artist name: "Red Hot Chili Peppers" ={'>'} <span style={{ color: "var(--main-color)" }}>Token name</span>: "Red Hot Chili Peppers Token".</p>
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                         className={Style.user_box_input_input}
                         style={{ margin: "0.5rem 0rem" }}
                         id="token name"
-                        placeholder={"Your token name once saved cannot be changed"}
+                        placeholder={"Once saved your token name cannot be changed"}
                         onChange={(e) => setNameOfToken(e.target.value)}
                     />
                 </div>
@@ -79,8 +79,8 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                         <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
-                                <p>The symbol is an abbrevation of the token name. Once you selected, it will be shared in all your collections.</p>
-                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Artist name: "Red Hot Chili Peppers" ={'>'} Token name: "Red Hot Chili Peppers Token" ={'>'} <span style={{ color: "var(--main-color)" }}>Symbol</span>: "RHCP"</p>
+                                <p>The symbol is an abbrevation of the token name. Once selected, it will be shared in all your collections.</p>
+                                <p><span style={{ color: "var(--main-color)" }}>E.g.</span> Token name: "Red Hot Chili Peppers Token" ={'>'} <span style={{ color: "var(--main-color)" }}>Symbol</span>: "RHCP"</p>
                             </div>
                         </div>
                     </div>
@@ -88,38 +88,28 @@ const CreateSmartContract = ({ closeCreateSmartContract }) => {
                         className={Style.user_box_input_input}
                         style={{ margin: "0.5rem 0rem" }}
                         id="token symbol"
-                        placeholder={"Your token name once saved cannot be changed"}
+                        placeholder={"Once saved your token symbol cannot be changed"}
                         onChange={(e) => setSymbolOfToken(e.target.value)}
                     />
                 </div>
                 <div className={Style.CreateSmartContract_bottom_95}>
                     <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial}>
-                        <label className='font-normal' htmlFor='token name'> Royaties</label>
+                        <label className='font-normal' htmlFor='token name'> Royalties: <span style={{ color: "var(--background-grey3)" }} className="font-small">5%</span></label>
                         <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
                                 <p>
                                     Royalties are a percentage of the resale value that goes to the original creator, providing ongoing compensation for their digital artworks.
                                     This ensures artists receive a share of the profits each time their tracks are resold between different users.<br />
-                                    Normally this percentage varies between <span style={{ color: "var(--main-color)" }}>5%</span> to <span style={{ color: "var(--main-color)" }}>10%</span>
-                                </p>
-                                <p>
-                                    <span style={{ color: "var(--main-color)" }}>IMPORTANT</span>: The number is already in percentage format- e.g. insert 5 for 5% royalties.
+                                    <br />This percentage is setted at <span style={{ color: "var(--main-color)" }}>5%</span> by default
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <input
-                        className={Style.user_box_input_input}
-                        style={{ margin: "0.5rem 0rem" }}
-                        id="royalties"
-                        placeholder={"Royalties percentage. The numer is already in percentage format - e.g. insert 10 for 10% royalties."}
-                        onChange={(e) => setRoyalties(e.target.value)}
-                    />
                 </div>
                 <div className={Style.CreateSmartContract_bottom_95}>
                     <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial}>
-                        <div className='font-normal' htmlFor='token name'> First sale fees: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_first_sale_fee}%</span></div>
+                        <div className='font-normal'> First sale fee: <span style={{ color: "var(--background-grey3)" }} className="font-small">{user.artist_first_sale_fee}%</span></div>
                         <div className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon}>
                             <CiSquareQuestion className={Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_icon} size={22} />
                             <div className={`${Style.CreateSmartContract_bottom_95_titleWithTutorial_icon_appear} font-small`}>
