@@ -19,7 +19,6 @@ const HeroSection = () => {
 
                 </div>
             </div>
-            <div className={Style.heroSection_gradient} />
         </div>
     );
 };

@@ -36,17 +36,6 @@
     grid-column: 3;
 }
 
-.heroSection_gradient {
-    content: '';
-    position: absolute;
-    height: calc(50vh);
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(17, 17, 17, 1) 0%, rgba(17, 17, 17, 0.5) 60%, transparent);
-    z-index: 2;
-}
-
 @media screen and (max-width: 480px) {
 
     .heroSection_box_colums h1 {
