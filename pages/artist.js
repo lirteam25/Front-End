@@ -28,10 +28,12 @@ const Artist = () => {
         })
     }, [router]);
 
+    const title = artist.length == 0 ? "Artist | LIR" : `${artist.artist_name} | LIR`;
+    const description = artist.length == 0 ? "" : `${artist.description}`;
 
     return (
         <div className={Style.Vh_artist}>
-            <NextSeo title="Artist | LIR" description="Explore the unique creations of one artist. Immerse yourself in their exclusive music digital collectibles and dive into the artistic world they've crafted." />
+            <NextSeo title={title} description={description} />
             <div className={Style.artist}>
                 <ArtistProfileCard artist={artist} />
                 <div className={Style.artist_bottom}>
