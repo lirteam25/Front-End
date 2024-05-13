@@ -71,10 +71,13 @@ const NFTDetails = () => {
         }
     }, [user])
 
+    const title = nft.length == 0 ? ("Token Details | LIR") : (`${nft.song} | ${nft.artist}`);
+    const description = nft.length == 0 ? ("") : (`${nft.song} is an unreleased track by ${nft.artist}. ${nft.description}`)
+
 
     return (
         <div>
-            <NextSeo title="Token Details | LIR" description="Delve deep into the details of this exclusive music digital collectible. Learn about its history, rarity, and the story it carries. Own a piece of music history." />
+            <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} />
                 <NFTDescription nft={nft} event={event} hash={hash} price={price} quantity={quantity} date={date} sameTokenNFT={sameTokenNFT} supporters={supporters} />
