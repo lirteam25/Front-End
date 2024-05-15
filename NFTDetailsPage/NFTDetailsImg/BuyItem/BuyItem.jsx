@@ -38,7 +38,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <CrossmintPayButton
+                    {nft.collection_id ? <CrossmintPayButton
                         style={{
                             borderRadius: 0,
                             width: "100%",
@@ -59,7 +59,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         environment="staging"
                         checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
                         mintTo={address}
-                    />
+                    /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>
         </div>

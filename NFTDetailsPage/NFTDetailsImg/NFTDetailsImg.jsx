@@ -161,7 +161,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                     {openListItem && <ListItem nft={shownNft} setOpenListItem={setOpenListItem} />}
                                                 </div>
                                                 )} */}
-                                        {user.role == "artist" && user.artist_minting_contract == shownNft.token_address ? (<InfoButton text={`You listed ${shownNft.sellingQuantity} tokens`} />) : (
+                                        {user.role == "artist" && user?.artist_minting_contract == shownNft?.token_address ? (<InfoButton text={`You listed ${shownNft.sellingQuantity} tokens`} />) : (
                                             <InfoButton text={`Secondary market function will be soon intregrated`} />
                                         )}
                                         {shownNft.sellingQuantity > 0 && (

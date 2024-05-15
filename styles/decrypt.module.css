@@ -1,0 +1,37 @@
+.vh_decrypt {
+    min-height: 100vh;
+    padding: 0.5px;
+}
+
+.decrypt {
+    width: 95%;
+    margin: calc(60px + 2.5%) auto;
+}
+
+.decrypt h1 {
+    text-transform: uppercase;
+}
+
+.decrypt input {
+    background-color: transparent;
+    margin-bottom: 1rem;
+    border: 1px solid var(--background-grey);
+}
+
+.decrypt input::placeholder {
+    color: var(--background-grey3);
+}
+
+@media screen and (max-width: 480px) {
+    .decrypt {
+        width: 90%;
+        margin: calc(60px + 5%) auto 90px auto;
+    }
+}
+
+@media screen and (min-width:481px) and (max-width: 1024px) {
+    .decrypt {
+        width: 95%;
+        margin: calc(60px + 2.5%) auto 90px auto;
+    }
+}

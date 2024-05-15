@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
-import * as LitJsSdk from "@lit-protocol/lit-node-client"
 import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
+
+import Style from "./../styles/decrypt.module.css";
+import { ActionButton } from '../components/componentsIndex';
 
 const DecryptFilePage = () => {
 
@@ -23,15 +25,17 @@ const DecryptFilePage = () => {
     }
 
     return (
-        <div>
-            <h1>Decrypt File</h1>
-            <input
-                type="text"
-                value={cid}
-                onChange={(e) => setCid(e.target.value)}
-                placeholder="Enter CID"
-            />
-            <button onClick={handleDecrypt}>Decrypt</button>
+        <div className={Style.vh_decrypt}>
+            <div className={Style.decrypt}>
+                <h1 className='font-huge'>Decrypt File</h1>
+                <input
+                    type="text"
+                    value={cid}
+                    onChange={(e) => setCid(e.target.value)}
+                    placeholder="Enter CID"
+                />
+                <ActionButton text="decrypt" onClick={handleDecrypt} />
+            </div>
         </div>
     );
 }
