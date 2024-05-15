@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
-import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendTransaction } from "thirdweb";
+import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendAndConfirmTransaction } from "thirdweb";
 import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
@@ -692,14 +692,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let tx;
 
         if (nft.isFirstSale) {
-            const approveTx = await approve({
+            const approveTx = approve({
                 contract: contractUSDC,
                 spender: contract.address,
                 amount: nft.price
             })
 
-            const { transactionHash } = await sendTransaction({ account, transaction: approveTx });
-            console.log(transactionHash);
+            const transactionResult = await sendAndConfirmTransaction({ account, transaction: approveTx });
+            transactionResult.wait();
 
             tx = claimTo({
                 contract,
