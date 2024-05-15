@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
-import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
+import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendTransaction } from "thirdweb";
 import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
@@ -13,6 +13,7 @@ import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelLi
 import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
 import { deployERC1155Contract } from "thirdweb/deploys";
 import { name, symbol } from "thirdweb/extensions/common";
+import { approve } from "thirdweb/extensions/erc20";
 
 import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, deleteUser } from "firebase/auth";
 
@@ -123,6 +124,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
     });
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
+    const USDCAddress = process.env.ACTIVE_CHAIN == "polygon" ? "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" : "0x14196f08a4fa0b66b7331bc40dd6bcd8a1deea9f"
+
+    const contractUSDC = getContract({
+        client,
+        chain,
+        address: USDCAddress
+    })
 
     const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
         try {
@@ -463,7 +471,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             phases: [
                 {
                     startTime: startingTime,
-                    currencyAddress: NATIVE_TOKEN_ADDRESS,
+                    currencyAddress: USDCAddress,
                     price: formInputPrice, // public sale price
                     maxClaimableSupply: supply
                 },
@@ -684,6 +692,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let tx;
 
         if (nft.isFirstSale) {
+            const approveTx = await approve({
+                contract: contractUSDC,
+                spender: contract.address,
+                amount: nft.price
+            })
+
+            const { transactionHash } = await sendTransaction({ account, transaction: approveTx });
+            console.log(transactionHash);
+
             tx = claimTo({
                 contract,
                 to: address,

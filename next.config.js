@@ -38,7 +38,7 @@ const nextConfig = {
     THIRDWEB_PROJECT_ID: process.env.THIRDWEB_PROJECT_ID,
     THIRDWEB_API_KEY: process.env.THIRDWEB_API_KEY,
     ACTIVE_CHAIN: process.env.ACTIVE_CHAIN,
-    TRANSAK_API_KEY: process.env.TRANSAK_API_KEY
+    CROSSMINT_PROJECT_ID: process.env.CROSSMINT_PROJECT_ID,
   }
 };
 

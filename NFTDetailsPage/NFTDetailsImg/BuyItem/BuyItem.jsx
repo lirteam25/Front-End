@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useActiveAccount } from "thirdweb/react";
 import { AiOutlineClose } from "react-icons/ai";
+import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 
 import Style from "./BuyItem.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
@@ -37,7 +38,28 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <InfoButton text="Pay with Credit Card Coming Soon" />
+                    <CrossmintPayButton
+                        style={{
+                            borderRadius: 0,
+                            width: "100%",
+                            backgroundColor: "transparent",
+                            border: "1px solid white",
+                            padding: "0.3rem 0",
+                            textTransform: "uppercase",
+                            fontFamily: "Space Grotesk",
+                            fontSize: "0.9rem",
+                            margin: 0
+                        }}
+                        getButtonText={(connecting) =>
+                            connecting ? "Connecting" : `Pay with credit card`
+                        }
+                        collectionId="4967ec15-66aa-45e1-a367-418b6325eb01"
+                        projectId={process.env.CROSSMINT_PROJECT_ID}
+                        mintConfig={{ "totalPrice": "0.015", "quantity": "1", "tokenId": nft.token_id }}
+                        environment="staging"
+                        checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
+                        mintTo={address}
+                    />
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@crossmint/client-sdk-react-ui": "^1.1.9",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@firebase/auth": "^1.5.1",
