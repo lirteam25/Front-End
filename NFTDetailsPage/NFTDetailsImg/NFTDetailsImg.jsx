@@ -7,28 +7,23 @@ import Link from "next/link";
 //INTERNAL IMPORT
 import Style from "./NFTDetailsImg.module.css";
 import img from "./../../img/index";
-import { SmartContractButton, InfoButton, ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
+import { InfoButton, ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
 import ChangePrice from "./ChangePrice/ChangePrice";
 import DelistItem from "./DelistItem/DelistItem";
 import ListItem from "./ListItem/ListItem";
 import BuyItem from "./BuyItem/BuyItem";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
-import { NFTMarketplaceAddress } from "../../Context/Constants";
 
 
 const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
-    const { setOpenRegister, nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, claimNFT, freeNFTTransfer, sendUserActivity, renderString, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
+    const { nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, freeNFTTransfer, sendUserActivity, renderString, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
 
     const address = useActiveAccount()?.address;
-
-    const openLogin = () => {
-        setOpenRegister(true)
-    }
 
     const [openChangePrice, setOpenChangePrice] = useState(false);
     const [openDelistItem, setOpenDelistItem] = useState(false);
     const [openListItem, setOpenListItem] = useState(false);
-    const [openBuy, setOpenBuy] = useState(false)
+    const [openBuy, setOpenBuy] = useState(false);
 
     const setNewPrice = () => {
         setOpenDelistItem(false); setOpenListItem(false); setOpenBuy(false);

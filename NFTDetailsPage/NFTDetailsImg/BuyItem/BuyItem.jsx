@@ -59,6 +59,10 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         environment="staging"
                         checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
                         mintTo={address}
+                        onEvent={(event) => {
+                            console.log(event.type, event);
+                        }}
+                        successCallbackURL="http://localhost:3000/success"
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>

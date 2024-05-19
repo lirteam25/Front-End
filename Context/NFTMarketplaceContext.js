@@ -746,6 +746,34 @@ export const NFTMarketplaceProvider = ({ children }) => {
             handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
         }
     };
+    async function updateDBafterPurchaseCreditCard(transactions, token_id, token_address) {
+        try {
+            const accessToken = (await fetchUserInformation()).accessToken;
+            console.log(accessToken);
+            const data2 = JSON.stringify({ token_id, token_address });
+            const response = await patchOnDB(
+                `${DBUrl}/api/v1/owners/nftSoldCreditCard`, data2, accessToken);
+            console.log(response);
+            console.log(response.data);
+            console.log(response.data.seller);
+            console.log(response.data.seller.price);
+            const data1 = JSON.stringify({ token_id, token_address, transactions, 'transactions_type': "SALE", "price": response?.data?.seller?.price, 'quantity': 1 });
+            await patchOnDB(
+                `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
+                    console.log(response);
+                });
+
+            const analytics = getAnalytics();
+            logEvent(analytics, 'purchase');
+
+            if (window.opener) {
+                window.opener.location.href = '/my-profile';
+                window.close();
+            }
+        } catch (error) {
+            handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
+        }
+    }
 
     const freeNFTTransfer = async (nft) => {
         try {
@@ -915,11 +943,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const disconnectUser = () => {
+        router.push("/");
         disconnect(activeWallet);
         const auth = getAuth();
         signOut(auth).then(() => {
             setUser(null);
-            router.push("/");
         })
             .catch((error) => {
                 console.error(error);
@@ -1172,6 +1200,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 claimNFT,
                 freeNFTTransfer,
                 updateDBafterPurchase,
+                updateDBafterPurchaseCreditCard,
 
                 changeNFTPrice,
                 updateDBOnPriceChange,

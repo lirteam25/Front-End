@@ -228,6 +228,10 @@
     .NFTDetailsImg_description_info_bottom {
         padding: 0.3rem 0.5rem;
     }
+
+    .navbar_Buy {
+        width: 90%;
+    }
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {
@@ -300,5 +304,9 @@
 
     .NFTDetailsImg_description_info_bottom {
         padding: 0.6rem 0.5rem;
+    }
+
+    .navbar_Buy {
+        width: 60%;
     }
 }
