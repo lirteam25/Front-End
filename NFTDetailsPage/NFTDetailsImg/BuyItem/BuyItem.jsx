@@ -62,7 +62,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         onEvent={(event) => {
                             console.log(event.type, event);
                         }}
-                        successCallbackURL="http://localhost:3000/success"
+                        successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>
