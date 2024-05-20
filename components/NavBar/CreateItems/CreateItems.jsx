@@ -58,7 +58,7 @@ const CreateItem = ({ closeCreateItems }) => {
             combinedDateISO = false;
         }
 
-        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, user.artist_name, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
+        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, user.artist_name, user.artist_collection_id, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
     }
 
     const numberInputOnWheelPreventChange = (e) => {

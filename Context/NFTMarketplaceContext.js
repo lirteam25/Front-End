@@ -486,12 +486,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
             params: [[txLazyMintEncoded, txClaimConditionEncoded]]
         });
     }
-    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
+    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, collection_id, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
         try {
+            console.log("here");
             const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
             const token_id = parseInt(nextTokenId) - 1;
             const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
-            console.log(token_URI);
 
             const transactionHash = receipt.transactionHash;
 
@@ -506,9 +506,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             let dataTokenInfo;
             const accessToken = (await fetchUserInformation()).accessToken;
             if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
             } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice });
             }
             await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
                 console.log("response:", response);
