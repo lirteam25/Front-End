@@ -56,7 +56,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         collectionId={nft.collection_id}
                         projectId={process.env.CROSSMINT_PROJECT_ID}
                         mintConfig={{ "totalPrice": nft.price.toString(), "quantity": "1", "tokenId": nft.token_id.toString() }}
-                        environment="staging"
+                        environment={process.env.ACTIVE_CHAIN == "polygon" ? "production " : "staging"}
                         checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
                         mintTo={address}
                         onEvent={(event) => {
