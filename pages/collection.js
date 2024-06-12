@@ -18,7 +18,7 @@ const Discover = () => {
 
     return (
         <div className={Style.vh_discover}>
-            <NextSeo title="Collection | LIR" description="Embark on a musical journey like no other. Discover a treasure trove of digital collectibles, each with its own story and artistry. Start exploring now." />
+            <NextSeo title="Collection | LIR" description="Discover unreleased limited-edition tracks. Start exploring now." />
             <div className={Style.discover}>
                 <NFTCardTwo sellingNFTs={data} />
             </div>

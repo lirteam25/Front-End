@@ -100,7 +100,7 @@ const ArtistProfileCard = ({ artist, myArtistProfile, setOpenArtistSettings }) =
                             <div className={Style.ArtistProfileCard_top_content_colums_2}>
                                 <div className={Style.ArtistProfileCard_top_content_colums_2_wallet}>
                                     <div className={`${Style.ArtistProfileCard_top_content_colums_3_wallet} font-small`} onClick={handleCopyClick}>
-                                        <Image src={img.copy} alt="copy" width={13} height={13} /> {artist.uid ? (<div>{renderString(artist.uid.toString(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span></div>) : ("----")}
+                                        <Image src={img.copy} alt="copy" width={13} height={13} /> {artist.wallet ? (<div>{renderString(artist.wallet.toString(), 6)}<span style={{ fontFamily: "Space Grotesk" }}>...</span></div>) : ("----")}
                                     </div>
                                 </div>
                                 <div className={Style.ArtistProfileCard_top_content_colums_social}>

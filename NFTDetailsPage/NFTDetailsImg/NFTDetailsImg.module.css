@@ -35,7 +35,7 @@
     margin: 0;
 }
 
-.NFTDetailsImg_description_info h2:hover {
+.underline:hover {
     text-decoration: underline;
 }
 

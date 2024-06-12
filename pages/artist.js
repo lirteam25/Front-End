@@ -18,13 +18,13 @@ const Artist = () => {
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { cnt = "" } = router.query;
-        fetchArtistNFT(cnt).then((result) => {
-            setTokenInfos(result);
-        });
-        fetchArtistName(cnt).then((response) => {
+        const { uid = "" } = router.query;
+        fetchArtistName(uid).then((response) => {
             console.log(response);
             setArtist(response);
+            fetchArtistNFT(response.artist_minting_contract).then((result) => {
+                setTokenInfos(result);
+            });
         })
     }, [router]);
 

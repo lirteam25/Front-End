@@ -32,10 +32,11 @@ const NFTDetails = () => {
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { token_id = "", token_address = "", id = "" } = router.query;
-        fetchNFTOwner(id).then((item) => {
+        const { token_id = "", token_address = "", uid = "" } = router.query;
+        fetchNFTOwner(token_id, token_address, uid).then((item) => {
             console.log("nft", item);
             setNft(item);
+            setSameTokenNFT([item]);
         });
         fetchTransactionsInfo(token_id, token_address).then((transactions) => {
             setEvent(transactions.transactions_type.reverse());
@@ -44,11 +45,11 @@ const NFTDetails = () => {
             setQuantity(transactions.quantity.reverse());
             setDate(transactions.date.reverse());
         });
-        fetchSellingSameTokenNFT(token_id, token_address).then((items) => {
+        /* fetchSellingSameTokenNFT(token_id, token_address).then((items) => {
             console.log("Same token NFT", items);
             setSameTokenNFT(items);
-        });
-        fetchSupporters(id).then((item) => {
+        }); */
+        fetchSupporters(token_id, token_address).then((item) => {
             console.log("supporters", item);
             setSupporters(item);
         });
@@ -76,13 +77,13 @@ const NFTDetails = () => {
 
 
     return (
-        <div>
+        <>
             <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} />
                 <NFTDescription nft={nft} event={event} hash={hash} price={price} quantity={quantity} date={date} sameTokenNFT={sameTokenNFT} supporters={supporters} />
             </div>
-        </div>
+        </>
     );
 };
 

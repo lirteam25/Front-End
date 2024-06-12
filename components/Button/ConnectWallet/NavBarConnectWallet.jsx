@@ -105,7 +105,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
                                                             <Image src={images.manage_accounts} alt="settings" width={16} height={16} /> Create artist profile
                                                         </div>}
                                                         {user.role == "artist" && user.artist_minting_contract && <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenCreateItem(true) }}>
-                                                            <Image src={images.upload} alt="upload" width={16} height={16} /> Create a new digital collectible
+                                                            <Image src={images.upload} alt="upload" width={16} height={16} /> Create your limited edition track
                                                         </div>}
                                                         <div className={Style.profile_tab_element} onClick={() => { closeProfileTab(); setOpenAccountSetting(true) }}>
                                                             <Image src={images.manage_accounts} alt="setting" width={16} height={16} /> Settings

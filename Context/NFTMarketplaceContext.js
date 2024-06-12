@@ -210,10 +210,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
             // then get the authSig
             await litNodeClient.connect();
-            const authSig = await LitJsSdk.checkAndSignAuthMessage({
+            const signurature = await createPayload();
+            /* const authSig = await LitJsSdk.checkAndSignAuthMessage({
                 chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
                 nonce: ''
-            });
+            }); */
+            console.log(signurature);
+            const authSig = signurature;
             // Here we can setup any access control conditions we want, such as must hold a specifc NFT, or have a certain amount of ETH
             // Right now its blank so anyone can decrypt the file
             const accs = [
@@ -238,6 +241,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 litNodeClient: litNodeClient,
                 readme: "Use IPFS CID of this file to decrypt it"
             });
+
+            console.log(encryptedZip);
 
             // Then we turn it into a file that will be accepted by the Pinata API
             const encryptedBlob = new Blob([encryptedZip], { type: 'text/plain' })
@@ -451,6 +456,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     async function createNFT(
         contractEditionDrop, artist, song, formInputPrice, audioPinata, imageSongPinata, description, supply, launch_date) {
 
+
         setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
 
         console.log(contractEditionDrop);
@@ -486,10 +492,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             params: [[txLazyMintEncoded, txClaimConditionEncoded]]
         });
     }
-    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, collection_id, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
+    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, author_address, collection_id, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
         try {
-            console.log("here");
-            const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
+            /* const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
             const token_id = parseInt(nextTokenId) - 1;
             const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
 
@@ -506,9 +511,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             let dataTokenInfo;
             const accessToken = (await fetchUserInformation()).accessToken;
             if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
             } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice });
             }
             await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
                 console.log("response:", response);
@@ -525,7 +530,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
             await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
                 console.log("response:", response);
-            });
+            }); */
 
             const analytics = getAnalytics();
             logEvent(analytics, 'create');
@@ -583,19 +588,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
     async function updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id) {
         try {
-            //Update transaction history
-            const transactions = receipt.transactionHash;
-            const accessToken = (await fetchUserInformation()).accessToken;
-            const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
-                    console.log(response);
-                });
-            //Update token Owners
-            const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address, listing_id, "sellingQuantity": amount, "price": formInputPrice });
-            await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
-                console.log(response);
-            });
+            /*             //Update transaction history
+                        const transactions = receipt.transactionHash;
+                        const accessToken = (await fetchUserInformation()).accessToken;
+                        const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
+                        await patchOnDB(
+                            `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
+                                console.log(response);
+                            });
+                        //Update token Owners
+                        const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address, listing_id, "sellingQuantity": amount, "price": formInputPrice });
+                        await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
+                            console.log(response);
+                        }); */
 
             const analytics = getAnalytics();
             logEvent(analytics, 'secondary_listing');
@@ -614,6 +619,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const fetchDiscoverNFTs = async () => {
         const response = await getFromDB(`${DBUrl}/api/v1/owners/discoverItem`
         ).then((response) => { return response });
+        console.log("discoverNFT:", response);
         console.log("discoverNFT:", response.data.discoverNFT);
         return response.data.discoverNFT;
     };
@@ -628,8 +634,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     //Given the owner _id returns the related item.
-    const fetchNFTOwner = async (id) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/nfts/ownersNFTInfo/${id}`
+    const fetchNFTOwner = async (token_id, token_address, uid) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/nfts/ownersNFTInfo/${token_id}/${token_address}/${uid}`
         ).then((response) => { return response });
         return response.data.ownerNFTInfo;
     }
@@ -652,15 +658,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     //Given the artist minting contract it returns the token created
-    const fetchArtistNFT = async (address_minting_contract) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/owners/artistNFT?cnt=${address_minting_contract}`
+    const fetchArtistNFT = async (wallet) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/owners/artistNFT?uid=${wallet}`
         ).then((response) => { return response });
+        console.log(response);
         console.log(response.data.artNFT)
-        return response.data.artNFT;
+        return response?.data?.artNFT;
     };
 
-    const fetchArtistName = async (address_minting_contract) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/users/artistName?cnt=${address_minting_contract}`
+    const fetchArtistName = async (wallet) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/artistName?uid=${wallet}`
         ).then((response) => { return response });
         console.log("Artist", response);
         return response.data;
@@ -673,9 +680,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response.topCollectors;
     }
 
-    const fetchSupporters = async (id) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/users/supporters/${id}`
-        ).then((response) => { return response });
+    const fetchSupporters = async (token_id, token_address) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/supporters/${token_id}/${token_address}`
+        ).then((response) => { console.log(response); return response });
         return response.supporters;
     }
 
@@ -721,7 +728,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
     async function updateDBafterPurchase(receipt, seller, newBuyer) {
         try {
-            const transactions = receipt.transactionHash;
+            /* const transactions = receipt.transactionHash;
             const accessToken = (await fetchUserInformation()).accessToken;
             const buyer = newBuyer;
             const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
@@ -733,7 +740,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             await patchOnDB(
                 `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
                     console.log(response);
-                });
+                }); */
 
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
@@ -746,23 +753,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
             handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
         }
     };
-    async function updateDBafterPurchaseCreditCard(transactions, token_id, token_address) {
+    async function afterPurchaseCreditCard() {
         try {
-            const accessToken = (await fetchUserInformation()).accessToken;
-            console.log(accessToken);
-            const data2 = JSON.stringify({ token_id, token_address });
-            const response = await patchOnDB(
-                `${DBUrl}/api/v1/owners/nftSoldCreditCard`, data2, accessToken);
-            console.log(response);
-            console.log(response.data);
-            console.log(response.data.seller);
-            console.log(response.data.seller.price);
-            const data1 = JSON.stringify({ token_id, token_address, transactions, 'transactions_type': "SALE", "price": response?.data?.seller?.price, 'quantity': 1 });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
-                    console.log(response);
-                });
-
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
 
@@ -1200,7 +1192,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 claimNFT,
                 freeNFTTransfer,
                 updateDBafterPurchase,
-                updateDBafterPurchaseCreditCard,
+                afterPurchaseCreditCard,
 
                 changeNFTPrice,
                 updateDBOnPriceChange,

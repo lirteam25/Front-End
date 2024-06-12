@@ -17,20 +17,17 @@ const Home = () => {
     queryFn: fetchTopCollectors
   });
 
-  const { data: tokenInfoData } = useQuery({
+  const { data: sellingNFT } = useQuery({
     queryKey: ["tokenInfo"],
     queryFn: fetchDiscoverNFTs
   });
 
   return (
-    <div>
-      <NextSeo title="LIR MUSIC" description="LIR Music is a streaming platform integrating a digital collectibles marketplace, empowering fans to collect, enjoy and resale exclusive musical content while investing in artists. Explore our unique collection of digital treasures and own a piece of music history." />
-      <div className={Style.index}>
-        <HeroSection />
-        <LastRelease tokenInfoData={tokenInfoData} />
-        <TopCollectors collectors={topCollectorsData} />
-        <JoinLir />
-      </div>
+    <div className={Style.index}>
+      <HeroSection />
+      <LastRelease tokenInfoData={sellingNFT} />
+      <TopCollectors collectors={topCollectorsData} />
+      <JoinLir />
     </div>
   )
 }

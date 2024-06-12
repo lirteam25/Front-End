@@ -117,7 +117,16 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                     <div className={Style.NFTDetailsImg_description_info_title}>
                         <div className={Style.NFTDetailsImg_description_info_title_songAndartist}>
                             <h1 className="font-medium">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
-                            <h2 className="font-medium"><Link href={{ pathname: "/artist", query: `cnt=${shownNft.token_address}` }}>{shownNft.artist ? shownNft.artist : "----"}</Link></h2>
+                            <h2 className="font-medium">
+                                {shownNft.artist?.map((art, i) => (
+                                    <span key={i}>
+                                        <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${shownNft.author_address[i]}` }}>
+                                            {art}
+                                        </Link>
+                                        {i < shownNft.artist.length - 1 && ', '}
+                                    </span>
+                                ))}
+                            </h2>
                         </div>
                         <div className={Style.NFTDetailsImg_description_info_title_play}>
                             {(userOwn || !user) && <div> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
@@ -134,11 +143,11 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                         </div>
                         <div>
                             <div>PRICE</div>
-                            <div>{typeof shownNft.price !== 'undefined' ? (shownNft.sellingQuantity == 0 ? "Track not listed" : (shownNft.price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.price} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
+                            <div>{typeof shownNft.price !== 'undefined' ? (shownNft.sellingQuantity == 0 ? "Track not listed" : (shownNft.price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
                         </div>
                         <div>
                             <div>SUPPLY</div>
-                            <div>{shownNft.supply ? shownNft.supply : "----"}</div>
+                            <div>{shownNft.maxClaimableSupply ? shownNft.maxClaimableSupply : "----"}</div>
                         </div>
                     </div>
                 </div>
