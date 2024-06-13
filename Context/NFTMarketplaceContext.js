@@ -494,7 +494,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
     async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, author_address, collection_id, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
         try {
-            /* const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
+            const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
             const token_id = parseInt(nextTokenId) - 1;
             const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
 
@@ -520,17 +520,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
 
             //Post Owners document
-            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address, "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+            /* const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address, "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
 
             await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
                 console.log("response:", response);
-            });
+            }); */
 
             //Post Transaction document
             const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
             await postOnDB(`${DBUrl}/api/v1/transactions`, dataTransaction, accessToken).then((response) => {
                 console.log("response:", response);
-            }); */
+            });
 
             const analytics = getAnalytics();
             logEvent(analytics, 'create');
@@ -657,7 +657,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return filteredNFTs;
     }
 
-    //Given the artist minting contract it returns the token created
+    //Given the artist wallet it returns the token created
     const fetchArtistNFT = async (wallet) => {
         const response = await getFromDB(`${DBUrl}/api/v1/owners/artistNFT?uid=${wallet}`
         ).then((response) => { return response });

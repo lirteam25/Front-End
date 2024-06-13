@@ -15,7 +15,7 @@ import BuyItem from "./BuyItem/BuyItem";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 
-const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
+const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
     const { nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, freeNFTTransfer, sendUserActivity, renderString, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
 
     const address = useActiveAccount()?.address;
@@ -68,44 +68,6 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
         }
     }
 
-    const [timeRemaining, setTimeRemaining] = useState(false);
-
-    useEffect(() => {
-        // Get the target date (October 20th)
-        const targetDate = new Date(`${shownNft.launch_date}`).getTime();;
-
-        // Function to update the timer
-        function updateTimer() {
-            const currentDate = new Date().getTime();
-            const timeDifference = targetDate - currentDate;
-
-            if (timeDifference <= 0) {
-                // The target date has passed
-                setTimeRemaining(false);
-            } else {
-                // Calculate hours, minutes, and seconds
-                const days = Math.floor((timeDifference / (1000 * 60 * 60 * 24)));
-                const hours = Math.floor((timeDifference / (1000 * 60 * 60))) % 24;
-                const minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
-                const seconds = Math.floor((timeDifference / 1000) % 60);
-
-                // Format the time as HH:MM:SS
-                const formattedTime = `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                // Update the timer state
-                setTimeRemaining(formattedTime);
-            }
-        }
-
-        // Call the updateTimer function initially
-        updateTimer();
-
-        // Update the timer every second (1000 milliseconds)
-        const timerInterval = setInterval(updateTimer, 1000);
-
-        // Clean up the interval when the component unmounts
-        return () => clearInterval(timerInterval);
-    }, [shownNft]);
-
     const chainId = useActiveWalletChain()?.id;
 
     const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002;
@@ -143,7 +105,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                         </div>
                         <div>
                             <div>PRICE</div>
-                            <div>{typeof shownNft.price !== 'undefined' ? (shownNft.sellingQuantity == 0 ? "Track not listed" : (shownNft.price == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
+                            <div>{typeof shownNft.pricePerToken !== 'undefined' ? (shownNft.sellingQuantity == 0 ? <span style={{ color: "var(--main-color)" }}>NOT LISTED</span> : (shownNft.pricePerToken == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
                         </div>
                         <div>
                             <div>SUPPLY</div>
@@ -153,10 +115,10 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                 </div>
 
                 <div className={Style.NFTDetailsImg_description_info_actions}>
-                    {shownNft.price !== 'undefined' ? (
+                    {shownNft.pricePerToken !== 'undefined' ? (
                         <div> {address && user && chainId == targetChainId ? (
                             <div>
-                                {user.uid == shownNft.owner_of ? (
+                                {user.uid == uid ? (
                                     <div>
                                         {/* {shownNft.sellingQuantity >= shownNft.amount ?
                                                 <InfoButton text={`You already listed all your owned ${shownNft.sellingQuantity} tokens`} /> :
@@ -174,18 +136,18 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                     <ActionButton action={setNewPrice} text="CHANGE PRICE" />
                                                     {openChangePrice && <ChangePrice nft={shownNft} setOpenChangePrice={setOpenChangePrice} />}
                                                 </div>
-                                                {!shownNft.isFirstSale && <div>
+                                                {/* {!shownNft.isFirstSale && <div>
                                                     <ActionButton action={setDelistItem} text="DELIST" />
                                                     {openDelistItem && <DelistItem nft={shownNft} setOpenDelistItem={setOpenDelistItem} />}
-                                                </div>}
+                                                </div>} */}
                                             </div>
                                         )}
                                     </div>
                                 ) : (
                                     <div>
-                                        {shownNft.price == 0 ?
+                                        {shownNft.pricePerToken == 0 ?
                                             (<div>
-                                                {userOwn.length != 0 ? (
+                                                {userOwn.amount > 0 ? (
                                                     <div>
                                                         <InfoButton text={`You have already colleted this track`} />
                                                         <div className={`${Style.link_to_your_NFTPage} font-normal`}>
@@ -193,21 +155,18 @@ const NFTDetailsImg = ({ shownNft, user, userOwn }) => {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div>
-                                                        {timeRemaining ? (<div className={`${Style.timer} font-normal`}>
-                                                            <span>{timeRemaining}</span>
-                                                        </div>) :
-                                                            <ActionButton action={freelyRetriveToken} text="redeem the token for free" />}
-                                                    </div>
+                                                    <ActionButton action={freelyRetriveToken} text="redeem the token for free" />
                                                 )
                                                 }
                                             </div>)
                                             :
                                             (<div>
+
                                                 <ActionButton action={setBuyItem} text="Collect Track" />
                                                 {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
-                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
+                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&uid=${user.uid}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
                                                 </div>)}
+
                                             </div>)}
                                     </div>
                                 )}

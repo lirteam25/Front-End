@@ -297,7 +297,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                         ))}
                                                     </div>
                                                     <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}` }} className={`${Style.display_song_title_info_name}`}>
+                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
                                                             {el.song}
                                                         </Link>
                                                         {el.artist?.map((art, i) => (
@@ -319,7 +319,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                 </div>
 
                                                 <div className={`${Style.display_song_owned} font-small`}>
-                                                    {el.maxClaimableSupply}
+                                                    {el.sellingQuantity}
                                                 </div>
 
                                                 <div className={`${Style.display_song_owned} ${Style.hide} font-small`}>

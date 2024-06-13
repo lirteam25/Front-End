@@ -19,10 +19,11 @@ const Artist = () => {
     useEffect(() => {
         if (!router.isReady) return;
         const { uid = "" } = router.query;
+        console.log(uid);
         fetchArtistName(uid).then((response) => {
             console.log(response);
             setArtist(response);
-            fetchArtistNFT(response.artist_minting_contract).then((result) => {
+            fetchArtistNFT(uid).then((result) => {
                 setTokenInfos(result);
             });
         })

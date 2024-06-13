@@ -55,12 +55,11 @@ const CreateItem = ({ closeCreateItems }) => {
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
-            console.log(combinedDateISO);
+            combinedDateISO = new Date(year, month - 1, day, hours, minutes);
         } else {
             combinedDateISO = false;
         }
-
+        console.log(combinedDateISO);
         let artist_name
 
         if (multipleArtist) {
@@ -87,11 +86,11 @@ const CreateItem = ({ closeCreateItems }) => {
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
-            console.log(combinedDateISO);
+            combinedDateISO = new Date(year, month - 1, day, hours, minutes);
         } else {
             combinedDateISO = false;
         }
+        console.log(combinedDateISO);
 
         let artist_name;
         let author_address;

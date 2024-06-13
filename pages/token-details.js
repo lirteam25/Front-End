@@ -22,6 +22,7 @@ const NFTDetails = () => {
     const [price, setPrice] = useState([]);
     const [quantity, setQuantity] = useState([]);
     const [date, setDate] = useState([]);
+    const [uid, setUid] = useState(null);
 
     const [sameTokenNFT, setSameTokenNFT] = useState([]);
 
@@ -34,6 +35,7 @@ const NFTDetails = () => {
         if (!router.isReady) return;
         const { token_id = "", token_address = "", uid = "" } = router.query;
         fetchNFTOwner(token_id, token_address, uid).then((item) => {
+            setUid(uid);
             console.log("nft", item);
             setNft(item);
             setSameTokenNFT([item]);
@@ -80,7 +82,7 @@ const NFTDetails = () => {
         <>
             <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
-                <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} />
+                <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} uid={uid} />
                 <NFTDescription nft={nft} event={event} hash={hash} price={price} quantity={quantity} date={date} sameTokenNFT={sameTokenNFT} supporters={supporters} />
             </div>
         </>
