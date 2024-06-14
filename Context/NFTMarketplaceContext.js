@@ -472,17 +472,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let txLazyMintEncoded = await encode(lazyMintTransaction);
 
         const startingTime = launch_date ? launch_date : new Date();
+        let phase = {
+            startTime: startingTime,
+            currencyAddress: USDCAddress,
+            price: formInputPrice, // public sale price
+            maxClaimableSupply: supply,
+        };
+
+        if (formInputPrice == 0) {
+            phase.maxClaimablePerWallet = 1;
+        }
+        console.log(phase);
+
         const claimConditionsTransaction = setClaimConditions({
             contract: contractEditionDrop,
             tokenId: nextTokenId,
-            phases: [
-                {
-                    startTime: startingTime,
-                    currencyAddress: USDCAddress,
-                    price: formInputPrice, // public sale price
-                    maxClaimableSupply: supply
-                },
-            ],
+            phases: [phase],
         });
         console.log(claimConditionsTransaction);
         let txClaimConditionEncoded = await encode(claimConditionsTransaction);
