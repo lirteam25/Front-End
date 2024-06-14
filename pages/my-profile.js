@@ -21,7 +21,6 @@ const MyProfile = () => {
     const [joiningDate, setJoiningDate] = useState(null);
     const [isArtist, setIsArtist] = useState(false);
     const [mintingContract, setMintingContract] = useState(false);
-    const [artistLastRelease, setArtistLastRelease] = useState(false);
     const [artistTokenInfos, setArtistTokenInfos] = useState([]);
 
     const fetchOwnedNFTs = async () => {
@@ -48,8 +47,7 @@ const MyProfile = () => {
                 setIsArtist(true);
                 if (user.artist_minting_contract) {
                     setMintingContract(true);
-                    fetchArtistNFT(user.artist_minting_contract).then((result) => {
-                        setArtistLastRelease(result[0]);
+                    fetchArtistNFT(user.uid).then((result) => {
                         setArtistTokenInfos(result);
                     });
                 }
@@ -69,9 +67,9 @@ const MyProfile = () => {
     if (isArtist && user.artist_description && user.artist_photo) {
         return (
             <div className={Style2.Vh_artist}>
-                <NextSeo title="Profile | LIR" description="Your personal sanctuary of digital collectibles. Listen to your unique music treasures, manage your collection, and immerse yourself in your musical legacy." />
+                <NextSeo title="Profile | LIR" description="Your personal collection of unreleased limited editions tracks. Listen, download and manage your collection." />
                 <div className={Style2.artist} onClick={closeWindow}>
-                    <ArtistProfileCard artist={user} lastRelease={artistLastRelease} myArtistProfile={true} setOpenArtistSettings={setOpenArtistSettings} />
+                    <ArtistProfileCard artist={user} myArtistProfile={true} setOpenArtistSettings={setOpenArtistSettings} />
                     <div className={Style2.artist_bottom}>
                         <ArtistInformation tokenInfos={artistTokenInfos} artistDescription={user.artist_description} myArtistProfile={true} myNFTs={myNFTs} />
                     </div>

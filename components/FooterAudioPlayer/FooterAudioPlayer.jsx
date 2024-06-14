@@ -151,9 +151,14 @@ const FooterAudioPlayer = () => {
                         <div className={`${Style.FooterAudioPlayer_colums_left_song} font-small`}>
                             {nft[currentIndex].song}
                         </div>
-                        <Link className={`${Style.FooterAudioPlayer_colums_left_artist} font-small`} href={{ pathname: "/artist", query: `cnt=${nft[currentIndex].token_address}` }}>
-                            {nft[currentIndex].artist}
-                        </Link>
+                        {nft[currentIndex].artist.map((art, i) => (
+                            <span key={i} className={`${Style.FooterAudioPlayer_colums_left_artist} font-small`}>
+                                <Link className={Style.hover} href={{ pathname: "/artist", query: `uid=${nft[currentIndex].author_address[i]}` }}>
+                                    {art}
+                                </Link>
+                                {i < nft[currentIndex].artist.length - 1 && ', '}
+                            </span>
+                        ))}
                     </div>
                 </div>
                 <div className={Style.FooterAudioPlayer_colums_center}>

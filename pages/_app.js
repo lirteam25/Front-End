@@ -3,6 +3,7 @@ import { NavBar, Footer } from "../components/componentsIndex";
 import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
 import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DefaultSeo } from "next-seo";
 
 import {
   ThirdwebProvider
@@ -11,6 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useRouter } from "next/router";
 import { firebaseApp } from '../firebase-init';
+import SEO from "../next-seo.config"
 
 import { GoogleAnalytics } from "nextjs-google-analytics";
 
@@ -62,21 +64,24 @@ _iub.csConfiguration = {
   `;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThirdwebProvider
-        queryClient={queryClient}>
-        <NFTMarketplaceProvider>
-          <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />
-          <Script strategy="lazyOnload" src="https://cs.iubenda.com/autoblocking/3354885.js" />
-          <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/gpp/stub.js" />
-          <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async />
-          <GoogleAnalytics strategy="lazyOnload" trackPageViews={false} />
-          <NavBar />
-          <Component {...pageProps} />
-          <Footer />
-        </NFTMarketplaceProvider>
-      </ThirdwebProvider>
-    </QueryClientProvider>
+    <>
+      <DefaultSeo {...SEO} />
+      <QueryClientProvider client={queryClient}>
+        <ThirdwebProvider
+          queryClient={queryClient}>
+          <NFTMarketplaceProvider>
+            <Script strategy="lazyOnload" dangerouslySetInnerHTML={{ __html: iubendaScript }} />
+            <Script strategy="lazyOnload" src="https://cs.iubenda.com/autoblocking/3354885.js" />
+            <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/gpp/stub.js" />
+            <Script strategy="lazyOnload" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async />
+            <GoogleAnalytics strategy="lazyOnload" trackPageViews={false} />
+            <NavBar />
+            <Component {...pageProps} />
+            <Footer />
+          </NFTMarketplaceProvider>
+        </ThirdwebProvider>
+      </QueryClientProvider>
+    </>
   )
 };
 

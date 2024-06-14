@@ -38,11 +38,37 @@
     padding: 0.5rem 0;
 }
 
-.CreateItems_bottom_yesOrNo {
+.border {
+    border: 1px solid var(--background-grey);
+    padding: 0rem 0.5rem;
+    transition: all 0.3s;
+}
+
+.red {
+    color: var(--main-color);
+    transition: all 0.3s;
+}
+
+.CreateItems_bottom_yesOrNo_top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0;
+}
+
+.CreateItems_bottom_yesOrNo_window {
+    padding: 0rem 0.5rem;
+}
+
+.CreateItems_bottom_yesOrNo_window_element {
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.CreateItems_bottom_yesOrNo_window_element input {
+    width: 200px;
 }
 
 .CreateItems_bottom_btn {

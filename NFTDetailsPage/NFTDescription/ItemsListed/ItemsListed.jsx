@@ -19,10 +19,10 @@ const ItemsListed = ({ sameTokenNFT }) => {
             {sameTokenNFT.map((el, i) => (
                 <Link href={`/token-details?token_id=${el.token_id}&token_address=${el.token_address}&id=${el._id}`} className={Style.ItemsListed_items} key={el._id}>
                     <p className="font-small">
-                        {el.sellingQuantity}
+                        {el.maxClaimableSupply - el.supplyClaimed}
                     </p>
                     <p className="font-small">
-                        {el.price} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
+                        {el.pricePerToken} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
                     </p>
                 </Link>
             ))}

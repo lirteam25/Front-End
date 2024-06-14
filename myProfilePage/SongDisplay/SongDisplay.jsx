@@ -84,7 +84,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                             SUPPLY
                         </div>
                         <div className={`${Style.display_title_item}`}>
-                            FLOOR PRICE
+                            PRICE
                         </div>
                     </div>
                     <div className={Style.display_song}>
@@ -102,7 +102,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                             key={el._id}
                                             onClick={() => {
                                                 if (window.innerWidth <= 1024) {
-                                                    window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}`;
+                                                    window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}`;
                                                 }
                                             }}
                                             onDoubleClick={() => {
@@ -142,30 +142,40 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                     <div className={`${Style.display_song_title_info_name}`}>
                                                         {el.song}
                                                     </div>
-                                                    <div className={`${Style.display_song_title_info_artist}`}>
-                                                        {el.artist}
-                                                    </div>
+                                                    {el.artist?.map((art, i) => (
+                                                        <div key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                            <span className={Style.underline}>
+                                                                {art}
+                                                            </span>
+                                                            {i < el.artist.length - 1 && ', '}
+                                                        </div>
+                                                    ))}
                                                 </div>
                                                 <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                    <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }} className={`${Style.display_song_title_info_name}`}>
+                                                    <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}` }} className={`${Style.display_song_title_info_name}`}>
                                                         {el.song}
                                                     </Link>
-                                                    <div>
-                                                        <Link href={{ pathname: "/artist", query: `cnt=${el.token_address}` }} className={`${Style.display_song_title_info_artist}`} >
-                                                            {el.artist}
-                                                        </Link>
+                                                    <div key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                        {el.artist?.map((art, i) => (
+                                                            <span key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                                <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
+                                                                    {art}
+                                                                </Link>
+                                                                {i < el.artist.length - 1 && ', '}
+                                                            </span>
+                                                        ))}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={`${Style.display_song_owned} font-small`}> {el.audioDuration}</div>
                                             <div className={`${Style.display_song_owned} ${Style.hide} font-small`}>
-                                                {el.sellingQuantity}
+                                                {parseInt(el.maxClaimableSupply) - parseInt(el.supplyClaimed)}
                                             </div>
                                             <div className={`${Style.display_song_owned}  ${Style.hide} font-small`}>
-                                                {el.supply}
+                                                {el.maxClaimableSupply}
                                             </div>
                                             <div className={`${Style.display_song_owned} font-small`}>
-                                                {el.floor_price} <span className={Style.display_song_price_symbol}>$</span>
+                                                {el.pricePerToken} <span className={Style.display_song_price_symbol}>$</span>
                                             </div>
                                         </div>))
                                 )}</div>) : (fake.map((el, i) => (
@@ -237,7 +247,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                 key={el._id}
                                                 onClick={() => {
                                                     if (window.innerWidth <= 1024) {
-                                                        window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}`;
+                                                        window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}`;
                                                     }
                                                 }}
                                                 onDoubleClick={() => {
@@ -277,19 +287,27 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                         <div className={`${Style.display_song_title_info_name}`}>
                                                             {el.song}
                                                         </div>
-                                                        <div className={`${Style.display_song_title_info_artist}`}>
-                                                            {el.artist}
-                                                        </div>
+                                                        {el.artist?.map((art, i) => (
+                                                            <span key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                                <span className={Style.underline}>
+                                                                    {art}
+                                                                </span>
+                                                                {i < el.artist.length - 1 && ', '}
+                                                            </span>
+                                                        ))}
                                                     </div>
                                                     <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }} className={`${Style.display_song_title_info_name}`}>
+                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
                                                             {el.song}
                                                         </Link>
-                                                        <div>
-                                                            <Link href={{ pathname: "/artist", query: `cnt=${el.token_address}` }} className={`${Style.display_song_title_info_artist}`} >
-                                                                {el.artist}
-                                                            </Link>
-                                                        </div>
+                                                        {el.artist?.map((art, i) => (
+                                                            <div key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                                <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
+                                                                    {art}
+                                                                </Link>
+                                                                {i < el.artist.length - 1 && ', '}
+                                                            </div>
+                                                        ))}
                                                     </div>
 
                                                 </div>
@@ -298,7 +316,6 @@ const SongDisplay = ({ myNFTs, artist }) => {
 
                                                 <div className={`${Style.display_song_owned} font-small`}>
                                                     {el.amount}
-
                                                 </div>
 
                                                 <div className={`${Style.display_song_owned} font-small`}>
@@ -306,7 +323,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                 </div>
 
                                                 <div className={`${Style.display_song_owned} ${Style.hide} font-small`}>
-                                                    {el.floor_price} <span className={Style.display_song_price_symbol}>$</span>
+                                                    {el.pricePerToken} <span className={Style.display_song_price_symbol}>$</span>
                                                 </div>
 
                                                 <div className={`${Style.display_song_download} ${Style.hide} font-small`}>

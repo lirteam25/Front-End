@@ -18,7 +18,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
             {sellingNFTs ? (sellingNFTs.map((el, i) => (
                 <Link
                     href={
-                        { pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&id=${el.owner_id}` }}
+                        { pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}` }}
                     className={`${Style.NFTCardTwo_box}`}
                     key={el._id}
                 >
@@ -47,10 +47,15 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                         <div className={Style.NFTCardTwo_box_info_top}>
                             <h2 className="font-normal">{el.song}</h2>
                             <h3 className="font-normal">
-                                <div className={Style.NFTCardTwo_box_info_top_action}>
-                                    <div className={Style.mobile}>{el.artist}</div>
-                                    <Link href={{ pathname: "/artist", query: `cnt=${el.token_address}` }} className={Style.pc}>{el.artist}</Link>
-                                </div>
+                                {el.artist.map((art, i) => (
+                                    <span key={i} className={Style.NFTCardTwo_box_info_top_action}>
+                                        <span className={Style.mobile}>{art}</span>
+                                        <Link href={{ pathname: "/artist", query: { uid: el.author_address[i] } }} className={Style.pc}>
+                                            {art}
+                                        </Link>
+                                        {i < el.artist.length - 1 && ', '}
+                                    </span>
+                                ))}
                             </h3>
                         </div>
                         {el.price == 0 ? (
@@ -82,10 +87,10 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                             </div>
                             <div className={Style.NFTCardTwo_box_info_bottom_items}>
                                 <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                    {el.price} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
+                                    {el.pricePerToken} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
                                 </div>
                                 <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                    {el.supply}
+                                    {el.maxClaimableSupply}
                                 </div>
                             </div>
                         </div>)

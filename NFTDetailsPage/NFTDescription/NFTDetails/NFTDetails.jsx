@@ -4,7 +4,7 @@ import Style from "./NFTDetails.module.css";
 import { NFTMarketplaceAddress } from "../../../Context/Constants";
 
 const NFTDetails = ({ nft, scanner }) => {
-    const listed = nft.totalListed == 0 ? (0) : (Math.floor(nft.totalListed / nft.supply * 100));
+    const listed = (Math.floor((nft.maxClaimableSupply - nft.supplyClaimed) / nft.maxClaimableSupply * 100));
 
     function formatDateToMonthYear(dateString) {
         const date = new Date(dateString);
@@ -38,7 +38,7 @@ const NFTDetails = ({ nft, scanner }) => {
                     <h4 className="font-small">Token supply</h4>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
-                    <p className="font-small">{nft.supply || "----"}</p>
+                    <p className="font-small">{nft.maxClaimableSupply || "----"}</p>
                 </div>
             </div>
 
@@ -64,22 +64,22 @@ const NFTDetails = ({ nft, scanner }) => {
                 <div className={Style.NFTDetails_box_title}>
                     <h4 className="font-small">Token owner</h4>
                 </div>
-                <div style={{ color: "var(--main-color)" }} className={Style.NFTDetails_box_content}>
-                    <a href={`${scanner}/address/${nft.owner_of}`} className={`${Style.NFTDetails_url} font-small`} target="_blank">
-                        {nft.owner_of || "----"}
+                {nft?.author_address && <div style={{ color: "var(--main-color)" }} className={Style.NFTDetails_box_content}>
+                    <a href={`${scanner}/address/${nft.author_address[0]}`} className={`${Style.NFTDetails_url} font-small`} target="_blank">
+                        {nft?.author_address[0] || "----"}
                     </a>
-                </div>
+                </div>}
             </div>
 
             <div className={Style.NFTDetails_box}>
                 <div className={Style.NFTDetails_box_title}>
                     <h4 className="font-small">Token creator</h4>
                 </div>
-                <div style={{ color: "var(--main-color)" }} className={Style.NFTDetails_box_content}>
-                    <a href={`${scanner}/address/${nft.author_address}`} className={`${Style.NFTDetails_url} font-small`} target="_blank">
-                        {nft.author_address || "----"}
+                {nft?.author_address && <div style={{ color: "var(--main-color)" }} className={Style.NFTDetails_box_content}>
+                    <a href={`${scanner}/address/${nft.author_address[0]}`} className={`${Style.NFTDetails_url} font-small`} target="_blank">
+                        {nft?.author_address[0] || "----"}
                     </a>
-                </div>
+                </div>}
             </div>
 
             <div className={Style.NFTDetails_box}>

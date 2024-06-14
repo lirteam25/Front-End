@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useActiveAccount } from "thirdweb/react";
 import { AiOutlineClose } from "react-icons/ai";
+import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 
 import Style from "./BuyItem.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
@@ -37,7 +38,32 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
-                    <InfoButton text="Pay with Credit Card Coming Soon" />
+                    {nft.collection_id ? <CrossmintPayButton
+                        style={{
+                            borderRadius: 0,
+                            width: "100%",
+                            backgroundColor: "transparent",
+                            border: "1px solid white",
+                            padding: "0.3rem 0",
+                            textTransform: "uppercase",
+                            fontFamily: "Space Grotesk",
+                            fontSize: "0.9rem",
+                            margin: 0
+                        }}
+                        getButtonText={(connecting) =>
+                            connecting ? "Connecting" : `Pay with credit card`
+                        }
+                        collectionId={nft.collection_id}
+                        projectId={process.env.CROSSMINT_PROJECT_ID}
+                        mintConfig={{ "totalPrice": nft.pricePerToken.toString(), "quantity": "1", "tokenId": nft.token_id.toString() }}
+                        environment={process.env.ACTIVE_CHAIN == "polygon" ? "production " : "staging"}
+                        checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
+                        mintTo={address}
+                        onEvent={(event) => {
+                            console.log(event.type, event);
+                        }}
+                        successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
+                    /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>
         </div>

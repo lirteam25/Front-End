@@ -5,21 +5,23 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
-import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS } from "thirdweb";
+import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendAndConfirmTransaction } from "thirdweb";
 import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
-import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing } from "thirdweb/extensions/erc1155";
+import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing, getActiveClaimCondition } from "thirdweb/extensions/erc1155";
 import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
 import { deployERC1155Contract } from "thirdweb/deploys";
 import { name, symbol } from "thirdweb/extensions/common";
+import { approve } from "thirdweb/extensions/erc20";
 
 import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProfile, deleteUser } from "firebase/auth";
 
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 const FormData = require('form-data');
 //Internal Imports
-import { OldNFTMarketplaceAddress, OldNFTMarketplaceABI, MarketplaceOwner } from "./Constants";
+import { editionDropABI, MarketplaceOwner } from "./Constants";
+import { FaPowerOff } from "react-icons/fa";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -123,6 +125,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
     });
 
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
+    const USDCAddress = process.env.ACTIVE_CHAIN == "polygon" ? "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" : "0x14196f08a4fa0b66b7331bc40dd6bcd8a1deea9f"
+
+    const contractUSDC = getContract({
+        client,
+        chain,
+        address: USDCAddress
+    })
 
     const connectingwithSmartContractOwner = async (ContractAddress, ContractABI) => {
         try {
@@ -202,10 +211,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
             });
             // then get the authSig
             await litNodeClient.connect();
-            const authSig = await LitJsSdk.checkAndSignAuthMessage({
+            const signurature = await createPayload();
+            /* const authSig = await LitJsSdk.checkAndSignAuthMessage({
                 chain: process.env.ACTIVE_CHAIN == "polygon" ? "polygon" : "sepolia",
                 nonce: ''
-            });
+            }); */
+            console.log(signurature);
+            const authSig = signurature;
             // Here we can setup any access control conditions we want, such as must hold a specifc NFT, or have a certain amount of ETH
             // Right now its blank so anyone can decrypt the file
             const accs = [
@@ -230,6 +242,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 litNodeClient: litNodeClient,
                 readme: "Use IPFS CID of this file to decrypt it"
             });
+
+            console.log(encryptedZip);
 
             // Then we turn it into a file that will be accepted by the Pinata API
             const encryptedBlob = new Blob([encryptedZip], { type: 'text/plain' })
@@ -443,6 +457,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     async function createNFT(
         contractEditionDrop, artist, song, formInputPrice, audioPinata, imageSongPinata, description, supply, launch_date) {
 
+
         setLoading("The tokens creation procedure has started. Accept the transaction."); setOpenLoading(true);
 
         console.log(contractEditionDrop);
@@ -457,17 +472,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let txLazyMintEncoded = await encode(lazyMintTransaction);
 
         const startingTime = launch_date ? launch_date : new Date();
+        let phase = {
+            startTime: startingTime,
+            currencyAddress: USDCAddress,
+            price: formInputPrice, // public sale price
+            maxClaimableSupply: supply,
+        };
+
+        if (formInputPrice == 0) {
+            phase.maxClaimablePerWallet = 1;
+        }
+        console.log(phase);
+
         const claimConditionsTransaction = setClaimConditions({
             contract: contractEditionDrop,
             tokenId: nextTokenId,
-            phases: [
-                {
-                    startTime: startingTime,
-                    currencyAddress: NATIVE_TOKEN_ADDRESS,
-                    price: formInputPrice, // public sale price
-                    maxClaimableSupply: supply
-                },
-            ],
+            phases: [phase],
         });
         console.log(claimConditionsTransaction);
         let txClaimConditionEncoded = await encode(claimConditionsTransaction);
@@ -478,12 +498,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
             params: [[txLazyMintEncoded, txClaimConditionEncoded]]
         });
     }
-    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
+    async function updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, audioCloudinary, royalties, supply, song, artist, author_address, collection_id, description, imageSongPinata, imageSongCloudinary, audioPinata, audioDuration, formInputPrice, launch_date) {
         try {
             const nextTokenId = await nextTokenIdToMint({ contract: contractEditionDrop });
             const token_id = parseInt(nextTokenId) - 1;
             const token_URI = await uri({ tokenId: token_id, contract: contractEditionDrop });
-            console.log(token_URI);
 
             const transactionHash = receipt.transactionHash;
 
@@ -498,20 +517,20 @@ export const NFTMarketplaceProvider = ({ children }) => {
             let dataTokenInfo;
             const accessToken = (await fetchUserInformation()).accessToken;
             if (launch_date) {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice, "launch_date": launch_date.toISOString() });
             } else {
-                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, "author_address": address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration/* , contract_id */, token_URI, "launch_price": formInputPrice });
+                dataTokenInfo = JSON.stringify({ token_id, token_address, "name": token_name, "symbol": token_symbol, author_address, royalties, supply, song, artist, description, imageSongPinata, imageSongCloudinary, audioPinata, audioCloudinary, audioPreview, audioDuration, collection_id, token_URI, "launch_price": formInputPrice });
             }
             await postOnDB(`${DBUrl}/api/v1/nfts`, dataTokenInfo, accessToken).then((response) => {
                 console.log("response:", response);
             });
 
             //Post Owners document
-            const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address, "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
+            /* const dataTokenOwner = JSON.stringify({ token_id, token_address, "owner_of": address, "amount": 0, "sellingQuantity": supply, "price": formInputPrice, date: new Date(), "isFirstSale": true });
 
             await postOnDB(`${DBUrl}/api/v1/owners`, dataTokenOwner, accessToken).then((response) => {
                 console.log("response:", response);
-            });
+            }); */
 
             //Post Transaction document
             const dataTransaction = JSON.stringify({ token_id, token_address, 'quantity': [supply], "transactions": [transactionHash], 'transactions_type': ["LAZY MINTING"], 'price': [formInputPrice] })
@@ -575,19 +594,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
     async function updateDBOnSecondListing(receipt, nft, formInputPrice, amount, listing_id) {
         try {
-            //Update transaction history
-            const transactions = receipt.transactionHash;
-            const accessToken = (await fetchUserInformation()).accessToken;
-            const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
-                    console.log(response);
-                });
-            //Update token Owners
-            const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address, listing_id, "sellingQuantity": amount, "price": formInputPrice });
-            await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
-                console.log(response);
-            });
+            /*             //Update transaction history
+                        const transactions = receipt.transactionHash;
+                        const accessToken = (await fetchUserInformation()).accessToken;
+                        const dataTransaction = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, transactions, 'transactions_type': "LISTING", 'price': formInputPrice, 'quantity': amount });
+                        await patchOnDB(
+                            `${DBUrl}/api/v1/transactions/addTransaction`, dataTransaction, accessToken).then((response) => {
+                                console.log(response);
+                            });
+                        //Update token Owners
+                        const dataTokenOwner = JSON.stringify({ "token_id": nft.token_id, "token_address": nft.token_address, "owner_of": address, listing_id, "sellingQuantity": amount, "price": formInputPrice });
+                        await patchOnDB(`${DBUrl}/api/v1/owners/nftRelisted`, dataTokenOwner, accessToken).then((response) => {
+                            console.log(response);
+                        }); */
 
             const analytics = getAnalytics();
             logEvent(analytics, 'secondary_listing');
@@ -606,6 +625,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const fetchDiscoverNFTs = async () => {
         const response = await getFromDB(`${DBUrl}/api/v1/owners/discoverItem`
         ).then((response) => { return response });
+        console.log("discoverNFT:", response);
         console.log("discoverNFT:", response.data.discoverNFT);
         return response.data.discoverNFT;
     };
@@ -620,8 +640,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     //Given the owner _id returns the related item.
-    const fetchNFTOwner = async (id) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/nfts/ownersNFTInfo/${id}`
+    const fetchNFTOwner = async (token_id, token_address, uid) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/nfts/ownersNFTInfo/${token_id}/${token_address}/${uid}`
         ).then((response) => { return response });
         return response.data.ownerNFTInfo;
     }
@@ -643,16 +663,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return filteredNFTs;
     }
 
-    //Given the artist minting contract it returns the token created
-    const fetchArtistNFT = async (address_minting_contract) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/owners/artistNFT?cnt=${address_minting_contract}`
+    //Given the artist wallet it returns the token created
+    const fetchArtistNFT = async (wallet) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/owners/artistNFT?uid=${wallet}`
         ).then((response) => { return response });
+        console.log(response);
         console.log(response.data.artNFT)
-        return response.data.artNFT;
+        return response?.data?.artNFT;
     };
 
-    const fetchArtistName = async (address_minting_contract) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/users/artistName?cnt=${address_minting_contract}`
+    const fetchArtistName = async (wallet) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/artistName?uid=${wallet}`
         ).then((response) => { return response });
         console.log("Artist", response);
         return response.data;
@@ -665,9 +686,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response.topCollectors;
     }
 
-    const fetchSupporters = async (id) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/users/supporters/${id}`
-        ).then((response) => { return response });
+    const fetchSupporters = async (token_id, token_address) => {
+        const response = await getFromDB(`${DBUrl}/api/v1/users/supporters/${token_id}/${token_address}`
+        ).then((response) => { console.log(response); return response });
         return response.supporters;
     }
 
@@ -684,6 +705,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let tx;
 
         if (nft.isFirstSale) {
+            const approveTx = approve({
+                contract: contractUSDC,
+                spender: contract.address,
+                amount: nft.price
+            })
+
+            const transactionResult = await sendAndConfirmTransaction({ account, transaction: approveTx });
+            transactionResult.wait();
+
             tx = claimTo({
                 contract,
                 to: address,
@@ -702,22 +732,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
         return tx;
     };
-    async function updateDBafterPurchase(receipt, seller, newBuyer) {
+    async function updateDBafterPurchase() {
         try {
-            const transactions = receipt.transactionHash;
-            const accessToken = (await fetchUserInformation()).accessToken;
-            const buyer = newBuyer;
-            const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
-                    console.log(response);
-                });
-            const data2 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, "owner_of": seller.owner_of, "buyer": buyer });
-            await patchOnDB(
-                `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
-                    console.log(response);
-                });
-
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
 
@@ -729,18 +745,40 @@ export const NFTMarketplaceProvider = ({ children }) => {
             handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
         }
     };
-
-    const freeNFTTransfer = async (nft) => {
+    async function afterPurchaseCreditCard() {
         try {
-            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
+            const analytics = getAnalytics();
+            logEvent(analytics, 'purchase');
 
-            const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(OldNFTMarketplaceAddress, OldNFTMarketplaceABI);
-            console.log(NFTMarketplace, gasPrice);
-            console.log(nft.token_id, nft.token_address, nft.owner_of, address);
-            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address,
-                {
-                    gasPrice: gasPrice
-                });
+            if (window.opener) {
+                window.opener.location.href = '/my-profile';
+                window.close();
+            }
+        } catch (error) {
+            handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
+        }
+    }
+
+    const freeNFTTransfer = async (contract, nft) => {
+        try {
+            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.")
+
+            const [EditionDropContract, gasPrice] = await connectingwithSmartContractOwner(nft.token_address, editionDropABI);
+            console.log(EditionDropContract, gasPrice);
+            console.log(address, nft.token_id, nft.token_address, address);
+            console.log(contract);
+            const claimConditions = await getActiveClaimCondition({ contract, tokenId: nft.token_id });
+            console.log(claimConditions);
+            const allowlistProof = {
+                proof: [claimConditions.merkleRoot],
+                quantityLimitPerWallet: claimConditions.quantityLimitPerWallet,
+                pricePerToken: claimConditions.pricePerToken,
+                currency: claimConditions.currency
+            };
+
+            const transaction = await EditionDropContract.claim(address, nft.token_id, 1, USDCAddress, 0, allowlistProof, "0x", {
+                gasPrice: gasPrice
+            })
 
             console.log(transaction);
             const trans = await transaction.wait();
@@ -898,11 +936,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     };
 
     const disconnectUser = () => {
+        router.push("/");
         disconnect(activeWallet);
         const auth = getAuth();
         signOut(auth).then(() => {
             setUser(null);
-            router.push("/");
         })
             .catch((error) => {
                 console.error(error);
@@ -1155,6 +1193,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 claimNFT,
                 freeNFTTransfer,
                 updateDBafterPurchase,
+                afterPurchaseCreditCard,
 
                 changeNFTPrice,
                 updateDBOnPriceChange,

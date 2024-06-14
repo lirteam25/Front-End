@@ -33,3 +33,13 @@
     width: 95%;
     margin: auto;
 }
+
+.BuyItem_bottom_item_creditCard {
+    width: 100%;
+    border: 1px solid white;
+    padding: 1rem 0;
+}
+
+.crossMintButton {
+    border-radius: 0;
+}

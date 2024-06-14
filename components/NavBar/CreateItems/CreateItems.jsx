@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import Switch from '@mui/material/Switch';
 import { CiSquareQuestion } from "react-icons/ci";
@@ -11,7 +11,24 @@ import { InfoButton, SmartContractButton } from "../../componentsIndex";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const CreateItem = ({ closeCreateItems }) => {
-    const { pinFileToIPFS, pinAndEncryptFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation } = useContext(NFTMarketplaceContext);
+    const { pinFileToIPFS, pinAndEncryptFileToIPFS, createNFT, user, cloudinaryUploadVideo, cloudinaryUploadImage, updateDBOnNFTCreation, fetchArtistName } = useContext(NFTMarketplaceContext);
+
+    const [collaboratorNames, setCollaboratorNames] = useState([]);
+
+    useEffect(() => {
+        if (user.role != "artist") return;
+        if (user.artist_possible_collaboration) {
+            let artist_name = [];
+            for (let i = 0; i < user.artist_possible_collaboration.length; i++) {
+                fetchArtistName(user.artist_possible_collaboration[i]).then((translation) => {
+                    console.log(translation.artist_name, translation.wallet)
+                    artist_name.push({ "artist_name": translation.artist_name, "artist_uid": translation.wallet })
+                });
+            };
+            console.log(artist_name);
+            setCollaboratorNames(artist_name);
+        }
+    }, [user])
 
     const [song, setSong] = useState(null);
     const [description, setDescription] = useState(null);
@@ -28,6 +45,9 @@ const CreateItem = ({ closeCreateItems }) => {
     const [imageSongCloudinary, setImageSongCloudinary] = useState(null);
 
     const [schedule, setSchedule] = useState(false);
+    const [multipleArtist, setMultipleArtist] = useState(false);
+
+    const [selectArtist, setSelectArtist] = useState(0);
 
 
     const mintNFT = async (contractEditionDrop) => {
@@ -35,14 +55,28 @@ const CreateItem = ({ closeCreateItems }) => {
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
-            console.log(combinedDateISO);
+            combinedDateISO = new Date(year, month - 1, day, hours, minutes);
         } else {
             combinedDateISO = false;
         }
+        console.log(combinedDateISO);
+        let artist_name
+
+        if (multipleArtist) {
+            console.log(user.artist_name);
+            console.log(collaboratorNames);
+            console.log(selectArtist);
+            console.log(collaboratorNames[selectArtist]);
+            console.log(collaboratorNames[selectArtist].artist_name);
+            artist_name = `${user.artist_name}, ${collaboratorNames[selectArtist].artist_name}`
+            console.log(artist_name);
+        } else {
+            artist_name = user.artist_name
+        }
+        console.log(artist_name);
 
         closeCreateItems();
-        const transactionPrepared = await createNFT(contractEditionDrop, user.artist_name, song, price, urlPinata, imageSongPinata, description, supply, combinedDateISO);
+        const transactionPrepared = await createNFT(contractEditionDrop, artist_name, song, price, urlPinata, imageSongPinata, description, supply, combinedDateISO);
         console.log(transactionPrepared);
         return transactionPrepared;
     }
@@ -52,13 +86,23 @@ const CreateItem = ({ closeCreateItems }) => {
         if (schedule) {
             const [year, month, day] = date.split('-');
             const [hours, minutes] = hour.split(':');
-            const combinedDateISO = new Date(year, month - 1, day, hours, minutes);
-            console.log(combinedDateISO);
+            combinedDateISO = new Date(year, month - 1, day, hours, minutes);
         } else {
             combinedDateISO = false;
         }
+        console.log(combinedDateISO);
 
-        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, user.artist_name, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
+        let artist_name;
+        let author_address;
+        if (multipleArtist) {
+            artist_name = [user.artist_name, collaboratorNames[selectArtist].artist_name];
+            author_address = [user.uid, collaboratorNames[selectArtist].artist_uid]
+        } else {
+            artist_name = [user.artist_name];
+            author_address = [user.uid]
+        }
+
+        await updateDBOnNFTCreation(contractEditionDrop, receipt, startPreview, urlCloudinary, user.artist_royalties, supply, song, artist_name, author_address, user.artist_collection_id, description, imageSongPinata, imageSongCloudinary, urlPinata, duration, price, combinedDateISO)
     }
 
     const numberInputOnWheelPreventChange = (e) => {
@@ -80,7 +124,7 @@ const CreateItem = ({ closeCreateItems }) => {
         <div className={Style.CreateItems}>
             <div className={`${Style.CreateItems_top} font-normal`}>
                 <div className={Style.CreateItems_top_title}>
-                    CREATE A DIGITAL COLLECTIBLE
+                    CREATE YOUR LIMITED EDITION TRACK
                 </div>
                 <AiOutlineClose className={Style.CreateItems_top_x} onClick={closeCreateItems} />
             </div>
@@ -207,33 +251,66 @@ const CreateItem = ({ closeCreateItems }) => {
                     </div>
                 </div>
 
-                <div className={Style.CreateItems_bottom_yesOrNo}>
-                    <div className='font-normal'>Would you like to schedule the drop of the track?</div>
-                    <Switch style={switchStyle} color="default" onChange={() => { setSchedule(!schedule) }} />
-                </div>
+                {user.artist_possible_collaboration &&
+                    <div className={`${Style.CreateItems_bottom_yesOrNo} ${multipleArtist && Style.border}`}>
+                        <div className={`${Style.CreateItems_bottom_yesOrNo_top} ${multipleArtist && Style.red}`}>
+                            <div className='font-normal'>Are there any other artists involved in the track creation?</div>
+                            <Switch style={switchStyle} color="default" onChange={() => { setMultipleArtist(!multipleArtist) }} />
+                        </div>
 
-                {schedule && (
-                    <div>
-                        <div className={Style.CreateItems_bottom_element}>
-                            <label htmlFor="date">Day</label>
-                            <input
-                                id="date"
-                                type="date"
-                                placeholder="Insert the date"
-                                onChange={(e) => setDate(e.target.value)}
-                            />
-                        </div>
-                        <div className={Style.CreateItems_bottom_element}>
-                            <label htmlFor="hour">Hour</label>
-                            <input
-                                id="hour"
-                                type="time"
-                                placeholder="Insert the hour"
-                                onChange={(e) => setHour(e.target.value)}
-                            />
-                        </div>
+                        {multipleArtist && (
+                            <div className={Style.CreateItems_bottom_yesOrNo_window}>
+                                <div className={Style.CreateItems_bottom_yesOrNo_window_element}>
+                                    <label htmlFor="multipleArtist">Select the other artist</label>
+                                    <select
+                                        id="multipleArtist"
+                                        name="artist"
+                                        onChange={(e) => {
+                                            console.log(e.target.value);
+                                            setSelectArtist(e.target.value)
+                                        }}
+                                    >
+                                        {collaboratorNames.map((el, i) => (
+                                            <option key={i} value={i}>
+                                                {el.artist_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                }
+
+                <div className={`${Style.CreateItems_bottom_yesOrNo} ${schedule && Style.border}`}>
+                    <div className={`${Style.CreateItems_bottom_yesOrNo_top} ${schedule && Style.red}`}>
+                        <div className='font-normal'>Would you like to schedule the drop of the track?</div>
+                        <Switch style={switchStyle} color="default" onChange={() => { setSchedule(!schedule) }} />
+                    </div>
+
+                    {schedule && (
+                        <div className={Style.CreateItems_bottom_yesOrNo_window}>
+                            <div className={Style.CreateItems_bottom_yesOrNo_window_element}>
+                                <label htmlFor="date">Day</label>
+                                <input
+                                    id="date"
+                                    type="date"
+                                    placeholder="Insert the date"
+                                    onChange={(e) => setDate(e.target.value)}
+                                />
+                            </div>
+                            <div className={Style.CreateItems_bottom_yesOrNo_window_element}>
+                                <label htmlFor="hour">Hour</label>
+                                <input
+                                    id="hour"
+                                    type="time"
+                                    placeholder="Insert the hour"
+                                    onChange={(e) => setHour(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 <div className={Style.CreateItems_bottom_btn}>
                     {(song && price && urlPinata && urlCloudinary && imageSongPinata && imageSongCloudinary && description && supply && duration) ? (

@@ -143,8 +143,7 @@
     text-overflow: ellipsis;
 }
 
-.display_song_title_info_name:hover,
-.display_song_title_info_artist:hover {
+.display_song_title_info_name:hover {
     cursor: pointer;
     text-decoration: underline;
 }
@@ -169,6 +168,11 @@
 
 .icon:hover {
     color: var(--main-color);
+}
+
+.underline:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 480px) {
