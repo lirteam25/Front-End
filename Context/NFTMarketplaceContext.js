@@ -9,7 +9,7 @@ import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIV
 import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
-import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing } from "thirdweb/extensions/erc1155";
+import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing, getActiveClaimCondition } from "thirdweb/extensions/erc1155";
 import { getListing, updateListing, createListing } from "thirdweb/extensions/marketplace";
 import { deployERC1155Contract } from "thirdweb/deploys";
 import { name, symbol } from "thirdweb/extensions/common";
@@ -20,7 +20,8 @@ import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, updateProf
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 const FormData = require('form-data');
 //Internal Imports
-import { OldNFTMarketplaceAddress, OldNFTMarketplaceABI, MarketplaceOwner } from "./Constants";
+import { editionDropABI, MarketplaceOwner } from "./Constants";
+import { FaPowerOff } from "react-icons/fa";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -726,22 +727,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
         return tx;
     };
-    async function updateDBafterPurchase(receipt, seller, newBuyer) {
+    async function updateDBafterPurchase() {
         try {
-            /* const transactions = receipt.transactionHash;
-            const accessToken = (await fetchUserInformation()).accessToken;
-            const buyer = newBuyer;
-            const data1 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, transactions, 'transactions_type': "SALE", "price": seller.price, 'quantity': 1 });
-            await patchOnDB(
-                `${DBUrl}/api/v1/transactions/addTransaction`, data1, accessToken).then((response) => {
-                    console.log(response);
-                });
-            const data2 = JSON.stringify({ "token_id": seller.token_id, "token_address": seller.token_address, "owner_of": seller.owner_of, "buyer": buyer });
-            await patchOnDB(
-                `${DBUrl}/api/v1/owners/nftSold`, data2, accessToken).then((response) => {
-                    console.log(response);
-                }); */
-
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
 
@@ -767,17 +754,26 @@ export const NFTMarketplaceProvider = ({ children }) => {
         }
     }
 
-    const freeNFTTransfer = async (nft) => {
+    const freeNFTTransfer = async (contract, nft) => {
         try {
-            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.");
+            setOpenLoading(true); setLoading("The token is being transferred. Wait for the transaction to be completed. Do not refresh or close the page.")
 
-            const [NFTMarketplace, gasPrice] = await connectingwithSmartContractOwner(OldNFTMarketplaceAddress, OldNFTMarketplaceABI);
-            console.log(NFTMarketplace, gasPrice);
-            console.log(nft.token_id, nft.token_address, nft.owner_of, address);
-            const transaction = await NFTMarketplace.GasFreeTransaction(nft.token_id, nft.token_address, nft.owner_of, address,
-                {
-                    gasPrice: gasPrice
-                });
+            const [EditionDropContract, gasPrice] = await connectingwithSmartContractOwner(nft.token_address, editionDropABI);
+            console.log(EditionDropContract, gasPrice);
+            console.log(address, nft.token_id, nft.token_address, address);
+            console.log(contract);
+            const claimConditions = await getActiveClaimCondition({ contract, tokenId: nft.token_id });
+            console.log(claimConditions);
+            const allowlistProof = {
+                proof: [claimConditions.merkleRoot],
+                quantityLimitPerWallet: claimConditions.quantityLimitPerWallet,
+                pricePerToken: claimConditions.pricePerToken,
+                currency: claimConditions.currency
+            };
+
+            const transaction = await EditionDropContract.claim(address, nft.token_id, 1, USDCAddress, 0, allowlistProof, "0x", {
+                gasPrice: gasPrice
+            })
 
             console.log(transaction);
             const trans = await transaction.wait();

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { NextSeo } from 'next-seo';
 import { useRouter } from "next/router";
 
-
 //INTERNAL IMPORT
 import { NFTDescription, NFTDetailsImg } from "../NFTDetailsPage/NFTDetailsPageIndex";
 import Style from "../styles/tokenDetails.module.css";

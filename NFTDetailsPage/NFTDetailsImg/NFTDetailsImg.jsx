@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import { useActiveWalletChain } from "thirdweb/react";
 import { useActiveAccount } from "thirdweb/react";
+import { polygon, polygonAmoy } from "thirdweb/chains";
+import { createThirdwebClient, getContract } from "thirdweb";
 import Link from "next/link";
 
 //INTERNAL IMPORT
@@ -19,6 +21,18 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
     const { nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, freeNFTTransfer, sendUserActivity, renderString, updateDBafterPurchase } = useContext(NFTMarketplaceContext);
 
     const address = useActiveAccount()?.address;
+
+    const client = createThirdwebClient({
+        clientId: process.env.THIRDWEB_PROJECT_ID,
+    });
+
+    const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
+
+    const contract = getContract({
+        client,
+        chain,
+        address: shownNft.token_address
+    })
 
     const [openChangePrice, setOpenChangePrice] = useState(false);
     const [openDelistItem, setOpenDelistItem] = useState(false);
@@ -46,7 +60,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
     }
 
     const freelyRetriveToken = () => {
-        freeNFTTransfer(shownNft);
+        freeNFTTransfer(contract, shownNft);
     }
 
     const [alreadyClicked, setAlreadyClicked] = useState(false);
