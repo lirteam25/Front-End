@@ -1077,12 +1077,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
         })
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (address) {
             console.log(address);
             setUserLogged();
         };
-    }, [address])
+    }, [address]) */
 
     return (
         <NFTMarketplaceContext.Provider

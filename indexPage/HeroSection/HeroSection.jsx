@@ -16,6 +16,7 @@ const HeroSection = () => {
                             <span className='bold'>LIMITED EDITIONS</span> TRACKS</h1>
                     </div>
                     <ExternalLinkButton text="learn more" path="https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4" background="white" textColor="black" />
+                    <div className={`${Style.heroSection_box_colums_warning} font-normal`}>The site is under maintenance. <br />We will be back soon.</div>
                 </div>
             </div>
         </div>

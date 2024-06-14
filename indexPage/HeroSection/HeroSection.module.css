@@ -32,6 +32,29 @@
     margin-bottom: 1rem;
 }
 
+.heroSection_box_colums_warning {
+    padding: 1rem 0;
+    text-align: right;
+    color: var(--main-color);
+    animation: pulseColor 5s infinite;
+
+}
+
+@keyframes pulseColor {
+    0% {
+        color: var(--main-color);
+    }
+
+    50% {
+        color: white;
+        /* You can change this to any color you want the div to pulse to */
+    }
+
+    100% {
+        color: var(--main-color);
+    }
+}
+
 .heroSection_box_colums_rigth {
     grid-column: 3;
 }

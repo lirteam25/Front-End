@@ -101,12 +101,8 @@ const NavBar = () => {
                         />
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
-                        <Link id="discover" className={Style.red_hover} href={{ pathname: `collection` }}>collection</Link>
                         <Link id="docs" className={Style.red_hover} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
                     </div>
-                </div>
-                <div className={Style.navbar_container_right}>
-                    <NavBarConnectWallet openProfileTab={openProfileTab} setOpenProfileTab={setOpenProfileTab} closeProfileTab={closeProfileTab} />
                 </div>
             </div>
             <div className={Style.navbar_sidebar} onClick={() => setOpenSideBar(!openSideBar)}>
