@@ -56,12 +56,12 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         collectionId={nft.collection_id}
                         projectId={process.env.CROSSMINT_PROJECT_ID}
                         mintConfig={{ "totalPrice": nft.pricePerToken.toString(), "quantity": "1", "tokenId": nft.token_id.toString() }}
-                        environment={process.env.ACTIVE_CHAIN == "polygon" ? "production " : "staging"}
                         checkoutProps={{ "paymentMethods": ["fiat", "ETH", "SOL"] }}
                         mintTo={address}
                         onEvent={(event) => {
                             console.log(event.type, event);
                         }}
+                        successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>
