@@ -41,7 +41,7 @@ const ChangePrice = ({ nft, setOpenChangePrice }) => {
             </div>
             <div className={Style.ListItem_button}>
                 {newPrice && newPrice >= 0 ?
-                    (<SmartContractButton onTransactionConfirmed={updateDB} contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress} action={changePrice} text="CHANGE PRICE" />) : (
+                    (<SmartContractButton onTransactionConfirmed={updateDB} contractAddress={nft.token_address} action={changePrice} text="CHANGE PRICE" />) : (
                         <InfoButton text="Insert a valid price" />
                     )}
             </div>

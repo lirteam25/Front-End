@@ -702,34 +702,25 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     async function claimNFT(contract, nft) {
         setOpenLoading(true); setLoading("The token buying procedure has started. Accept the transaction.");
-        let tx;
 
-        if (nft.isFirstSale) {
-            const approveTx = approve({
-                contract: contractUSDC,
-                spender: contract.address,
-                amount: nft.price
-            })
+        const approveTx = approve({
+            contract: contractUSDC,
+            spender: contract.address,
+            amount: nft.price
+        })
+        console.log(approveTx);
 
-            const transactionResult = await sendAndConfirmTransaction({ account, transaction: approveTx });
-            transactionResult.wait();
+        const transactionResult = await sendAndConfirmTransaction({ account, transaction: approveTx });
+        transactionResult.wait();
 
-            tx = claimTo({
-                contract,
-                to: address,
-                tokenId: nft.token_id,
-                quantity: 1,
-            });
-            console.log("transaction", tx);
-        } else {
-            tx = await buyFromListing({
-                contract,
-                listingId: nft.listing_id,
-                quantity: 1,
-                recipient: address,
-            });
-            console.log("transaction", tx);
-        }
+        const tx = claimTo({
+            contract,
+            to: address,
+            tokenId: nft.token_id,
+            quantity: 1,
+        });
+        console.log("transaction", tx);
+
         return tx;
     };
     async function updateDBafterPurchase() {
@@ -793,21 +784,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     async function changeNFTPrice(contract, nft, formInputPrice) {
         setLoading("The change price procedure has started. Accept the transaction."); setOpenLoading(true);
-        let tx;
-        if (nft.isFirstSale) {
-            tx = setClaimConditions({
-                contract,
-                tokenId: nft.token_id,
-                phases: [
-                    {
-                        maxClaimableSupply: nft.supply,
-                        currencyAddress: NATIVE_TOKEN_ADDRESS,
-                        price: formInputPrice,
-                        startTime: new Date(),
-                    },
-                ],
-            });
-        } else {
+        const tx = setClaimConditions({
+            contract,
+            tokenId: nft.token_id,
+            phases: [
+                {
+                    maxClaimableSupply: nft.supply,
+                    currencyAddress: NATIVE_TOKEN_ADDRESS,
+                    price: formInputPrice,
+                    startTime: new Date(),
+                },
+            ],
+        });
+        /* } else {
             const params = await getListing({ contract, listingId: nft.listing_id });
             const date = new Date(params.startTimeInSeconds * 1000);
             console.log(date);
@@ -822,7 +811,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 startTimestamp: date
             }
             tx = updateListing({ contract, listingId: nft.listing_id, listing });
-        }
+        } */
         return tx;
     };
     async function updateDBOnPriceChange(receipt, formInputPrice, nft) {
