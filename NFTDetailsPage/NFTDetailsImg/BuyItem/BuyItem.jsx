@@ -15,6 +15,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
 
     const claimTrack = async (nftMintArtistContract) => {
         setOpenBuy(false);
+        console.log("Here");
         const tx = await claimNFT(nftMintArtistContract, nft);
         console.log(tx);
         return tx;
@@ -34,7 +35,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
             </div>
             <div className={Style.BuyItem_bottom}>
                 <div className={Style.BuyItem_bottom_item}>
-                    <SmartContractButton text="Pay with Crypto" contractAddress={nft.isFirstSale ? nft.token_address : NFTMarketplaceAddress} action={claimTrack} onTransactionConfirmed={updateDB} />
+                    <SmartContractButton text="Pay with Crypto" contractAddress={nft.token_address} action={claimTrack} onTransactionConfirmed={updateDB} />
                 </div>
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
