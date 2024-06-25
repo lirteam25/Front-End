@@ -8,7 +8,7 @@
 .TransactionHistory_title {
     display: grid;
     padding: 0.5rem 0.5rem;
-    grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr;
     gap: 10px;
     border-bottom: 1px solid var(--background-grey);
 }
@@ -18,7 +18,7 @@
     padding: 0.3rem 0.5rem;
     border-bottom: 1px solid var(--background-grey);
     display: grid;
-    grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr;
     align-items: center;
     gap: 10px;
 }
@@ -46,7 +46,7 @@
 
     .TransactionHistory_content,
     .TransactionHistory_title {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .TransactionHistory_content_url,

@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 
-
-import Style from "./../Login/Login.module.css";
+import Style from "./ArtistForm.module.css";
 import { ActionButton, InfoButton } from '../../componentsIndex';
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
@@ -28,18 +27,16 @@ const ArtistForm = ({ closeArtistForm }) => {
     }
 
     return (
-        <div className={Style.login}>
-            <div className={`${Style.login_container} font-normal`}>
-                <div className={Style.login_container_top}>
-                    <div className={Style.login_container_top_login}>
-                        Artist Application
-                    </div>
-                    <AiOutlineClose className={Style.login_container_top_x} onClick={() => closeArtistForm()} />
+        <div className={Style.ArtistForm}>
+            <div className={`${Style.ArtistForm_top} font-normal`}>
+                <div className={Style.ArtistForm_top_title}>
+                    Artist Application
                 </div>
+                <AiOutlineClose className={Style.ArtistForm_top_x} onClick={() => closeArtistForm()} />
             </div>
-            <div className={Style.login_container_bottom}>
-                <p className={`${Style.form_paragraph} font-small`}>Please introduce yourself by completing the form below. We are highly interested in learning about your work and your music! We'll get back to you within a couple of business days.</p>
-                <div className={Style.ArtistForm_box_input}>
+            <div className={Style.ArtistForm_bottom}>
+                <p className={`font-small`}>Please introduce yourself by completing the form below. We are highly interested in learning about your work and your music! <br />We'll get back to you within a couple of business days.</p>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="string"
@@ -47,7 +44,7 @@ const ArtistForm = ({ closeArtistForm }) => {
                         onChange={(e) => setName(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.ArtistForm_box_input}>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="email"
@@ -55,7 +52,7 @@ const ArtistForm = ({ closeArtistForm }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.ArtistForm_box_input}>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="link"
@@ -63,7 +60,7 @@ const ArtistForm = ({ closeArtistForm }) => {
                         onChange={(e) => setInstagram(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.ArtistForm_box_input}>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="link"
@@ -71,7 +68,7 @@ const ArtistForm = ({ closeArtistForm }) => {
                         onChange={(e) => setSpotify(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.ArtistForm_box_input}>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="link"
@@ -79,7 +76,7 @@ const ArtistForm = ({ closeArtistForm }) => {
                         onChange={(e) => setSoundcloud(e.target.value)}
                         onKeyDown={handleKeyPress} />
                 </div>
-                <div className={Style.ArtistForm_box_input}>
+                <div className={Style.ArtistForm_bottom_input}>
                     <input
                         className={Style.inputFake}
                         type="link"

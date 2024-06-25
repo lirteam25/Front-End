@@ -38,13 +38,13 @@ const HeroSection = () => {
         <div className={Style.heroSection}>
             <div>
                 <div className={`${Style.heroSection_banner} font-normal`}>
-                    <span className='bold'>free release</span> for the first <span className='bold'>20</span> artists
+                    <span className='bold'>free lifetime release</span> for the first <span className='bold'>20</span> artists
                 </div>
                 <div className={Style.heroSection_colums}>
                     <div className={Style.heroSection_colums_text}>
                         <h1 className='font-huge'>
                             <br />
-                            YOUR <span id="animatedWord" className={`${Style.heroSection_colums_text_animateWord} ${rolling ? Style.rolling : ''} bold`}>{words[index]}</span>  <br />
+                            YOUR <span id="animatedWord" className={`${Style.heroSection_colums_text_animateWord} ${rolling ? Style.fadeOut : ''} bold`}>{words[index]}</span>  <br />
                         </h1>
                         <p className='font-normal'>
                             Create your <span className='bold'>digital vinyl</span>.

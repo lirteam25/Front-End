@@ -8,9 +8,9 @@ import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
 import Collectors from "./Collectors/Collectors";
 
-const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT, supporters }) => {
+const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters }) => {
 
-    const mumbaiScanner = "https://polygonscan.com";
+    const scanner = "https://polygonscan.com";
 
     const [description, setDescription] = useState(true);
     const [collectors, setCollectors] = useState(true);
@@ -27,7 +27,7 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT,
                     </div>
                     {tokenDetails &&
                         <div className={Style.NFTDescription_box_content}>
-                            <NFTDetails nft={nft} scanner={mumbaiScanner} />
+                            <NFTDetails nft={nft} scanner={scanner} />
                         </div>
                     }
                 </div>
@@ -58,7 +58,7 @@ const NFTDescription = ({ nft, event, hash, price, quantity, date, sameTokenNFT,
                         Transaction History {transactionHistory ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     </div>
                     {transactionHistory && <div className={Style.NFTDescription_box_content}>
-                        <TransactionHistory event={event} hash={hash} price={price} quantity={quantity} date={date} scanner={mumbaiScanner} />
+                        <TransactionHistory transactions={transactions} scanner={scanner} />
                     </div>}
                 </div>
                 <div className={Style.NFTDescription_box_itemsListed}>

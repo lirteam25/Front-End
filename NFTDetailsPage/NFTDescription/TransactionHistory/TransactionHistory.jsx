@@ -4,33 +4,29 @@ import Style from "./TransactionHistory.module.css";
 
 
 
-const TransactionHistory = ({ event, hash, price, quantity, date, scanner }) => {
+const TransactionHistory = ({ transactions, scanner }) => {
 
     return (
         <div className={Style.TransactionHistory}>
             <div className={Style.TransactionHistory_title}>
                 <h4 className="font-small">EVENT</h4>
                 <h4 className={`${Style.TransactionHistory_title_hash} font-small`} >HASH</h4>
-                <h4 className="font-small">PRICE</h4>
                 <h4 className="font-small">AMOUNT</h4>
-                <h4 className="font-small">DATE</h4>
+                <h4 className="font-small">RECEIVER</h4>
             </div>
-            {event.map((el, i) => (
-                <a key={i + 1} href={`${scanner}/tx/${hash[i]}`} target="_blank" className={Style.TransactionHistory_content}>
+            {transactions.map((el, i) => (
+                <a key={i + 1} href={`${scanner}/tx/${el.transactionHash}`} target="_blank" className={Style.TransactionHistory_content}>
                     <p style={{ textTransform: 'lowercase' }} className="font-small">
-                        {el}
+                        SALE
                     </p>
                     <p className={`${Style.TransactionHistory_content_url} font-small`}>
-                        {hash[i]}
+                        {el.transactionHash}
                     </p>
                     <p className="font-small">
-                        {price[i]} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
+                        {el.quantityClaimed}
                     </p>
-                    <p className="font-small">
-                        {quantity[i]}
-                    </p>
-                    <p className="font-small">
-                        {date[i] ? date[i].replace("T", " ").substring(0, 10) : " "}
+                    <p className={`${Style.TransactionHistory_content_url} font-small`}>
+                        {el.receiver}
                     </p>
                 </a>
             ))}

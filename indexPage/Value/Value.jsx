@@ -1,23 +1,24 @@
 import React from 'react';
 
-import Style from "./Value.module.css"
+import Style from "./Value.module.css";
+import { ExternalLinkButton } from "../../components/componentsIndex";
 
 const boxes = [
     {
         "title": "No Subscription Fees",
-        "description": "You receive 90% of each sale instantly."
+        "description": "Receive 90% of each sale, instantly. The remaining 10% is allocated to run the platform. We value collecting, not subscriptions."
     },
     {
         "title": "Enhanced DJ and Fan Engagement",
-        "description": "Directly release your exclusive, limited-edition tracks to fans, giving them full control over supply and pricing. Enable digital collecting and resale of unique content."
+        "description": "Digital music has a value. Release your limited edition tracks directly to your fans. Give them the possibility to digitally collect and trade them though blockchain technology."
     },
     {
-        "title": "Cost Efficiency for Higher Revenues",
-        "description": "Eliminate high production and distribution costs associated with vinyl records, resulting in increased revenues."
+        "title": "Lower cost for Higher Profits",
+        "description": "Eliminate high production and distribution costs associated with vinyl records, resulting in increased profits."
     },
     {
         "title": "Resale Royalties",
-        "description": "Earn a 5% revenue share on each digital vinyl resale, a feature not available with traditional vinyl releases."
+        "description": "Earn a 5% share on each digital vinyl resale. This is not possible in ordinary vinyl release.."
     }
 ]
 
@@ -32,6 +33,9 @@ const Value = () => {
                         <p className='font-small'>{el.description}</p>
                     </div>
                 ))}
+            </div>
+            <div className={Style.Value_button}>
+                <ExternalLinkButton text="learn more" path="https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4" background="white" textColor="black" />
             </div>
         </div>
     )

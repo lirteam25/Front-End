@@ -1,0 +1,51 @@
+.ArtistForm_top {
+    width: 100%;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2.5%;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistForm_top_title {
+    text-transform: uppercase;
+}
+
+.ArtistForm_top_x {
+    cursor: pointer;
+}
+
+.ArtistForm_bottom {
+    padding-bottom: 1rem;
+    width: 95%;
+    margin: auto;
+}
+
+.ArtistForm_bottom_input {
+    padding: 0.5rem 0;
+}
+
+.ArtistForm_bottom_input input {
+    background-color: transparent;
+    color: white;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.ArtistForm_bottom_input input::placeholder {
+    color: white;
+}
+
+@media screen and (max-width: 480px) {
+    .ArtistForm_top {
+        padding: 0.6rem 5%;
+    }
+
+    .ArtistForm_bottom {
+        width: 90%;
+    }
+
+    .ArtistForm_bottom {
+        padding-top: 0rem;
+    }
+}

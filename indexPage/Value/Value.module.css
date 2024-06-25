@@ -1,6 +1,7 @@
 .Value {
     width: 95%;
     margin: auto;
+    margin-bottom: 4rem;
 }
 
 .Value h3 {
@@ -21,7 +22,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2.5%;
-    margin-bottom: 4rem;
 }
 
 .Value_boxes_box {
@@ -32,21 +32,22 @@
     transition: transform 0.3s ease;
 }
 
-.Value_boxes_box:hover {
-    border: 1px solid var(--main-color);
-    transform: scale(1.01);
+.Value_button {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
 }
 
 @media screen and (max-width: 480px) {
     .Value {
         width: 90%;
         margin-top: 3rem;
+        margin-bottom: 4rem;
     }
 
     .Value_boxes {
         gap: 0;
         grid-template-columns: 1fr;
-        margin-bottom: 4rem;
     }
 
     .Value_boxes_box {
@@ -55,5 +56,10 @@
 
     .Value h3 {
         margin: 0.3rem 0;
+    }
+
+    .Value_button {
+        margin-top: 1.5rem;
+
     }
 }
