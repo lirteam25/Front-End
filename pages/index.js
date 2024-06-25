@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
-import { NextSeo } from 'next-seo';
 import { useQuery } from '@tanstack/react-query';
 
 
 //Internal Imports
 import Style from "./../styles/index.module.css";
 import { NFTMarketplaceContext } from '../Context/NFTMarketplaceContext';
-import { HeroSection, TopCollectors, JoinLir, LastRelease } from "../indexPage/indexIndex";
+import { HeroSection, TopCollectors, JoinLir, LastRelease, Value } from "../indexPage/indexIndex";
 
 const Home = () => {
 
@@ -25,6 +24,7 @@ const Home = () => {
   return (
     <div className={Style.index}>
       <HeroSection />
+      <Value />
       <LastRelease tokenInfoData={sellingNFT} />
       <TopCollectors collectors={topCollectorsData} />
       <JoinLir />

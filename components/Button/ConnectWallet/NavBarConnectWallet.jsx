@@ -47,7 +47,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "login / sign up",
+                label: "log in | sign up",
                 style: {
                     fontFamily: "Space Grotesk",
                     fontSize: "1rem",
