@@ -18,7 +18,7 @@ const boxes = [
     },
     {
         "title": "Resale Royalties",
-        "description": "Earn a 5% share on each digital vinyl resale. This is not possible in ordinary vinyl release.."
+        "description": "Earn a 5% share on each digital vinyl resale. This is not possible in ordinary vinyl release."
     }
 ]
 
