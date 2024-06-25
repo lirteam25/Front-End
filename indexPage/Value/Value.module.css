@@ -1,0 +1,65 @@
+.Value {
+    width: 95%;
+    margin: auto;
+    margin-bottom: 4rem;
+}
+
+.Value h3 {
+    margin: 0.2rem 0;
+    padding: 0;
+}
+
+.Value p {
+    margin: 0.2rem 0;
+    padding: 0;
+}
+
+.Value_title {
+    text-align: center;
+}
+
+.Value_boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5%;
+}
+
+.Value_boxes_box {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid var(--background-grey);
+    background-color: var(--background-grey2);
+    transition: transform 0.3s ease;
+}
+
+.Value_button {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 480px) {
+    .Value {
+        width: 90%;
+        margin-top: 3rem;
+        margin-bottom: 4rem;
+    }
+
+    .Value_boxes {
+        gap: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .Value_boxes_box {
+        padding: 0.4rem 0.7rem;
+    }
+
+    .Value h3 {
+        margin: 0.3rem 0;
+    }
+
+    .Value_button {
+        margin-top: 1.5rem;
+
+    }
+}

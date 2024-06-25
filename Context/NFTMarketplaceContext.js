@@ -1006,9 +1006,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const fetchTransactionsInfo = async (token_id, token_address) => {
-        const response = await getFromDB(`${DBUrl}/api/v1/transactions?token_id=${token_id}&token_address=${token_address}`);
-        const transactions = response.data.transactions[0];
-        return transactions;
+        const response = await getFromDB(`${DBUrl}/api/v1/transactions/${token_id}/${token_address}`
+        ).then((response) => { return response });
+        console.log("transaction", response?.data?.events);
+        return response?.data?.events;
     }
 
     const renderString = (inputString, maxLength) => {

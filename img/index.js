@@ -45,6 +45,8 @@ import cover_howToCollect from "./cover.jpg";
 import background_iPhone from "./timetofirst2_CUT.jpg";
 import cover_YT_mobile from "./cover_pc.jpg";
 
+import landing_floppy from "./landing_floppy.png";
+
 export default {
     logo,
     MrBlue,
@@ -93,5 +95,7 @@ export default {
     cover_howToCreateAWallet,
     cover_howToCollect,
     background_iPhone,
-    cover_YT_mobile
+    cover_YT_mobile,
+
+    landing_floppy
 };
