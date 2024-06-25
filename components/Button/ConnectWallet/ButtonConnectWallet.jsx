@@ -45,7 +45,7 @@ const buttonConnectWallet = () => {
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "login / sign up",
+                label: "login | sign up",
                 style: {
                     width: "100%",
                     borderRadius: "0px",

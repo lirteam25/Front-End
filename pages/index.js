@@ -27,7 +27,7 @@ const Home = () => {
       <Value />
       <LastRelease tokenInfoData={sellingNFT} />
       <TopCollectors collectors={topCollectorsData} />
-      {/* <JoinLir /> */}
+      <JoinLir />
     </div>
   )
 }

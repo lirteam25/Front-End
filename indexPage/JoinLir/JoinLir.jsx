@@ -13,7 +13,7 @@ const JoinLir = () => {
 
     return (
         <div className={Style.JoinLir}>
-            <h2 className='font-huge'>Generate <span className='bold'>new value</span><br /> from music </h2>
+            <h2 className='font-huge'>Join our<br /> community </h2>
             <div className={Style.JoinLir_buttons}>
                 <div className={Style.JoinLir_secondFeature}>
                     <ButtonConnectWallet />
