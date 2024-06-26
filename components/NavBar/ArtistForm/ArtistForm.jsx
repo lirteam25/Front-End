@@ -16,7 +16,7 @@ const ArtistForm = ({ closeArtistForm }) => {
     const { sendArtistForm, openErrorAuth, errorAuth } = useContext(NFTMarketplaceContext);
 
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && email) {
+        if (e.key === 'Enter' && email && name) {
             ArtistForm();
         }
     };
@@ -90,9 +90,10 @@ const ArtistForm = ({ closeArtistForm }) => {
                     </div>
                 }
                 <div className={Style.login_box_button}>
-                    {name && email ?
+                    <ActionButton action={ArtistForm} text="SEND REQUEST" fontSize="0.9rem" />
+                    {/* {name && email ?
                         <ActionButton action={ArtistForm} text="SEND REQUEST" fontSize="0.9rem" /> :
-                        <InfoButton text="Email and Name required" fontSize="0.9rem" />}
+                        <InfoButton text="Email and Name required" fontSize="0.9rem" />} */}
                 </div>
             </div>
         </div>
