@@ -4,6 +4,7 @@ import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
 import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DefaultSeo } from "next-seo";
+import * as fbq from "../Context/fpixel";
 
 import {
   ThirdwebProvider
@@ -19,6 +20,7 @@ import { GoogleAnalytics } from "nextjs-google-analytics";
 
 function MyApp({ Component, pageProps }) {
   const location = useRouter();
+  const router = useRouter();
 
   const queryClient = new QueryClient();
 
@@ -31,6 +33,20 @@ function MyApp({ Component, pageProps }) {
       });
     }
   }, [location]);
+
+  useEffect(() => {
+    // This pageview only triggers the first time (it's important for Pixel to have real information)
+    fbq.pageview();
+
+    const handleRouteChange = () => {
+      fbq.pageview();
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>
