@@ -39,7 +39,8 @@ const nextConfig = {
     THIRDWEB_API_KEY: process.env.THIRDWEB_API_KEY,
     ACTIVE_CHAIN: process.env.ACTIVE_CHAIN,
     CROSSMINT_PROJECT_ID: process.env.CROSSMINT_PROJECT_ID,
-    NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN
+    NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+    META_PIXELS_ID: process.env.META_PIXELS_ID
   }
 };
 
