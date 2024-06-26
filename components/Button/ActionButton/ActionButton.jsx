@@ -11,9 +11,9 @@ const ActionButton = ({ action, text, fontSize }) => {
 
     return (
         <div className={Style.ActionButton} style={buttonStyle} >
-            <div onClick={async () => action()} className={Style.ActionButton_text}>
+            <button onClick={async () => action()} className={Style.ActionButton_text}>
                 {text}
-            </div>
+            </button>
         </div>
     )
 }
