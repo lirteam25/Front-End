@@ -16,7 +16,7 @@
 .InfoButton {
     border: 1px solid var(--main-color);
     color: var(--main-color);
-    background-color: transparent;
+    background-color: var(--background-dark-color);
 }
 
 .Button_text {
