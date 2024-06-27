@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
 
-import { ExternalLinkButton, ActionButton } from '../../components/componentsIndex';
+import { ExternalLinkButton, ActionButton, InfoButton } from '../../components/componentsIndex';
 import img from "../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
@@ -11,10 +11,17 @@ import Style from "./HeroSection.module.css";
 
 const HeroSection = () => {
 
-    const { setOpenArtistForm } = useContext(NFTMarketplaceContext);
+    const { sendArtistForm } = useContext(NFTMarketplaceContext);
 
-    const openForm = () => {
-        setOpenArtistForm(true);
+    const [email, setEmail] = useState();
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && email) {
+            ArtistForm();
+        }
+    };
+
+    const ArtistForm = async () => {
+        await sendArtistForm("an Artist sent the form", email);
     }
 
     const [index, setIndex] = useState(0);
@@ -52,7 +59,17 @@ const HeroSection = () => {
                             <br />No production costs or shippings. Let fans <span className='bold'>collect</span> and <span className='bold'>resell digitally</span>.
                         </p>
                         <div className={Style.heroSection_colums_text_button}>
-                            <ActionButton text="APPLY AS AN ARTIST" action={openForm} />
+                            <input
+                                type="string"
+                                placeholder="Insert Your Email"
+                                onChange={(e) => setEmail(e.target.value)}
+                                onKeyDown={handleKeyPress} />
+                            <div className={Style.heroSection_colums_text_button_active}>
+                                {email ?
+                                    <ActionButton text="APPLY AS AN ARTIST" action={sendArtistForm} /> :
+                                    <InfoButton text="APPLY AS AN ARTIST" />
+                                }
+                            </div>
                         </div>
                     </div>
                     <div className={Style.heroSection_colums_floppy}>

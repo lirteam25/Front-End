@@ -29,7 +29,7 @@
     grid-template-columns: 1fr 6fr 5fr;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 60px - 40px);
+    height: calc(100vh - 60px - 40px - 80px);
 }
 
 .heroSection_colums_text {
@@ -47,10 +47,22 @@
     opacity: 0;
 }
 
-
 .heroSection_colums_text_button {
     margin-top: 40px;
-    width: 200px;
+    display: flex;
+    width: 100%;
+}
+
+.heroSection_colums_text_button_active {
+    width: 300px;
+}
+
+.heroSection_colums_text_button input {
+    border: none
+}
+
+.heroSection_colums_text_button input::placeholder {
+    color: white;
 }
 
 .heroSection_colums_floppy {
@@ -95,6 +107,14 @@
     .heroSection_colums_floppy_img {
         width: 200px;
         height: auto;
+    }
+
+    .heroSection_colums_text_button {
+        margin-top: 30px;
+    }
+
+    .heroSection_colums_text_button_active {
+        width: 350px;
     }
 }
 
