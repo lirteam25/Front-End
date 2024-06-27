@@ -12,7 +12,7 @@ const Home = () => {
 
   const router = useRouter();
 
-  const { fetchDiscoverNFTs, setOpenArtistForm } = useContext(NFTMarketplaceContext);
+  const { fetchTopCollectors, fetchDiscoverNFTs, setOpenArtistForm } = useContext(NFTMarketplaceContext);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -21,10 +21,10 @@ const Home = () => {
     setOpenArtistForm(isOpen);
   }, [router]);
 
-  /* const { data: topCollectorsData } = useQuery({
+  const { data: topCollectorsData } = useQuery({
     queryKey: ["topCollectors"],
     queryFn: fetchTopCollectors
-  }); */
+  });
 
   const { data: sellingNFT } = useQuery({
     queryKey: ["tokenInfo"],
@@ -36,7 +36,7 @@ const Home = () => {
       <HeroSection />
       <Value />
       <LastRelease tokenInfoData={sellingNFT} />
-      <TopCollectors collectors={[]} />
+      <TopCollectors collectors={topCollectorsData} />
       <JoinLir />
     </div>
   )
