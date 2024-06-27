@@ -58,7 +58,7 @@
 }
 
 .heroSection_colums_text_button input {
-    border: none
+    border: none;
 }
 
 .heroSection_colums_text_button input::placeholder {

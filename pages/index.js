@@ -21,10 +21,10 @@ const Home = () => {
     setOpenArtistForm(isOpen);
   }, [router]);
 
-  const { data: topCollectorsData } = useQuery({
+  /* const { data: topCollectorsData } = useQuery({
     queryKey: ["topCollectors"],
     queryFn: fetchTopCollectors
-  });
+  }); */
 
   const { data: sellingNFT } = useQuery({
     queryKey: ["tokenInfo"],
@@ -36,7 +36,7 @@ const Home = () => {
       <HeroSection />
       <Value />
       <LastRelease tokenInfoData={sellingNFT} />
-      <TopCollectors collectors={topCollectorsData} />
+      <TopCollectors collectors={[]} />
       <JoinLir />
     </div>
   )
