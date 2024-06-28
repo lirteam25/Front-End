@@ -693,6 +693,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const sendArtistForm = async (name, email) => {
+        console.log(name, email);
         const data = JSON.stringify({ name, email });
         console.log(data);
         const response = await postOnDB(`${DBUrl}/api/v1/artistForm`, data).then((response) => { return response });

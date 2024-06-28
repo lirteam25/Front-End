@@ -23,7 +23,10 @@ const HeroSection = () => {
     };
 
     const ArtistForm = async () => {
-        await sendArtistForm("an Artist sent the form", email);
+        const name = "an Artist sent the form";
+        console.log(name);
+        console.log(email);
+        await sendArtistForm(name, email);
         setEmailSent(true)
     }
 
@@ -75,8 +78,8 @@ const HeroSection = () => {
                                     onKeyDown={handleKeyPress} />
                                 <div className={Style.heroSection_colums_text_button_active}>
                                     {email ?
-                                        <ActionButton text="APPLY AS AN ARTIST" action={sendArtistForm} /> :
-                                        <InfoButton text="APPLY AS AN ARTIST" />
+                                        <ActionButton text="APPLY" action={ArtistForm} /> :
+                                        <InfoButton text="APPLY" />
                                     }
                                 </div>
                             </div>
