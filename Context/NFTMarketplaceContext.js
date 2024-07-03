@@ -260,6 +260,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             console.log(name)
             formData.append("file", encryptedFile, { filename: name });
             formData.append("pinataMetadata", metadata);
+            console.log(formData);
 
             const res = await fetch(
                 "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -275,8 +276,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const ipfsHash = await res.text();
             console.log(ipfsHash)
             return ipfsHash
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
 
     };
