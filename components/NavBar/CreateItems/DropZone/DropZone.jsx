@@ -55,13 +55,15 @@ const DropZone = ({
     const onDropAudio = useCallback(async (file) => {
         setAudioLoading(20);
         console.log(file);
-        const response = await cloudinaryUploadVideo(file, user._id);
+        /* const response = await cloudinaryUploadVideo(file, user._id); */
         setAudioLoading(80);
-        console.log(response);
-        const duration = secondsToMMSS(response.duration);
+        /* console.log(response); */
+        /* const duration = secondsToMMSS(response.duration); */
+        const duration = secondsToMMSS(474.576939);
         console.log(duration);
         setDuration(duration);
-        const path = response.secure_url.replace(process.env.CLOUDINARY_URL, "");
+        /* const path = response.secure_url.replace(process.env.CLOUDINARY_URL, ""); */
+        const path = "/v1720019871/Lunatik/a7yysiidp7ksqpb6vu9f.wav";
         console.log("URL CLOUDINARY", path);
         setUrlCloudinary(path);
         const urlAudio = await pinAndEncryptFileToIPFS(file[0], user.artist_minting_contract, user.artist_name, user._id, contractEditionDrop);
