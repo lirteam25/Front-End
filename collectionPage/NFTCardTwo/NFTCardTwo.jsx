@@ -64,7 +64,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                     <div>
                                     </div>
                                     <div>
-                                        SUPPLY
+                                        REMAINING
                                     </div>
                                 </div>
                                 <div className={Style.NFTCardTwo_box_info_bottom_items}>
@@ -72,7 +72,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                         FOR FREE
                                     </div>
                                     <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                        {el.supply}
+                                        {el.maxClaimableSupply - el.supplyClaimed}
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                     PRICE
                                 </div>
                                 <div>
-                                    SUPPLY
+                                    REMAINING
                                 </div>
                             </div>
                             <div className={Style.NFTCardTwo_box_info_bottom_items}>
@@ -90,7 +90,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                     {el.pricePerToken} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
                                 </div>
                                 <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                    {el.maxClaimableSupply}
+                                    {el.maxClaimableSupply - el.supplyClaimed}
                                 </div>
                             </div>
                         </div>)
