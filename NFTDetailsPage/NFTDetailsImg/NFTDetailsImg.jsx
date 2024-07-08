@@ -36,6 +36,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
             const timeDifference = launchDate - now;
 
             if (timeDifference <= 0) {
+                setTimeRemaining(null)
                 return;
             }
 
