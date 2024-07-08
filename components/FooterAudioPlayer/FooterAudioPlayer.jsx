@@ -22,6 +22,7 @@ const FooterAudioPlayer = () => {
     useEffect(() => {
         const seconds = Math.floor(audioPlayer.current.duration);
         setDuration(seconds);
+        console.log("duration", seconds);
         progressBar.current.max = seconds;
         if (!stopFooter) {
             const playPromise = audioPlayer.current.play();

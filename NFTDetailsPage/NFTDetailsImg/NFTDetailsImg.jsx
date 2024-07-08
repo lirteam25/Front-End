@@ -36,7 +36,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
             const timeDifference = launchDate - now;
 
             if (timeDifference <= 0) {
-                setTimeRemaining(null)
+                setTimeRemaining("Ready")
                 return;
             }
 
@@ -171,7 +171,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                                 </div>
                                                 )} */}
                                         {user.role == "artist" && user?.artist_minting_contract == shownNft?.token_address ? (<InfoButton text={`You listed ${shownNft.sellingQuantity} tokens`} />) : (
-                                            <InfoButton text={`Secondary market function will be soon intregrated`} />
+                                            <InfoButton text="Reselling starts when all tracks are collected" />
                                         )}
                                         {shownNft.sellingQuantity > 0 && (
                                             <div className={Style.NFTDetailsImg_description_info_button}>
@@ -188,7 +188,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                     </div>
                                 ) : (
                                     <div>
-                                        {timeRemaining ? (<InfoButton text={timeRemaining} />) : (
+                                        {timeRemaining !== "Ready" ? (<InfoButton text={timeRemaining} />) : (
                                             <div>
                                                 {shownNft.pricePerToken == 0 ?
                                                     (<div>
@@ -211,7 +211,6 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                                         {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
                                                             You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&uid=${user.uid}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
                                                         </div>)}
-
                                                     </div>)}
                                             </div>
                                         )}
