@@ -726,10 +726,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
         return tx;
     };
-    async function updateDBafterPurchase() {
+    async function updateDBafterPurchase(nft) {
         try {
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
+
+            console.log(`nfts/purchasedSuccedeed/${nft.token_id}/${nft.token_address}`);
+
+            const response = await fetch(`${DBUrl}/api/v1/nfts/purchasedSuccedeed/${nft.token_id}/${nft.token_address}`, {
+                method: "POST",
+
+            }).then((response) => { return response.json() });
+
+            console.log(response);
 
             setOpenLoading(false);
             setToast("Token successfully purchased");
@@ -739,10 +748,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
             handleMetaMaskErrors(error, "You successfully bought the track but something went wrong. <br/>Please contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_token_claim");
         }
     };
-    async function afterPurchaseCreditCard() {
+    async function afterPurchaseCreditCard(token_id, token_address) {
         try {
             const analytics = getAnalytics();
             logEvent(analytics, 'purchase');
+            const response = await fetch(`${DBUrl}/api/v1/nfts/purchasedSuccedeed/${token_id}/${token_address}`, {
+                method: "POST",
+
+            }).then((response) => { return response.json() });
+            console.log(response);
 
             if (window.opener) {
                 window.opener.location.href = '/my-profile';
@@ -778,7 +792,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const trans = await transaction.wait();
             console.log(trans);
 
-            await updateDBafterPurchase(trans, nft, address);
+            await updateDBafterPurchase(nft);
 
         } catch (error) {
             handleMetaMaskErrors(error, "Something went wrong while transfering the token. <br/>Please try again. If the error persist contact us at <a href='mailto:info@lirmusic.com' style='color: var(--main-color)'>info@lirmusic.com </a>.", "ERROR_retrieve");
