@@ -11,7 +11,7 @@ import img from "./../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const SongDisplay = ({ myNFTs, artist }) => {
-    const { user, downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity } = useContext(NFTMarketplaceContext);
+    const { setToast, setOpenToast, user, downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity } = useContext(NFTMarketplaceContext);
 
     const [isDownloading, setIsDownloading] = useState(false);
     const [indexDownload, setIndexDownload] = useState();
@@ -47,6 +47,8 @@ const SongDisplay = ({ myNFTs, artist }) => {
     }
 
     async function downloadFile(el) {
+        setToast("Track download started");
+        setOpenToast(true);
         const response = await fetch(`https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload${el.audioCloudinary}`);
 
         if (!response.ok) {
