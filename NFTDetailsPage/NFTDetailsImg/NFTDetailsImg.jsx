@@ -26,6 +26,34 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
+    const [timeRemaining, setTimeRemaining] = useState(null);
+
+    useEffect(() => {
+        const launchDate = new Date(shownNft.launch_date).getTime();
+
+        const updateTimeRemaining = () => {
+            const now = new Date().getTime();
+            const timeDifference = launchDate - now;
+
+            if (timeDifference <= 0) {
+                return;
+            }
+
+            const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`);
+        };
+
+        updateTimeRemaining(); // Initialize the timer with the correct remaining time
+
+        const intervalId = setInterval(updateTimeRemaining, 1000); // Update every second
+
+        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    }, [shownNft.launch_date]);
+
+
     const chain = process.env.ACTIVE_CHAIN == "polygon" ? polygon : polygonAmoy;
 
     const contract = getContract({
@@ -122,7 +150,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                             <div>{typeof shownNft.pricePerToken !== 'undefined' ? (shownNft.sellingQuantity == 0 ? <span style={{ color: "var(--main-color)" }}>NOT LISTED</span> : (shownNft.pricePerToken == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
                         </div>
                         <div>
-                            <div>SUPPLY</div>
+                            <div>EDITION OF</div>
                             <div>{shownNft.maxClaimableSupply ? shownNft.maxClaimableSupply : "----"}</div>
                         </div>
                     </div>
@@ -159,29 +187,34 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                     </div>
                                 ) : (
                                     <div>
-                                        {shownNft.pricePerToken == 0 ?
-                                            (<div>
-                                                {userOwn.amount > 0 ? (
-                                                    <div>
-                                                        <InfoButton text={`You have already colleted this track`} />
-                                                        <div className={`${Style.link_to_your_NFTPage} font-normal`}>
-                                                            You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <ActionButton action={freelyRetriveToken} text="redeem the token for free" />
-                                                )
-                                                }
-                                            </div>)
-                                            :
-                                            (<div>
+                                        {timeRemaining ? (<InfoButton text={timeRemaining} />) : (
+                                            <div>
+                                                {shownNft.pricePerToken == 0 ?
+                                                    (<div>
+                                                        {userOwn.amount > 0 ? (
+                                                            <div>
+                                                                <InfoButton text={`You have already colleted this track`} />
+                                                                <div className={`${Style.link_to_your_NFTPage} font-normal`}>
+                                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&id=${userOwn.owner_id}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <ActionButton action={freelyRetriveToken} text="redeem the token for free" />
+                                                        )
+                                                        }
+                                                    </div>)
+                                                    :
+                                                    (<div>
 
-                                                <ActionButton action={setBuyItem} text="Collect Track" />
-                                                {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
-                                                    You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&uid=${user.uid}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
-                                                </div>)}
+                                                        <ActionButton action={setBuyItem} text="Collect Track" />
+                                                        {userOwn.length != 0 && (<div className={`${Style.link_to_your_NFTPage} font-normal`}>
+                                                            You already own {userOwn.amount} {userOwn.amount > 1 ? ("tokens") : ("token")}. <Link href={{ pathname: "/token-details", query: `token_id=${shownNft.token_id}&token_address=${shownNft.token_address}&uid=${user.uid}` }} style={{ color: "var(--main-color)" }}> Manage {userOwn.amount > 1 ? ("them") : ("it")}</Link>
+                                                        </div>)}
 
-                                            </div>)}
+                                                    </div>)}
+                                            </div>
+                                        )}
+
                                     </div>
                                 )}
                             </div>
