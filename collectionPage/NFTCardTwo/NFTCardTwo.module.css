@@ -141,7 +141,6 @@
     padding: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Apply ellipsis for overflowed text */
     white-space: nowrap;
 }
 
@@ -168,11 +167,7 @@
     align-items: center;
 }
 
-.mobile {
-    display: none;
-}
-
-.pc:hover {
+.underline:hover {
     text-decoration: underline;
 }
 
@@ -201,13 +196,7 @@
         line-height: 0.8rem;
     }
 
-    .mobile {
-        display: block;
-    }
 
-    .pc {
-        display: none;
-    }
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {
@@ -217,14 +206,6 @@
     }
 
     .NFTCardTwo_box_img:hover .play_button_overlay {
-        display: none;
-    }
-
-    .mobile {
-        display: block;
-    }
-
-    .pc {
         display: none;
     }
 
