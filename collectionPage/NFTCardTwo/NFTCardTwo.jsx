@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isMobile } from 'react-device-detect';
 
 //INTERNAL IMPORT
 import Style from "./NFTCardTwo.module.css";
@@ -49,10 +50,13 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                             <h3 className="font-normal">
                                 {el.artist.map((art, i) => (
                                     <span key={i} className={Style.NFTCardTwo_box_info_top_action}>
-                                        <span className={Style.mobile}>{art}</span>
-                                        <Link href={{ pathname: "/artist", query: { uid: el.author_address[i] } }} className={Style.pc}>
-                                            {art}
-                                        </Link>
+                                        {isMobile ? (
+                                            <span>{art}</span>
+                                        ) : (
+                                            <Link href={{ pathname: "/artist", query: { uid: el.author_address[i] } }} className={Style.underline}>
+                                                {art}
+                                            </Link>
+                                        )}
                                         {i < el.artist.length - 1 && ', '}
                                     </span>
                                 ))}
