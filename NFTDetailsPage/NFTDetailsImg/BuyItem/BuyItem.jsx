@@ -22,7 +22,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
     }
 
     const updateDB = async (receipt, contract) => {
-        await updateDBafterPurchase(receipt, nft, address)
+        await updateDBafterPurchase(nft)
     }
 
     return (
@@ -54,6 +54,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         getButtonText={(connecting) =>
                             connecting ? "Connecting" : `Pay with credit card`
                         }
+                        /* environment="staging" */
                         collectionId={nft.collection_id}
                         projectId={process.env.CROSSMINT_PROJECT_ID}
                         mintConfig={{ "totalPrice": nft.pricePerToken.toString(), "quantity": "1", "tokenId": nft.token_id.toString() }}
@@ -63,6 +64,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                             console.log(event.type, event);
                         }}
                         successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
+                    /* successCallbackURL={`http://localhost:3000/success`} */
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
             </div>
