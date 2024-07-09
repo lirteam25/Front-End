@@ -94,7 +94,6 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
 
     const [alreadyClicked, setAlreadyClicked] = useState(false);
     const playSong = () => {
-        console.log(userOwn);
         if (userOwn && userOwn.length !== 0) {
             console.log("here");
             setCurrentIndex(0); setOpenFooterAudio(true); setNft([userOwn]); setStopFooter(false);
@@ -134,11 +133,14 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                             </h2>
                         </div>
                         <div className={Style.NFTDetailsImg_description_info_title_play}>
-                            {(userOwn || !user) && <div> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
-                                <Image src={img.pause} alt="pause icon" width={25} height={25} onClick={() => { setStopFooter(true) }} /> :
-                                <Image src={img.play} alt="play icon" width={25} height={25}
-                                    onClick={() => { playSong() }} />
-                            }</div>}
+                            {shownNft?.token_id && shownNft?.token_id && <div>
+                                {(userOwn || !user) && <div> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
+                                    <Image src={img.pause} alt="pause icon" width={25} height={25} onClick={() => { setStopFooter(true) }} /> :
+                                    <Image src={img.play} alt="play icon" width={25} height={25}
+                                        onClick={() => { playSong() }} />
+                                }</div>}
+                            </div>
+                            }
                         </div>
                     </div>
                     <div className={`${Style.NFTDetailsImg_description_info_bottom} font-normal`}>
