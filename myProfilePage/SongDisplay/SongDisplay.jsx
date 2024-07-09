@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from "next/image";
 import { AiOutlineDownload } from "react-icons/ai";
 import CircularProgress from '@mui/material/CircularProgress';
+import { isMobile } from 'react-device-detect';
 
 
 //Internal Imports
@@ -290,26 +291,28 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                             {el.song}
                                                         </div>
                                                         {el.artist?.map((art, i) => (
-                                                            <span key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                            <div key={i} className={`${Style.display_song_title_info_artist}`}>
                                                                 <span className={Style.underline}>
                                                                     {art}
                                                                 </span>
                                                                 {i < el.artist.length - 1 && ', '}
-                                                            </span>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                     <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
+                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}` }} className={`${Style.display_song_title_info_name}`}>
                                                             {el.song}
                                                         </Link>
-                                                        {el.artist?.map((art, i) => (
-                                                            <div key={i} className={`${Style.display_song_title_info_artist}`}>
-                                                                <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
-                                                                    {art}
-                                                                </Link>
-                                                                {i < el.artist.length - 1 && ', '}
-                                                            </div>
-                                                        ))}
+                                                        <div key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                            {el.artist?.map((art, i) => (
+                                                                <span key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                                    <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
+                                                                        {art}
+                                                                    </Link>
+                                                                    {i < el.artist.length - 1 && ', '}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     </div>
 
                                                 </div>
