@@ -134,6 +134,7 @@
 
 .display_song_title_info_artist {
     color: var(--main-color);
+    display: flex;
     overflow: hidden;
     text-overflow: ellipsis;
 }
