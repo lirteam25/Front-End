@@ -202,7 +202,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <ActionButton action={freelyRetriveToken} text="redeem the token for free" />
+                                                            <ActionButton action={freelyRetriveToken} text="redeem the track for free" />
                                                         )
                                                         }
                                                     </div>)
