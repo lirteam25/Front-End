@@ -54,7 +54,6 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                         getButtonText={(connecting) =>
                             connecting ? "Connecting" : `Pay with credit card`
                         }
-                        /* environment="staging" */
                         collectionId={nft.collection_id}
                         projectId={process.env.CROSSMINT_PROJECT_ID}
                         mintConfig={{ "totalPrice": nft.pricePerToken.toString(), "quantity": "1", "tokenId": nft.token_id.toString() }}
