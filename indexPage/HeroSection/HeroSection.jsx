@@ -78,8 +78,8 @@ const HeroSection = () => {
                                     onKeyDown={handleKeyPress} />
                                 <div className={Style.heroSection_colums_text_button_active}>
                                     {email ?
-                                        <ActionButton text="APPLY" action={ArtistForm} /> :
-                                        <InfoButton text="APPLY" />
+                                        <ActionButton text="APPLY AS AN ARTIST" action={ArtistForm} /> :
+                                        <InfoButton text="APPLY AS AN ARTIST" />
                                     }
                                 </div>
                             </div>

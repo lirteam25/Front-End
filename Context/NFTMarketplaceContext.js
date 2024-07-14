@@ -480,9 +480,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             maxClaimableSupply: supply,
         };
 
-        if (formInputPrice == 0) {
+        /* if (formInputPrice == 0) {
             phase.maxClaimablePerWallet = 1;
-        }
+        } */
         console.log(phase);
 
         const claimConditionsTransaction = setClaimConditions({
