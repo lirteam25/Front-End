@@ -250,7 +250,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                 key={el._id}
                                                 onClick={() => {
                                                     if (window.innerWidth <= 1024) {
-                                                        window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}`;
+                                                        window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}`;
                                                     }
                                                 }}
                                                 onDoubleClick={() => {
@@ -300,7 +300,7 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                         ))}
                                                     </div>
                                                     <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${el.author_address[0]}` }} className={`${Style.display_song_title_info_name}`}>
+                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
                                                             {el.song}
                                                         </Link>
                                                         <div key={i} className={`${Style.display_song_title_info_artist}`}>
