@@ -36,9 +36,10 @@
 
 @media screen and (max-width: 480px) {
     .discover {
-        width: 90%;
-        margin: calc(60px + 5%) auto 90px auto;
+        margin: 60px auto;
     }
+
+    .discover_filter {}
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {

@@ -26,16 +26,16 @@ const Discover = () => {
             <NextSeo title="Collection | LIR" description="Discover unreleased limited-edition tracks. Start exploring now." />
             <div className={Style.discover}>
                 <div className={Style.discover_filter}>
-                    <div className={`${Style.discover_filter_element} ${!filter && Style.active} font-normal`} onClick={() => { if (filter) { setFilter(false) } }}>
-                        All items
+                    <div className={`${Style.discover_filter_element} ${!filter && Style.active} font-small`} onClick={() => { if (filter) { setFilter(false) } }}>
+                        All Genres
                     </div>
-                    <div className={`${Style.discover_filter_element} ${filter == "Techno" && Style.active} font-normal`} onClick={() => { if (filter != "Techno") { setFilter("Techno") } }}>
+                    <div className={`${Style.discover_filter_element} ${filter == "Techno" && Style.active} font-small`} onClick={() => { if (filter != "Techno") { setFilter("Techno") } }}>
                         Techno
                     </div>
-                    <div className={`${Style.discover_filter_element} ${filter == "House" && Style.active} font-normal`} onClick={() => { if (filter != "House") { setFilter("House") } }}>
+                    <div className={`${Style.discover_filter_element} ${filter == "House" && Style.active} font-small`} onClick={() => { if (filter != "House") { setFilter("House") } }}>
                         House
                     </div>
-                    <div className={`${Style.discover_filter_element} ${filter == "Electronic" && Style.active} font-normal`} onClick={() => { if (filter != "Electronic") { setFilter("Electronic") } }}>
+                    <div className={`${Style.discover_filter_element} ${filter == "Electronic" && Style.active} font-small`} onClick={() => { if (filter != "Electronic") { setFilter("Electronic") } }}>
                         Electronic
                     </div>
                 </div>
