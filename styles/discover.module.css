@@ -4,8 +4,34 @@
 }
 
 .discover {
+    margin: 60px auto;
+}
+
+.discover_filter {
+    height: 60px;
+    display: flex;
+    gap: 15px;
+    padding: 0 2.5%;
+    align-items: center;
+    border-bottom: 1px solid var(--background-grey);
+}
+
+.discover_filter_element {
+    border: 1px solid var(--background-grey);
+    background-color: var(--background-grey2);
+    padding: 0.1rem 0.6rem;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.active {
+    border: 1px solid white;
+    background-color: var(--main-color);
+}
+
+.discover_items {
+    margin: 2.5% auto;
     width: 95%;
-    margin: calc(60px + 2.5%) auto;
 }
 
 @media screen and (max-width: 480px) {

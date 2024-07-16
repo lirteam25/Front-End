@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { NextSeo } from 'next-seo';
 import { useQuery } from "@tanstack/react-query";
 
@@ -10,17 +10,38 @@ import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 const Discover = () => {
     const { fetchDiscoverNFTs } = useContext(NFTMarketplaceContext);
 
+    const [filter, setFilter] = useState(false);
+
     const { data } = useQuery({
         queryKey: ["tokenInfo"],
         queryFn: fetchDiscoverNFTs
     }
     );
 
+    const filteredNFts = data?.filter((el) => el.musicTag.includes(filter));
+
+
     return (
         <div className={Style.vh_discover}>
             <NextSeo title="Collection | LIR" description="Discover unreleased limited-edition tracks. Start exploring now." />
             <div className={Style.discover}>
-                <NFTCardTwo sellingNFTs={data} />
+                <div className={Style.discover_filter}>
+                    <div className={`${Style.discover_filter_element} ${!filter && Style.active} font-normal`} onClick={() => { if (filter) { setFilter(false) } }}>
+                        All items
+                    </div>
+                    <div className={`${Style.discover_filter_element} ${filter == "Techno" && Style.active} font-normal`} onClick={() => { if (filter != "Techno") { setFilter("Techno") } }}>
+                        Techno
+                    </div>
+                    <div className={`${Style.discover_filter_element} ${filter == "House" && Style.active} font-normal`} onClick={() => { if (filter != "House") { setFilter("House") } }}>
+                        House
+                    </div>
+                    <div className={`${Style.discover_filter_element} ${filter == "Electronic" && Style.active} font-normal`} onClick={() => { if (filter != "Electronic") { setFilter("Electronic") } }}>
+                        Electronic
+                    </div>
+                </div>
+                <div className={Style.discover_items}>
+                    <NFTCardTwo sellingNFTs={filter ? filteredNFts : data} />
+                </div>
             </div>
         </div>
     );
