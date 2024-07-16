@@ -13,7 +13,6 @@
     gap: 15px;
     padding: 0 2.5%;
     align-items: center;
-    border-bottom: 1px solid var(--background-grey);
 }
 
 .discover_filter_element {
@@ -24,14 +23,38 @@
     cursor: pointer;
 }
 
+.discover_items {
+    margin: 0 auto;
+    width: 95%;
+}
+
+.mobile_discover_filter {
+    display: none;
+    height: 80px;
+    align-content: center;
+    padding: 0 5%;
+}
+
+.mobile_discover_filter_element {
+    border: 1px solid var(--background-grey);
+    background-color: var(--background-grey2);
+    padding: 0.1rem 0;
+    text-align: center;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 95px;
+    margin-bottom: 10px;
+}
+
 .active {
     border: 1px solid white;
     background-color: var(--main-color);
 }
 
-.discover_items {
-    margin: 2.5% auto;
-    width: 95%;
+.mobile_discover_filter_bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 @media screen and (max-width: 480px) {
@@ -39,12 +62,25 @@
         margin: 60px auto;
     }
 
-    .discover_filter {}
+    .discover_filter {
+        display: none;
+    }
+
+    .mobile_discover_filter {
+        display: block;
+    }
+
+    .discover_items {
+        width: 90%;
+    }
 }
 
 @media screen and (min-width:481px) and (max-width: 1024px) {
-    .discover {
+    .discover_filter {
+        padding: 0 2.5%;
+    }
+
+    .discover_items {
         width: 95%;
-        margin: calc(60px + 2.5%) auto 90px auto;
     }
 }
