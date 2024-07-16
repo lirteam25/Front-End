@@ -16,8 +16,8 @@ const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNF
     const [description, setDescription] = useState(true);
     const [collectors, setCollectors] = useState(true);
     const [tokenDetails, setTokenDetails] = useState(true);
-    const [itemsListed, setItemsListed] = useState(false);
-    const [transactionHistory, setTransactionHistory] = useState(false);
+    const [itemsListed, setItemsListed] = useState(true);
+    const [transactionHistory, setTransactionHistory] = useState(true);
 
     return (
         <div className={Style.NFTDescription}>

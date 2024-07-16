@@ -1,7 +1,7 @@
 import React from 'react';
+import { CiSquareQuestion } from 'react-icons/ci';
 
 import Style from "./NFTDetails.module.css";
-import { NFTMarketplaceAddress } from "../../../Context/Constants";
 
 const NFTDetails = ({ nft, scanner }) => {
     const listed = nft.maxClaimableSupply - nft.supplyClaimed;
@@ -23,6 +23,22 @@ const NFTDetails = ({ nft, scanner }) => {
                     <p className="font-small">{nft.created_at ? formatDateToMonthYear(nft.created_at) : "----"}</p>
                 </div>
             </div>
+            {nft.musicTag && nft.musicTag.length > 0 &&
+                <div className={Style.NFTDetails_box2}>
+                    <div className={Style.NFTDetails_box_title}>
+                        <h4 className="font-small">Genre</h4>
+                    </div>
+                    <div className={Style.NFTDetails_box_content}>
+                        <p className="font-small">
+                            {nft.musicTag.map((el, i) => (
+                                <span key={i}>
+                                    {el}
+                                    {i < nft.musicTag.length - 1 && <br />}
+                                </span>
+                            ))}
+                        </p>
+                    </div>
+                </div>}
             <div className={Style.NFTDetails_box}>
                 <div className={Style.NFTDetails_box_title}>
                     <h4 className="font-small">duration</h4>
@@ -41,8 +57,17 @@ const NFTDetails = ({ nft, scanner }) => {
             </div>
 
             <div className={Style.NFTDetails_box}>
-                <div className={Style.NFTDetails_box_title}>
-                    <h4 className="font-small">Edition of</h4>
+                <div className={Style.NFTDetails_box_title2}>
+                    <h4 className="font-small">Edition of </h4>
+                    <div className={Style.NFTDetails_box_title2_icon}>
+                        <CiSquareQuestion className={Style.CiSquareQuestion_editionOf} />
+                        <div className={`${Style.CiSquareQuestion_editionOf_text} font-small`}>
+                            <p>
+                                The predefined number of editions created,
+                                representing the maximum number of users who can collect the track.
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
                     <p className="font-small">{nft.maxClaimableSupply || "----"}</p>
@@ -50,8 +75,17 @@ const NFTDetails = ({ nft, scanner }) => {
             </div>
 
             <div className={Style.NFTDetails_box}>
-                <div className={Style.NFTDetails_box_title}>
+                <div className={Style.NFTDetails_box_title2}>
                     <h4 className="font-small">Remaining</h4>
+                    <div className={Style.NFTDetails_box_title2_icon}>
+                        <CiSquareQuestion className={Style.CiSquareQuestion_editionOf} />
+                        <div className={`${Style.CiSquareQuestion_editionOf_text} font-small`}>
+                            <p>
+                                The number of editions that have not yet been collected.
+                                Once all editions are collected, the secondary market will start.
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
                     <p className="font-small">{typeof listed !== "undefined" ? listed : "----"}</p>
@@ -59,8 +93,18 @@ const NFTDetails = ({ nft, scanner }) => {
             </div>
 
             <div className={Style.NFTDetails_box}>
-                <div className={Style.NFTDetails_box_title}>
+                <div className={Style.NFTDetails_box_title2}>
                     <h4 className="font-small">Resale Royalty</h4>
+                    <div className={Style.NFTDetails_box_title2_icon}>
+                        <CiSquareQuestion className={Style.CiSquareQuestion_editionOf} />
+                        <div className={`${Style.CiSquareQuestion_editionOf_text} font-small`}>
+                            <p>
+                                Royalties are a percentage of the resale value that goes to the original creator, providing ongoing compensation for their digital artworks.
+                                This ensures artists receive a share of the profits each time their tracks are resold between different users.<br />
+                                <br />This percentage is setted at <span style={{ color: "var(--main-color)" }}>5%</span> by default
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
                     <p className="font-small">{typeof nft.royalties !== "undefined" ? `${nft.royalties}%` : "----"}</p>
