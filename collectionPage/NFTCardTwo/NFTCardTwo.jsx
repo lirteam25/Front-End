@@ -62,7 +62,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                 ))}
                             </h3>
                         </div>
-                        {el.price == 0 ? (
+                        {el.pricePerToken == 0 ? (
                             <div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
                                 <div className={Style.NFTCardTwo_box_info_bottom_colums}>
                                     <div>

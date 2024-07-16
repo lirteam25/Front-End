@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-
 //Internal Imports
 import Style from "./NFTDescription.module.css";
 import NFTDetails from "./NFTDetails/NFTDetails";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
 import Collectors from "./Collectors/Collectors";
+import { LastRelease } from "./../../indexPage/indexIndex";
 
-const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters }) => {
+const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNFT }) => {
+
 
     const scanner = "https://polygonscan.com";
 
@@ -23,7 +24,7 @@ const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters }) => {
             <div className={Style.NFTDescription_first}>
                 <div className={Style.NFTDescription_box_tokenDetails}>
                     <div className={`${Style.NFTDescription_box_title} ${tokenDetails && Style.active} font-medium`} onClick={() => setTokenDetails(!tokenDetails)}>
-                        Token details {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        Track details {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     </div>
                     {tokenDetails &&
                         <div className={Style.NFTDescription_box_content}>
