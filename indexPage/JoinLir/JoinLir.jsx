@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 
 import Style from "./JoinLir.module.css";
-import { ActionButton, ButtonConnectWallet } from '../../components/componentsIndex';
+import { ActionButton, InfoButton, ButtonConnectWallet } from '../../components/componentsIndex';
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const JoinLir = () => {

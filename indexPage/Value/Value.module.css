@@ -88,6 +88,7 @@
 .Value_bottomGrid_artist_bottom_active {
     display: grid;
     grid-template-columns: 1fr 200px;
+    align-items: center;
     justify-content: center;
 }
 
