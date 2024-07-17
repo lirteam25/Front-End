@@ -23,29 +23,12 @@ const HeroSection = () => {
     };
 
     const ArtistForm = async () => {
-        const name = "an Artist sent the form";
-        console.log(name);
-        console.log(email);
-        await sendArtistForm(name, email);
-        setEmailSent(true)
+        if (email) {
+            const name = "an Artist sent the form";
+            await sendArtistForm(name, email);
+            setEmailSent(true)
+        }
     }
-
-    const [index, setIndex] = useState(0);
-    const words = ["MUSIC", "ART", "RULES"];
-    const [rolling, setRolling] = useState(false);
-
-    useEffect(() => {
-        const changeWord = () => {
-            setRolling(true);
-            setTimeout(() => {
-                setIndex((prevIndex) => (prevIndex + 1) % words.length);
-                setRolling(false);
-            }, 500); // match this timeout with the CSS animation duration
-        };
-
-        const interval = setInterval(changeWord, 2000); // Change every 2 seconds
-        return () => clearInterval(interval); // Cleanup interval on component unmount
-    }, []);
 
     return (
         <div className={Style.heroSection}>
@@ -61,7 +44,7 @@ const HeroSection = () => {
                             </div>
                         </div> :
                         <div className={Style.heroSection_colums_text_button}>
-                            <h2 className={`${Style.heroSection_colums_text_button_explanation} font-large`}>
+                            <h2 className={`${Style.heroSection_colums_text_button_explanation} font-normal`}>
                                 Release the first song for free ↓
                             </h2>
                             <div className={Style.heroSection_colums_text_button_flex}>
@@ -71,10 +54,7 @@ const HeroSection = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     onKeyDown={handleKeyPress} />
                                 <div className={Style.heroSection_colums_text_button_active}>
-                                    {email ?
-                                        <ActionButton text="APPLY AS AN ARTIST" action={ArtistForm} /> :
-                                        <InfoButton text="APPLY AS AN ARTIST" />
-                                    }
+                                    <ActionButton text="APPLY AS AN ARTIST" action={ArtistForm} />
                                 </div>
                             </div>
                         </div>

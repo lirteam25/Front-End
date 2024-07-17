@@ -1060,7 +1060,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     const [openAccountSetting, setOpenAccountSetting] = useState(false);
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
-    const [openArtistForm, setOpenArtistForm] = useState(false);
 
     const [openCreateItem, setOpenCreateItem] = useState(false);
 
@@ -1161,8 +1160,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setOpenAccountSetting,
                 openArtistSettings,
                 setOpenArtistSettings,
-                openArtistForm,
-                setOpenArtistForm,
 
                 openCreateItem, setOpenCreateItem,
 

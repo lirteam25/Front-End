@@ -40,12 +40,7 @@
     display: grid;
     grid-template-columns: 1fr 200px;
     justify-content: center;
-    gap: 1px;
 }
-
-/* .heroSection_colums_text_button_active {
-    width: 300px;
-} */
 
 .heroSection_colums_text_button input {
     border: 1px solid white;
@@ -81,18 +76,16 @@
         width: 90%;
         align-items: center;
         justify-content: center;
-        border: 1px solid white;
+        height: calc(100vh - 80px);
     }
 
     .heroSection_colums_text {
-        border: 1px solid white;
         width: 100%;
         grid-column: unset;
         order: 2;
     }
 
     .heroSection_colums_floppy {
-        border: 1px solid white;
         grid-column: unset;
         order: 1;
         margin-top: 1rem;
@@ -108,10 +101,7 @@
     }
 
     .heroSection_colums_text_button_flex {
-        display: grid;
         grid-template-columns: 1fr 170px;
-        justify-content: center;
-        gap: 1px;
     }
 }
 

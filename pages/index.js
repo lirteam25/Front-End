@@ -1,7 +1,5 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from "next/router";
-
 
 //Internal Imports
 import Style from "./../styles/index.module.css";
@@ -10,16 +8,7 @@ import { HeroSection, TopCollectors, JoinLir, LastRelease, Value } from "../inde
 
 const Home = () => {
 
-  const router = useRouter();
-
-  const { fetchTopCollectors, fetchDiscoverNFTs, setOpenArtistForm } = useContext(NFTMarketplaceContext);
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    const { artistForm } = router.query;
-    const isOpen = artistForm === 'true';
-    setOpenArtistForm(isOpen);
-  }, [router]);
+  const { fetchTopCollectors, fetchDiscoverNFTs } = useContext(NFTMarketplaceContext);
 
   const { data: topCollectorsData } = useQuery({
     queryKey: ["topCollectors"],

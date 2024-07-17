@@ -45,7 +45,7 @@ const buttonConnectWallet = () => {
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "login | sign up",
+                label: "sign in",
                 style: {
                     width: "100%",
                     borderRadius: "0px",
@@ -85,7 +85,7 @@ const buttonConnectWallet = () => {
                                 {user ? (
                                     <InfoButton text="Connected" />
                                 ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                    login
+                                    sign in
                                 </div>)}
                             </div>
                         )}</div>

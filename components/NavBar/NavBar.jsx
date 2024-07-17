@@ -8,7 +8,6 @@ import Style from "./NavBar.module.css";
 import images from "../../img";
 import { Error, Loading, FooterAudioPlayer, Notification, Toast, NavBarConnectWallet } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
-import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
 import CreateItem from "./CreateItems/CreateItems";
@@ -29,7 +28,6 @@ const NavBar = () => {
         openNotification,
         openToast,
         openUsername,
-        openArtistForm, setOpenArtistForm,
         openAccountSetting, setOpenAccountSetting,
         openArtistSettings, setOpenArtistSettings,
         openCreateItem, setOpenCreateItem
@@ -39,11 +37,6 @@ const NavBar = () => {
 
     const closeProfileTab = () => {
         setOpenProfileTab(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeArtistForm = () => {
-        setOpenArtistForm(false);
         setOpenErrorAuth(false);
     }
 
@@ -135,14 +128,6 @@ const NavBar = () => {
                         </div>
                     </div>
                 )}
-
-            {
-                openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
-                    <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
-                        <ArtistForm closeArtistForm={closeArtistForm} />
-                    </div>
-                </div>
-            }
 
             {
                 openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>
