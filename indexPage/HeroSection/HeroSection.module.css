@@ -70,7 +70,6 @@
     }
 
     .heroSection_colums {
-        border: 1px solid white;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -82,22 +81,20 @@
     }
 
     .heroSection_colums_text {
-        border: 1px solid white;
         width: 100%;
         grid-column: unset;
         order: 2;
     }
 
     .heroSection_colums_floppy {
-        border: 1px solid white;
         grid-column: unset;
         order: 1;
         margin-top: 1rem;
     }
 
     .heroSection_colums_floppy_img {
-        width: 200px;
-        height: auto;
+        width: auto;
+        height: 30vh;
     }
 
     .heroSection_colums_text_button {
