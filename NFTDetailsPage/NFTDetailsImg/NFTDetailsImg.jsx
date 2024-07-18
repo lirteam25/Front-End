@@ -114,6 +114,8 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
 
     const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002;
 
+    const listed = shownNft?.maxClaimableSupply - shownNft?.supplyClaimed;
+
     return (
         <div className={Style.NFTDetailsImg}>
             <div className={Style.NFTDetailsImg_description}>
@@ -145,16 +147,16 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                     </div>
                     <div className={`${Style.NFTDetailsImg_description_info_bottom} font-normal`}>
                         <div>
-                            <div>DURATION</div>
-                            <div>{shownNft.audioDuration ? shownNft.audioDuration : "----"}</div>
-                        </div>
-                        <div>
                             <div>PRICE</div>
                             <div>{typeof shownNft.pricePerToken !== 'undefined' ? (shownNft.sellingQuantity == 0 ? <span style={{ color: "var(--main-color)" }}>NOT LISTED</span> : (shownNft.pricePerToken == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
                         </div>
                         <div>
                             <div>EDITION OF</div>
                             <div>{shownNft.maxClaimableSupply ? shownNft.maxClaimableSupply : "----"}</div>
+                        </div>
+                        <div>
+                            <div>REMAINING</div>
+                            <div>{listed ? listed : "----"}</div>
                         </div>
                     </div>
                 </div>

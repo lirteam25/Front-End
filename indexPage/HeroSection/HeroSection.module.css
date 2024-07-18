@@ -70,23 +70,26 @@
     }
 
     .heroSection_colums {
+        border: 1px solid white;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: flex-start;
         align-items: center;
         grid-template-columns: 1fr;
-        gap: 0px;
+        gap: 50px;
         width: 90%;
         height: calc(100vh - 100px);
     }
 
     .heroSection_colums_text {
+        border: 1px solid white;
         width: 100%;
         grid-column: unset;
         order: 2;
     }
 
     .heroSection_colums_floppy {
+        border: 1px solid white;
         grid-column: unset;
         order: 1;
         margin-top: 1rem;

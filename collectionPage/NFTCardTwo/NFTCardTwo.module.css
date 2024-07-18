@@ -164,15 +164,6 @@
         line-height: 0.9rem;
     }
 
-    .NFTCardTwo_box_info_bottom {
-        padding: 0.3rem 0.5rem;
-    }
-
-    .NFTCardTwo_box_info_bottom_colums,
-    .NFTCardTwo_box_info_bottom_items {
-        line-height: 0.8rem;
-    }
-
 
 }
 
@@ -189,15 +180,6 @@
     .NFTCardTwo_box_info_top h2,
     .NFTCardTwo_box_info_top h3 {
         line-height: 1rem;
-    }
-
-    .NFTCardTwo_box_info_bottom {
-        padding: 0.3rem 0.5rem;
-    }
-
-    .NFTCardTwo_box_info_bottom_colums,
-    .NFTCardTwo_box_info_bottom_items {
-        line-height: 0.9rem;
     }
 }
 
