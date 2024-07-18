@@ -48,7 +48,6 @@
 .JoinLir_buttons_button_flex {
     display: grid;
     grid-template-columns: 1fr 200px;
-    align-items: center;
     justify-content: center;
 }
 
