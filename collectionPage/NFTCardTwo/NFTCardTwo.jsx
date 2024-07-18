@@ -62,43 +62,9 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                 ))}
                             </h3>
                         </div>
-                        {el.pricePerToken == 0 ? (
-                            <div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
-                                <div className={Style.NFTCardTwo_box_info_bottom_colums}>
-                                    <div>
-                                    </div>
-                                    <div>
-                                        REMAINING
-                                    </div>
-                                </div>
-                                <div className={Style.NFTCardTwo_box_info_bottom_items}>
-                                    <div style={{ color: "var(--main-color)" }} className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                        FOR FREE
-                                    </div>
-                                    <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                        {el.maxClaimableSupply - el.supplyClaimed}
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (<div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
-                            <div className={Style.NFTCardTwo_box_info_bottom_colums}>
-                                <div>
-                                    PRICE
-                                </div>
-                                <div>
-                                    REMAINING
-                                </div>
-                            </div>
-                            <div className={Style.NFTCardTwo_box_info_bottom_items}>
-                                <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                    {el.pricePerToken} <span style={{ fontFamily: "Space Grotesk" }}>$</span>
-                                </div>
-                                <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                    {el.maxClaimableSupply - el.supplyClaimed}
-                                </div>
-                            </div>
-                        </div>)
-                        }
+                        <div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
+                            <h4>limited edition of {el.maxClaimableSupply}</h4>
+                        </div>
                     </div>
                 </Link>
             ))) :
@@ -113,24 +79,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                 <h3 className="font-normal">----</h3>
                             </div>
                             <div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
-                                <div className={Style.NFTCardTwo_box_info_bottom_colums}>
-                                    <div>
-                                        ----
-                                    </div>
-                                    <div>
-                                        ----
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={Style.NFTCardTwo_box_info_bottom_items}>
-                                        <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                            ----
-                                        </div>
-                                        <div className={Style.NFTCardTwo_box_info_bottom_items_elements}>
-                                            ----
-                                        </div>
-                                    </div>
-                                </div>
+                                ----
                             </div>
                         </div>
                     </div>

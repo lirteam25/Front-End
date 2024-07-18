@@ -86,7 +86,6 @@
 
 .image_placeholder {
     background-color: #ccc;
-    /* Use the desired background color */
     width: 100%;
     height: 100%;
     display: flex;
@@ -114,14 +113,10 @@
     width: 100%;
     margin: auto;
     cursor: default;
-    border-left: 1px solid var(--background-grey);
-    border-right: 1px solid var(--background-grey);
-    border-bottom: 1px solid var(--background-grey);
-    background-color: var(--background-grey2);
 }
 
 .NFTCardTwo_box_info_top {
-    padding: 0.3rem 0.5rem;
+    padding: 0.3rem 0rem;
 }
 
 .NFTCardTwo_box_info_top h2 {
@@ -144,27 +139,9 @@
     white-space: nowrap;
 }
 
-.NFTCardTwo_box_info_bottom {
-    border-top: 1px solid var(--background-grey);
-    padding: 0.4rem 0.5rem;
-    font-family: "Space Mono", sans-serif;
-}
-
-.NFTCardTwo_box_info_bottom_colums {
-    display: grid;
-    line-height: 1rem;
-    grid-template-columns: 1fr 1fr;
-}
-
-.NFTCardTwo_box_info_bottom_items {
-    line-height: 1rem;
-    align-items: center;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-.NFTCardTwo_box_info_bottom_items_elements {
-    align-items: center;
+.NFTCardTwo_box_info_bottom h4 {
+    padding: 0;
+    margin: 0;
 }
 
 .underline:hover {
