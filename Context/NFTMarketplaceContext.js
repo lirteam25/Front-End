@@ -118,7 +118,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const account = useActiveAccount();
     const activeWallet = useActiveWallet();
     const { disconnect } = useDisconnect();
-    const address = account?.address;
+    const address = account?.address ? ethers.utils.getAddress(account?.address) : account?.address;
+
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -1131,6 +1132,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     return (
         <NFTMarketplaceContext.Provider
             value={{
+                address,
+
                 handleMetaMaskErrors,
                 error,
                 setError,

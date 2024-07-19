@@ -6,7 +6,6 @@ import NFTDetails from "./NFTDetails/NFTDetails";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
 import Collectors from "./Collectors/Collectors";
-import { LastRelease } from "./../../indexPage/indexIndex";
 
 const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNFT }) => {
 

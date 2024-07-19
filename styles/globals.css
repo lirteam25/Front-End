@@ -228,7 +228,7 @@ input:-webkit-autofill {
   input:focus,
   input.visited,
   input:-webkit-autofill {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     padding: 0.2rem 0.1rem;
   }
 }

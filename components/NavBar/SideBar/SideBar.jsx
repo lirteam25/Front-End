@@ -38,17 +38,17 @@ const SideBar = ({ setOpenSideBar, user }) => {
                     </div>
                 )}
                 <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>
-                    <div className={Style.sidebar_center_element}>collection</div>
+                    <div className={Style.sidebar_center_element}>COLLECTION</div>
                 </Link>
                 <Link href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"} onClick={() => setOpenSideBar(false)}>
-                    <div className={Style.sidebar_center_element}>info</div>
+                    <div className={Style.sidebar_center_element}>INFO</div>
                 </Link>
                 <Link href={"./about-us"} onClick={() => setOpenSideBar(false)}>
-                    <div className={Style.sidebar_center_element} >about</div>
+                    <div className={Style.sidebar_center_element} >ABOUT</div>
                 </Link>
                 {user && <div className={Style.sidebar_center_element} >
                     <div className="font-medium" onClick={() => disconnectUser()}>
-                        log out
+                        LOG OUT
                     </div>
                 </div>}
             </div>

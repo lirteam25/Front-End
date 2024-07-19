@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
+import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
@@ -23,9 +23,7 @@ const recommendedWallets = [
 ]
 
 
-const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTab }) => {
-
-    const address = useActiveAccount()?.address;
+const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTab, address }) => {
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -47,15 +45,17 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "sign in",
+                label: "SIGN IN",
                 style: {
                     fontFamily: "Space Grotesk",
                     fontSize: "1rem",
                     borderRadius: "0px",
                     backgroundColor: "transparent",
+                    textAlign: "left",
                     color: "var(--main-color)",
                     padding: 0,
                     margin: 0,
+                    minWidth: "unset",
                     height: "60px",
                 }
             }}

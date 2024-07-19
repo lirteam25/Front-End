@@ -1,20 +1,18 @@
 import React, { useState, useContext } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { CiSquareQuestion } from "react-icons/ci";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { useActiveWalletChain } from "thirdweb/react";
 
 import Style from "./CreateSmartContract.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import { ActionButton, InfoButton, ButtonConnectWallet } from '../../../components/componentsIndex';
-import { NFTMintFactoryAddress, NFTMintFactoryABI } from "./../../../Context/Constants";
 
 const CreateSmartContract = ({ closeCreateSmartContract }) => {
 
     const chainId = useActiveWalletChain()?.id;
     const targetChainId = process.env.ACTIVE_CHAIN == "polygon" ? 137 : 80002
-    const address = useActiveAccount()?.address;
 
-    const { user, createEditionDrop } = useContext(NFTMarketplaceContext);
+    const { user, address, createEditionDrop } = useContext(NFTMarketplaceContext);
 
     const [nameOfToken, setNameOfToken] = useState();
     const [symbolOfToken, setSymbolOfToken] = useState();

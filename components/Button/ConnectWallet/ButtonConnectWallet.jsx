@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
+import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";

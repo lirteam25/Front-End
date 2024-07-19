@@ -11,7 +11,7 @@ import { ArtistProfileCard, ArtistInformation } from '../artistPage/artistPageIn
 const Artist = () => {
     const router = useRouter();
 
-    const { fetchArtistNFT, fetchArtistName } = useContext(NFTMarketplaceContext);
+    const { fetchArtistNFT, fetchArtistName, address } = useContext(NFTMarketplaceContext);
     const [tokenInfos, setTokenInfos] = useState([]);
     const [artist, setArtist] = useState([]);
 
@@ -38,7 +38,7 @@ const Artist = () => {
             <div className={Style.artist}>
                 <ArtistProfileCard artist={artist} />
                 <div className={Style.artist_bottom}>
-                    <ArtistInformation tokenInfos={tokenInfos} artistDescription={artist.artist_description} />
+                    <ArtistInformation tokenInfos={tokenInfos} artistDescription={artist.artist_description} address={address} />
                 </div>
             </div>
         </div>

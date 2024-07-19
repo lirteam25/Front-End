@@ -20,11 +20,11 @@
 .heroSection_colums {
     display: grid;
     width: 95%;
-    margin: 60px auto 0 auto;
+    margin: 0 auto;
     grid-template-columns: 1fr 5fr 1fr 5fr;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 60px);
+    height: calc(100vh);
 }
 
 .heroSection_colums_text {
