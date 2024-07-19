@@ -8,7 +8,7 @@ const NFTDetails = ({ nft, scanner }) => {
 
     function formatDateToMonthYear(dateString) {
         const date = new Date(dateString);
-        const options = { year: 'numeric', month: 'long' };
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = date.toLocaleDateString("en-US", options);
         return formattedDate;
     }
@@ -17,7 +17,7 @@ const NFTDetails = ({ nft, scanner }) => {
         <div className={Style.NFTDetails}>
             <div className={Style.NFTDetails_box}>
                 <div className={Style.NFTDetails_box_title}>
-                    <h4 className="font-small">Release on</h4>
+                    <h4 className="font-small">Released on</h4>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
                     <p className="font-small">{nft.created_at ? formatDateToMonthYear(nft.created_at) : "----"}</p>

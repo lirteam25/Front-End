@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ConnectButton, useActiveAccount, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
+import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
 import { polygon, polygonAmoy } from "thirdweb/chains";
@@ -10,15 +10,14 @@ import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import Style from "./Wallet.module.css";
 
 const wallets = [
-    inAppWallet(),
-    createWallet("io.metamask"),
+    inAppWallet()
 ];
 
 const recommendedWallets = [
     inAppWallet()
 ]
 
-const buttonConnectWallet = () => {
+const buttonConnectWallet = ({ text }) => {
 
     const { user, completeLogin } = useContext(NFTMarketplaceContext);
 
@@ -45,7 +44,7 @@ const buttonConnectWallet = () => {
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "login | sign up",
+                label: `${text}`,
                 style: {
                     width: "100%",
                     borderRadius: "0px",
@@ -85,7 +84,7 @@ const buttonConnectWallet = () => {
                                 {user ? (
                                     <InfoButton text="Connected" />
                                 ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                    login
+                                    sign in
                                 </div>)}
                             </div>
                         )}</div>

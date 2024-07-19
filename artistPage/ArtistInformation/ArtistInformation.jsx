@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useActiveAccount } from "thirdweb/react";
 
 import DOMPurify from 'dompurify';
 
@@ -9,9 +8,8 @@ import { NFTMarketplaceContext } from '../../Context/NFTMarketplaceContext';
 import { ActionButton, InfoButton, ButtonConnectWallet } from "../../components/componentsIndex";
 import CreateSmartContract from './CreateSmartContract/CreateSmartContract';
 
-const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs }) => {
+const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs, address }) => {
 
-    const address = useActiveAccount()?.address;
     const [openRelease, setOpenRelease] = useState(true);
     const [openAbout, setOpenAbout] = useState(false);
     const [openCollectedItems, setOpenCollectedItems] = useState(false);

@@ -8,7 +8,6 @@ import Style from "./NavBar.module.css";
 import images from "../../img";
 import { Error, Loading, FooterAudioPlayer, Notification, Toast, NavBarConnectWallet } from "../componentsIndex";
 import SideBar from "./SideBar/SideBar";
-import ArtistForm from "./ArtistForm/ArtistForm";
 import ArtistSettings from "./ArtistSettings/ArtistSettings";
 import AccountSettings from "./AccountSettings/AccountSettings";
 import CreateItem from "./CreateItems/CreateItems";
@@ -29,21 +28,16 @@ const NavBar = () => {
         openNotification,
         openToast,
         openUsername,
-        openArtistForm, setOpenArtistForm,
         openAccountSetting, setOpenAccountSetting,
         openArtistSettings, setOpenArtistSettings,
-        openCreateItem, setOpenCreateItem
+        openCreateItem, setOpenCreateItem,
+        address
     } = useContext(NFTMarketplaceContext);
     const router = useRouter();
     const isIndexPage = router.pathname === '/';
 
     const closeProfileTab = () => {
         setOpenProfileTab(false);
-        setOpenErrorAuth(false);
-    }
-
-    const closeArtistForm = () => {
-        setOpenArtistForm(false);
         setOpenErrorAuth(false);
     }
 
@@ -101,12 +95,12 @@ const NavBar = () => {
                         />
                     </Link>
                     <div className={Style.navbar_container_left_discover}>
-                        <Link id="discover" className={Style.red_hover} href={{ pathname: `collection` }}>collection</Link>
-                        <Link id="docs" className={Style.red_hover} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>info</Link>
+                        <Link id="discover" className={Style.red_hover} href={{ pathname: `collection` }}>COLLECTION</Link>
+                        <Link id="docs" className={Style.red_hover} target="_blank" href={"https://lirmusic.notion.site/Lir-Music-info-694b4a6252224f9fba741bc2397f6212?pvs=4"}>INFO</Link>
                     </div>
                 </div>
                 <div className={Style.navbar_container_right}>
-                    <NavBarConnectWallet openProfileTab={openProfileTab} setOpenProfileTab={setOpenProfileTab} closeProfileTab={closeProfileTab} />
+                    <NavBarConnectWallet openProfileTab={openProfileTab} setOpenProfileTab={setOpenProfileTab} closeProfileTab={closeProfileTab} address={address} />
                 </div>
             </div>
             <div className={Style.navbar_sidebar} onClick={() => setOpenSideBar(!openSideBar)}>
@@ -135,14 +129,6 @@ const NavBar = () => {
                         </div>
                     </div>
                 )}
-
-            {
-                openArtistForm && <div className={Style.overlay} onMouseDown={() => closeArtistForm()}>
-                    <div className={Style.navbar_ArtistForm} onMouseDown={(e) => e.stopPropagation()}>
-                        <ArtistForm closeArtistForm={closeArtistForm} />
-                    </div>
-                </div>
-            }
 
             {
                 openAccountSetting && <div className={Style.overlay} onMouseDown={() => closeAccountSettings()}>

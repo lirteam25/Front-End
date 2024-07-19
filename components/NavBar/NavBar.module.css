@@ -244,14 +244,7 @@ body.overlay-open {
     animation: slideInOther 0.3s ease-in-out;
 }
 
-.navbar_ArtistForm {
-    top: 50%;
-    left: 50%;
-    animation: slideInOther 0.3s ease-in-out;
-}
-
 .navbar_openUsername,
-.navbar_ArtistForm,
 .navbar_CreateItem,
 .navbar_ArtistSettings {
     position: absolute;
@@ -411,12 +404,6 @@ body.overlay-open {
         width: 90%;
     }
 
-    .navbar_ArtistForm {
-        top: 50%;
-        left: 50%;
-        width: 90%;
-    }
-
     .navbar_openUsername,
     .navbar_AccountSetting,
     .navbar_ArtistSettings {
@@ -471,11 +458,5 @@ body.overlay-open {
         top: 40%;
         left: 50%;
         width: 60%;
-    }
-
-    .navbar_ArtistForm {
-        top: 45%;
-        left: 50%;
-        width: 80%;
     }
 }

@@ -6,7 +6,6 @@ import NFTDetails from "./NFTDetails/NFTDetails";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import ItemsListed from "./ItemsListed/ItemsListed";
 import Collectors from "./Collectors/Collectors";
-import { LastRelease } from "./../../indexPage/indexIndex";
 
 const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNFT }) => {
 
@@ -16,8 +15,8 @@ const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNF
     const [description, setDescription] = useState(true);
     const [collectors, setCollectors] = useState(true);
     const [tokenDetails, setTokenDetails] = useState(true);
-    const [itemsListed, setItemsListed] = useState(true);
-    const [transactionHistory, setTransactionHistory] = useState(true);
+    const [itemsListed, setItemsListed] = useState(false);
+    const [transactionHistory, setTransactionHistory] = useState(false);
 
     return (
         <div className={Style.NFTDescription}>

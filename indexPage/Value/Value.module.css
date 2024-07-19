@@ -1,65 +1,221 @@
 .Value {
     width: 95%;
-    margin: auto;
-    margin-bottom: 4rem;
+    margin: 2rem auto 4rem auto;
+}
+
+.Value input {
+    border: 1px solid white;
+    background-color: white;
+    color: black;
+}
+
+.Value input::placeholder {
+    color: black;
+}
+
+.Value h2 {
+    margin: 1rem 0;
+    padding: 0;
 }
 
 .Value h3 {
-    margin: 0.2rem 0;
+    margin: 0.8rem 0;
+    padding: 0;
+}
+
+.Value h4 {
+    margin: 0;
     padding: 0;
 }
 
 .Value p {
-    margin: 0.2rem 0;
+    margin: 1.2rem 0;
     padding: 0;
+    line-height: 1.6rem;
 }
 
-.Value_title {
+.Value_grid {
+    display: grid;
+    grid-template-columns: 1fr 11fr;
+    margin-bottom: 2rem;
+}
+
+.Value_grid_2 {
+    grid-column: 2;
+}
+
+.Value_grid_2_grid {
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+}
+
+.center {
     text-align: center;
 }
 
-.Value_boxes {
+.Value_bottomGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5%;
+    gap: 40px;
+    align-items: flex-end;
 }
 
-.Value_boxes_box {
-    padding: 0.5rem 1rem;
-    margin: 0.5rem 0;
-    border: 1px solid var(--background-grey);
-    background-color: var(--background-grey2);
-    transition: transform 0.3s ease;
+.Value_bottomGrid_fan {
+    background: var(--main-color);
 }
 
-.Value_button {
-    margin-top: 1.5rem;
+.Value_bottomGrid_artist {
+    margin-top: 2rem;
+    background: var(--white-pearl);
+    color: black;
+}
+
+.Value_bottomGrid_fan,
+.Value_bottomGrid_artist {
+    padding: 0.5rem 1.5rem;
+}
+
+.Value_bottomGrid_fan_element p {
+    margin: 0rem auto 1rem auto;
+    padding: 0;
+    line-height: 1rem;
+}
+
+.Value_bottomGrid_artist_bottom {
+    margin: 2rem auto 1rem auto;
+}
+
+.Value_bottomGrid_artist_bottom_active {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+}
+
+.Value_learnMore {
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
+    align-content: center;
 }
 
 @media screen and (max-width: 480px) {
     .Value {
         width: 90%;
-        margin-top: 3rem;
-        margin-bottom: 4rem;
+        margin-top: 4rem;
+        margin-bottom: 2rem;
     }
 
-    .Value_boxes {
-        gap: 0;
+    .Value h2 {
+        margin: 0 auto 2rem auto;
+    }
+
+    .Value_grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 40px;
+    }
+
+    .Value_grid_2 {
+        grid-column: unset;
+    }
+
+    .Value_grid_2_grid {
+        display: grid;
         grid-template-columns: 1fr;
     }
 
-    .Value_boxes_box {
-        padding: 0.4rem 0.7rem;
+    .Value p {
+        margin: 0 0 1rem 0;
+        padding: 0;
+        line-height: 1.3rem;
     }
 
-    .Value h3 {
-        margin: 0.3rem 0;
+    .center {
+        text-align: left;
     }
 
-    .Value_button {
-        margin-top: 1.5rem;
+    .Value_bottomGrid {
+        margin-top: 20px;
+        grid-template-columns: 1fr;
+    }
 
+    .Value_bottomGrid_fan,
+    .Value_bottomGrid_artist {
+        padding: 0rem 0.8rem;
+        margin: 0;
+    }
+
+    .Value_bottomGrid_fan_element p {
+        line-height: 0.8rem;
+        margin: 0rem auto;
+    }
+
+    .Value_bottomGrid_fan_element {
+        margin-bottom: 1rem;
+    }
+
+    .Value_bottomGrid_artist_bottom {
+        margin: 1.5rem auto 1rem auto;
+    }
+
+    .Value_bottomGrid_artist_bottom_active {
+        grid-template-columns: 1fr 170px;
+    }
+}
+
+
+@media screen and (min-width: 481px) and (max-width: 1024px) {
+    .Value {
+        width: 90%;
+        margin-top: 4rem;
+    }
+
+    .Value_grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 4rem;
+    }
+
+    .Value_grid_2 {
+        grid-column: unset;
+    }
+
+    .Value_grid_2_grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .Value p {
+        margin: 1.2rem 0;
+        padding: 0;
+        line-height: 1.5rem;
+    }
+
+    .center {
+        text-align: left;
+    }
+
+    .Value_bottomGrid {
+        margin-top: 2rem;
+        grid-template-columns: 1fr;
+    }
+
+    .Value_bottomGrid_fan,
+    .Value_bottomGrid_artist {
+        padding: 0rem 0.8rem;
+    }
+
+    .Value_bottomGrid_fan_element p {
+        line-height: 0.9rem;
+        margin: 0rem auto;
+    }
+
+    .Value_bottomGrid_fan_element {
+        margin-bottom: 1rem;
+    }
+
+    .Value_bottomGrid_artist_bottom {
+        margin: 1.5rem auto 1rem auto;
+    }
+
+    .Value_bottomGrid_artist_bottom_active {
+        grid-template-columns: 1fr 200px;
     }
 }

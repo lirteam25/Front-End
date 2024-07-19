@@ -4,6 +4,16 @@
     padding: 4rem 0;
 }
 
+.JoinLir input {
+    border: 1px solid white;
+    background-color: white;
+    color: black;
+}
+
+.JoinLir input::placeholder {
+    color: black;
+}
+
 .JoinLir h2 {
     margin: 0;
     padding: 0;
@@ -19,15 +29,26 @@
 }
 
 .JoinLir_buttons {
-    display: flex;
-    justify-content: flex-start;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     margin: 1rem 0;
     align-items: left;
 }
 
-.JoinLir_secondFeature {
-    width: 250px;
+.JoinLir_buttons_button {
+    margin: 0.5rem 0;
+    width: 200px;
+}
+
+.JoinLir_buttons_email {
+    margin: 0.5rem 0;
+}
+
+.JoinLir_buttons_button_flex {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    justify-content: center;
 }
 
 
@@ -48,6 +69,10 @@
     .JoinLir_secondFeature {
         width: 180px;
         padding: 0.5rem 0rem;
+    }
+
+    .JoinLir_buttons_button_flex {
+        grid-template-columns: 1fr 170px;
     }
 }
 
