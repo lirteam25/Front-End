@@ -30,9 +30,9 @@
 
 .mobile_discover_filter {
     display: none;
-    height: 90px;
+    height: unset;
     align-content: center;
-    padding: 0 5%;
+    padding: 15px 5%;
 }
 
 .mobile_discover_filter_element {

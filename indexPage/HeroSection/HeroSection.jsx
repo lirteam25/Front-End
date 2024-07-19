@@ -44,7 +44,7 @@ const HeroSection = () => {
                             </div>
                         </div> :
                         <div className={Style.heroSection_colums_text_button}>
-                            <h2 className={`${Style.heroSection_colums_text_button_explanation} font-normal`}>
+                            <h2 className={`${Style.heroSection_colums_text_button_explanation} font-large`}>
                                 Release the first song for free ↓
                             </h2>
                             <div className={Style.heroSection_colums_text_button_flex}>

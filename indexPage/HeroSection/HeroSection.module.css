@@ -70,14 +70,15 @@
     }
 
     .heroSection_colums {
+        margin-top: 60px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
         grid-template-columns: 1fr;
-        gap: 50px;
+        gap: 5vh;
         width: 90%;
-        height: calc(100vh - 100px);
+        height: calc(100vh - 60px);
     }
 
     .heroSection_colums_text {
@@ -89,12 +90,11 @@
     .heroSection_colums_floppy {
         grid-column: unset;
         order: 1;
-        margin-top: 1rem;
     }
 
     .heroSection_colums_floppy_img {
-        width: auto;
-        height: 30vh;
+        width: 100%;
+        height: auto;
     }
 
     .heroSection_colums_text_button {
