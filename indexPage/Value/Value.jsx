@@ -90,7 +90,7 @@ const Value = () => {
                         </div>
                     ))}
                     <div className={Style.Value_bottomGrid_artist_bottom}>
-                        <ButtonConnectWallet />
+                        <ButtonConnectWallet text="SIGN IN" />
                     </div>
                 </div>
                 <div className={Style.Value_bottomGrid_artist}>

@@ -46,7 +46,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                     </div>
                     <div className={Style.NFTCardTwo_box_info}>
                         <div className={Style.NFTCardTwo_box_info_top}>
-                            <h2 className="font-normal">{el.song}</h2>
+                            <h2 className={`${Style.underline} font-normal`}>{el.song}</h2>
                             <h3 className="font-normal">
                                 {el.artist.map((art, i) => (
                                     <span key={i} className={Style.NFTCardTwo_box_info_top_action}>
@@ -61,9 +61,7 @@ const NFTCardTwo = ({ sellingNFTs, isSingle }) => {
                                     </span>
                                 ))}
                             </h3>
-                        </div>
-                        <div className={` ${Style.NFTCardTwo_box_info_bottom} font-small`}>
-                            <h4>limited edition of {el.maxClaimableSupply}</h4>
+                            <h4 className="font-small">limited edition of {el.maxClaimableSupply}</h4>
                         </div>
                     </div>
                 </Link>

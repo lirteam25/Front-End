@@ -31,7 +31,7 @@ const JoinLir = () => {
                 <div>
                     <span className='font-large'>Start Collecting</span>
                     <div className={Style.JoinLir_buttons_button}>
-                        <ButtonConnectWallet />
+                        <ButtonConnectWallet text="SING IN" />
                     </div>
                 </div>
                 <div>

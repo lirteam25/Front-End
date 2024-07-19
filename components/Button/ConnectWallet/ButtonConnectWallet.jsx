@@ -10,15 +10,14 @@ import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import Style from "./Wallet.module.css";
 
 const wallets = [
-    inAppWallet(),
-    createWallet("io.metamask"),
+    inAppWallet()
 ];
 
 const recommendedWallets = [
     inAppWallet()
 ]
 
-const buttonConnectWallet = () => {
+const buttonConnectWallet = ({ text }) => {
 
     const { user, completeLogin } = useContext(NFTMarketplaceContext);
 
@@ -45,7 +44,7 @@ const buttonConnectWallet = () => {
             chain={chain}
             recommendedWallets={recommendedWallets}
             connectButton={{
-                label: "sign in",
+                label: `${text}`,
                 style: {
                     width: "100%",
                     borderRadius: "0px",

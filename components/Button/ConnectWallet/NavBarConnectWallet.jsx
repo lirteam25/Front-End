@@ -14,8 +14,7 @@ import Link from 'next/link';
 import Style from "./Wallet.module.css";
 
 const wallets = [
-    inAppWallet(),
-    createWallet("io.metamask"),
+    inAppWallet()
 ];
 
 const recommendedWallets = [

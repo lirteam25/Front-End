@@ -27,6 +27,10 @@
     padding: 1rem 0;
 }
 
+.LastRelease_box_swiper {
+    cursor: grab;
+}
+
 @media screen and (max-width: 480px) {
     .LastRelease_box {
         width: 90%;
