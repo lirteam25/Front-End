@@ -34,7 +34,7 @@ const SideBar = ({ setOpenSideBar, user }) => {
                     </div>
                 ) : (
                     <div className={Style.sidebar_center_login}>
-                        <ButtonConnectWallet />
+                        <ButtonConnectWallet text="SIGN IN" />
                     </div>
                 )}
                 <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>
