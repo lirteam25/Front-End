@@ -21,7 +21,7 @@ const LastRelease = ({ tokenInfoData }) => {
         <div className={Style.LastRelease}>
             <div className={Style.LastRelease_box}>
                 <div className={`${Style.LastRelease_box_title} font-huge`}>
-                    <h2 className='font-huge'>Latest Drops</h2>
+                    <h2 className='font-huge'>Latest Releases</h2>
                 </div>
                 <div className={Style.LastRelease_box_swiper}>
                     <Swiper slidesPerView={1}
