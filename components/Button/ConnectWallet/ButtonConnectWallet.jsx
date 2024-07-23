@@ -77,14 +77,14 @@ const buttonConnectWallet = ({ text }) => {
                     <div>
                         {chainId !== targetChainId ? (
                             <div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); switchChain(polygonAmoy); }}>
-                                switch network
+                                SWITCH NETWORK
                             </div>
                         ) : (
                             <div>
                                 {user ? (
                                     <InfoButton text="Connected" />
                                 ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                    sign in
+                                    SIGN IN
                                 </div>)}
                             </div>
                         )}</div>
