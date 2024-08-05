@@ -40,6 +40,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                 <div className={`${Style.BuyItem_bottom_middle} font-small`}>or</div>
                 <div className={Style.BuyItem_bottom_item}>
                     {nft.collection_id ? <CrossmintPayButton
+
                         style={{
                             borderRadius: 0,
                             width: "100%",
@@ -63,6 +64,7 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                             console.log(event.type, event);
                         }}
                         successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
+                        environment='staging'
                     /* successCallbackURL={`http://localhost:3000/success`} */
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
