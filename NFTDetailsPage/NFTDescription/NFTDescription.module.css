@@ -71,20 +71,13 @@
         margin: 5% auto;
     }
 
-    .NFTDescription_first {
+    .NFTDescription_grid {
         grid-template-columns: 100%;
     }
 
-    .NFTDescription_box_tokenDetails,
-    .NFTDescription_box_description,
-    .NFTDescription_box_itemsListed {
-        margin-bottom: 1rem;
-    }
-
-    .NFTDescription_box_itemsListed,
-    .NFTDescription_box_description {
+    .NFTDescription_grid_comment {
+        margin-top: 1rem;
         grid-column: unset;
-        grid-row: 1;
     }
 }
 
@@ -94,19 +87,12 @@
         margin: 2.5% auto;
     }
 
-    .NFTDescription_firs {
+    .NFTDescription_grid {
         grid-template-columns: 100%;
     }
 
-    .NFTDescription_box_tokenDetails,
-    .NFTDescription_box_description,
-    .NFTDescription_box_itemsListed {
-        margin-bottom: 0;
-    }
-
-    .NFTDescription_box_itemsListed,
-    .NFTDescription_box_description {
+    .NFTDescription_grid_comment {
+        margin-top: 1rem;
         grid-column: unset;
-        grid-row: 1;
     }
 }
