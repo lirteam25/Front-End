@@ -116,31 +116,29 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
             <div className={Style.NFTDetailsImg_description}>
                 <div className={Style.NFTDetailsImg_description_info}>
                     <div className={Style.NFTDetailsImg_description_info_title}>
-                        <div className={Style.NFTDetailsImg_description_info_title_songAndartist}>
-                            <h1 className="font-medium">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
-                            <h2 className="font-medium">
-                                {shownNft.artist?.map((art, i) => (
+                        {shownNft?.token_id && <div className={Style.NFTDetailsImg_description_info_title_play}>
+                            {(userOwn || !user) && <> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
+                                <Image src={img.pause} alt="pause icon" className={Style.pause} onClick={() => { setStopFooter(true) }} /> :
+                                <Image src={img.play} alt="play icon" className={Style.play}
+                                    onClick={() => { playSong() }} />
+                            }</>}
+                        </div>
+                        }
+                        <div className={Style.NFTDetailsImg_description_info_title_title}>
+                            <h1 className="font-normal">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
+                            <h2 className="font-normal">
+                                {shownNft.artist ? (shownNft.artist.map((art, i) => (
                                     <span key={i}>
                                         <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${shownNft.author_address[i]}` }}>
                                             {art}
                                         </Link>
                                         {i < shownNft.artist.length - 1 && ', '}
-                                    </span>
-                                ))}
+                                    </span>)
+                                )) : "----"}
                             </h2>
                         </div>
-                        <div className={Style.NFTDetailsImg_description_info_title_play}>
-                            {shownNft?.token_id && shownNft?.token_id && <div>
-                                {(userOwn || !user) && <div> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
-                                    <Image src={img.pause} alt="pause icon" width={25} height={25} onClick={() => { setStopFooter(true) }} /> :
-                                    <Image src={img.play} alt="play icon" width={25} height={25}
-                                        onClick={() => { playSong() }} />
-                                }</div>}
-                            </div>
-                            }
-                        </div>
                     </div>
-                    <div className={`${Style.NFTDetailsImg_description_info_bottom} font-normal`}>
+                    <div className={`${Style.NFTDetailsImg_description_info_bottom} font-small`}>
                         <div>
                             <div>PRICE</div>
                             <div>{typeof shownNft.pricePerToken !== 'undefined' ? (shownNft.sellingQuantity == 0 ? <span style={{ color: "var(--main-color)" }}>NOT LISTED</span> : (shownNft.pricePerToken == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
@@ -155,6 +153,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                         </div>
                     </div>
                 </div>
+                <p className={`${Style.NFTDetailsImg_description_middle} font-small`}>Includes unlimited streaming via Lir Music, plus high-quality download and the ability to resell it.</p>
 
                 <div className={Style.NFTDetailsImg_description_info_actions}>
                     {shownNft.pricePerToken == 'undefined' ? (
@@ -235,9 +234,8 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                         />
                         <div className={Style.play_button_overlay}>
                             {(userOwn || !user) && <div>{(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
-                                <Image src={img.pause} alt="pause icon" width={40} height={40} onClick={() => { setStopFooter(true) }} /> :
-                                <Image src={img.play} alt="play icon" width={40} height={40}
-                                    onClick={() => { playSong() }} />
+                                <Image src={img.pause} alt="pause icon" width={40} height={40} style={{ cursor: "pointer" }} onClick={() => { setStopFooter(true) }} /> :
+                                <Image src={img.play} alt="play icon" width={40} height={40} style={{ cursor: "pointer" }} onClick={() => { playSong() }} />
                             }</div>}
                         </div>
                     </div>

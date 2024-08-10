@@ -11,20 +11,16 @@ import Style from "../styles/tokenDetails.module.css";
 import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 
 const NFTDetails = () => {
-    const { fetchNFTOwner, fetchTransactionsInfo, fetchSellingSameTokenNFT, fetchNFTOwners, fetchSupporters, user } = useContext(NFTMarketplaceContext);
+    const { fetchNFTOwner, fetchNFTOwners, fetchSupporters, user } = useContext(NFTMarketplaceContext);
 
     const [nft, setNft] = useState([]);
 
     const router = useRouter();
     const [uid, setUid] = useState(null);
 
-    const [sameTokenNFT, setSameTokenNFT] = useState([]);
-
     const [supporters, setSupporters] = useState([])
 
     const [userOwn, setUserOwn] = useState(false);
-
-    const [transactions, setTransactions] = useState([])
 
 
     useEffect(() => {
@@ -34,16 +30,7 @@ const NFTDetails = () => {
             setUid(uid);
             console.log("nft", item);
             setNft(item);
-            setSameTokenNFT([item]);
         });
-        fetchTransactionsInfo(token_id, token_address).then((transactions) => {
-            console.log(transactions);
-            setTransactions(transactions)
-        });
-        /* fetchSellingSameTokenNFT(token_id, token_address).then((items) => {
-            console.log("Same token NFT", items);
-            setSameTokenNFT(items);
-        }); */
         fetchSupporters(token_id, token_address).then((item) => {
             console.log("supporters", item);
             setSupporters(item);
@@ -67,7 +54,7 @@ const NFTDetails = () => {
         }
     }, [user])
 
-    const title = nft.length == 0 ? ("Token Details | LIR") : (`${nft.song} | ${nft.artist}`);
+    const title = nft.length == 0 ? ("Track Details | LIR") : (`${nft.song} | ${nft.artist}`);
     const description = nft.length == 0 ? ("") : (`${nft.song} is an unreleased track by ${nft.artist}. ${nft.description}`)
 
 
@@ -76,7 +63,7 @@ const NFTDetails = () => {
             <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} uid={uid} />
-                <NFTDescription nft={nft} transactions={transactions} sameTokenNFT={sameTokenNFT} supporters={supporters} />
+                <NFTDescription nft={nft} user={user} supporters={supporters} setNft={setNft} />
             </div>
         </>
     );

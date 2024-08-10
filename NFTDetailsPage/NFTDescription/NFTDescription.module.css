@@ -3,47 +3,66 @@
     margin: 2.5% auto;
 }
 
-.NFTDescription_first {
+.NFTDescription_grid {
     display: grid;
-    grid-template-columns: 41.67% 8.33% 50%;
-    align-items: baseline;
-}
-
-.NFTDescription_box_tokenDetails,
-.NFTDescription_box_description,
-.NFTDescription_box_transactions,
-.NFTDescription_box_itemsListed {
+    grid-template-columns: 41.67% 8.33% 41.67% 8.33%;
+    align-items: top;
     margin-bottom: 1rem;
 }
 
-.NFTDescription_box_itemsListed,
-.NFTDescription_box_description {
+.NFTDescription_grid_comment {
     grid-column: 3;
 }
 
-.NFTDescription_box_title {
+.NFTDescription_grid_box_title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 0.5rem 0rem;
-    border-bottom: 1px solid var(--background-grey);
+    padding: 0rem 0rem;
+    border: 1px solid var(--background-grey);
+    background-color: var(--background-grey2);
+}
+
+.NFTDescription_grid_box_title_arrow {
+    padding: 0.45rem 0.45rem;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--background-grey);
+}
+
+.NFTDescription_grid_box_title_text {
+    padding: 0 0.7rem;
+}
+
+.NFTDescription_grid_box_content {
     margin-bottom: 1rem;
 }
 
-.NFTDescription_box_content {
+.NFTDescription_grid_comment_action {
     margin-bottom: 1rem;
 }
 
-.active {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid white !important;
+.NFTDescription_grid_comment_action_comment {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-.NFTDescription_second {
+.NFTDescription_grid_comment_action_comment_input {
+    width: 100%;
     display: grid;
-    grid-template-columns: 9fr 1fr 2fr;
-    align-items: baseline;
+    grid-template-columns: 1fr 100px;
+    align-items: center;
+}
+
+.NFTDescription_grid_comment_action_comment_input {
+    background-color: white;
+}
+
+.NFTDescription_grid_comment_action_comment_input input {
+    background-color: white;
+    color: black;
+    border: none;
 }
 
 @media screen and (max-width: 480px) {
@@ -52,8 +71,7 @@
         margin: 5% auto;
     }
 
-    .NFTDescription_first,
-    .NFTDescription_second {
+    .NFTDescription_first {
         grid-template-columns: 100%;
     }
 
@@ -61,10 +79,6 @@
     .NFTDescription_box_description,
     .NFTDescription_box_itemsListed {
         margin-bottom: 1rem;
-    }
-
-    .NFTDescription_box_transactions {
-        margin-bottom: 0rem;
     }
 
     .NFTDescription_box_itemsListed,
@@ -80,14 +94,12 @@
         margin: 2.5% auto;
     }
 
-    .NFTDescription_first,
-    .NFTDescription_second {
+    .NFTDescription_firs {
         grid-template-columns: 100%;
     }
 
     .NFTDescription_box_tokenDetails,
     .NFTDescription_box_description,
-    .NFTDescription_box_transactions,
     .NFTDescription_box_itemsListed {
         margin-bottom: 0;
     }

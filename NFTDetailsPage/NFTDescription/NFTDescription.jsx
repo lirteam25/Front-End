@@ -1,73 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import Image from "next/image";
+import { ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
 //Internal Imports
 import Style from "./NFTDescription.module.css";
+import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 import NFTDetails from "./NFTDetails/NFTDetails";
-import TransactionHistory from "./TransactionHistory/TransactionHistory";
-import ItemsListed from "./ItemsListed/ItemsListed";
+import Comments from "./Comments/Comments";
 import Collectors from "./Collectors/Collectors";
+import images from "../../img/index";
 
-const NFTDescription = ({ nft, transactions, sameTokenNFT, supporters, sellingNFT }) => {
+const NFTDescription = ({ nft, user, supporters, setNft }) => {
 
 
     const scanner = "https://polygonscan.com";
 
-    const [description, setDescription] = useState(true);
-    const [collectors, setCollectors] = useState(true);
     const [tokenDetails, setTokenDetails] = useState(true);
-    const [itemsListed, setItemsListed] = useState(false);
-    const [transactionHistory, setTransactionHistory] = useState(false);
+    const [comment, setComment] = useState(null);
+
+    const { addComment } = useContext(NFTMarketplaceContext);
+
+    const handleKeyPress = async (e) => {
+        if (e.key === 'Enter' && comment) {
+            await sendComment();
+        }
+    };
+
+    const sendComment = async () => {
+        if (comment) {
+            const newNftWithComment = await addComment(nft, comment);
+            console.log(newNftWithComment)
+            setNft(newNftWithComment);
+            setComment("")
+        }
+    }
 
     return (
         <div className={Style.NFTDescription}>
-            <div className={Style.NFTDescription_first}>
-                <div className={Style.NFTDescription_box_tokenDetails}>
-                    <div className={`${Style.NFTDescription_box_title} ${tokenDetails && Style.active} font-medium`} onClick={() => setTokenDetails(!tokenDetails)}>
-                        Track details {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            <div className={Style.NFTDescription_grid}>
+                <div className={Style.NFTDescription_grid_box}>
+                    <div className={`${Style.NFTDescription_grid_box_title} font-normal`} onClick={() => setTokenDetails(!tokenDetails)}>
+                        <div className={Style.NFTDescription_grid_box_title_arrow}>
+                            {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </div>
+                        <div className={Style.NFTDescription_grid_box_title_text}>Track details</div>
                     </div>
                     {tokenDetails &&
-                        <div className={Style.NFTDescription_box_content}>
-                            <NFTDetails nft={nft} scanner={scanner} />
-                        </div>
-                    }
-                </div>
-                <div className={Style.NFTDescription_box_description}>
-                    <div className={`${Style.NFTDescription_box_title} ${collectors && (Style.active)} font-medium`} onClick={() => setCollectors(!collectors)}>
-                        Collectors {collectors ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </div>
-                    {collectors &&
-                        <div className={Style.NFTDescription_box_content}>
-                            <Collectors supporters={supporters} />
-                        </div>
-                    }
-                    <div className={`${Style.NFTDescription_box_title} ${description && (Style.active)} font-medium`} onClick={() => setDescription(!description)}>
-                        Description {description ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </div>
-                    {description &&
-                        <div
-                            className={`${Style.NFTDescription_box_content} font-small}`}
-                            dangerouslySetInnerHTML={{ __html: nft.description || "----" }}
-                        />
-                    }
 
+                        <NFTDetails nft={nft} scanner={scanner} />
+                    }
                 </div>
-            </div>
-            <div className={Style.NFTDescription_second}>
-                <div className={Style.NFTDescription_box_transactions}>
-                    <div className={`${Style.NFTDescription_box_title} ${transactionHistory && Style.active} font-medium`} onClick={() => setTransactionHistory(!transactionHistory)}>
-                        Transaction History {transactionHistory ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                <div className={Style.NFTDescription_grid_comment}>
+                    <div className={Style.NFTDescription_grid_comment_action}>
+                        {user ?
+                            <div className={Style.NFTDescription_grid_comment_action_comment}>
+                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} />
+                                <div className={Style.NFTDescription_grid_comment_action_comment_input}>
+                                    <input
+                                        type="name"
+                                        placeholder={"Write a comment..."}
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        onKeyDown={handleKeyPress}
+                                    />
+                                    <ActionButton text="post" action={sendComment} />
+                                </div>
+                            </div>
+                            : <ButtonConnectWallet text={"SIGN IN TO COMMENT"} />}
                     </div>
-                    {transactionHistory && <div className={Style.NFTDescription_box_content}>
-                        <TransactionHistory transactions={transactions} scanner={scanner} />
-                    </div>}
-                </div>
-                <div className={Style.NFTDescription_box_itemsListed}>
-                    <div className={`${Style.NFTDescription_box_title} ${itemsListed && Style.active} font-medium`} onClick={() => setItemsListed(!itemsListed)}>
-                        Items Listed {itemsListed ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    <div className="font-normal">
+                        Collected by
                     </div>
-                    {itemsListed && <div className={Style.NFTDescription_box_content}>
-                        <ItemsListed sameTokenNFT={sameTokenNFT} />
-                    </div>}
+                    <Collectors supporters={supporters} />
+                    <Comments nft={nft} />
                 </div>
             </div>
         </div>

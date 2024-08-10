@@ -22,7 +22,7 @@ const Collectors = ({ supporters }) => {
                     className="mySwiper"
                     breakpoints={{
                         375: {
-                            slidesPerView: 6,
+                            slidesPerView: 5,
                         },
                         670: {
                             slidesPerView: 8,
@@ -47,7 +47,6 @@ const Collectors = ({ supporters }) => {
                             </SwiperSlide>
                         ))}
                 </Swiper>
-
             </div>
         </div>
     )

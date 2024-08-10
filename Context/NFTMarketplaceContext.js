@@ -1030,6 +1030,20 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response?.data?.events;
     }
 
+    const addComment = async (nft, comment) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const data = JSON.stringify({ comment });
+        const response = await patchOnDB(`${DBUrl}/api/v1/nfts/addComment/${nft._id}`, data, accessToken
+        ).then((response) => { return response });
+        console.log("New Comment", response);
+        setToast("Comment created");
+        setOpenToast(true);
+
+        const uid = nft.author_address.length == 1 ? nft.author_address : nft.author_address[0]
+        const updatedNft = fetchNFTOwner(nft.token_id, nft.token_address, uid)
+        return updatedNft;
+    }
+
     const renderString = (inputString, maxLength) => {
         if (inputString.length <= maxLength) {
             return inputString;
@@ -1217,6 +1231,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 renderString,
                 sendUserActivity,
                 downloadSong,
+                addComment,
                 completeLogin
             }}
         >

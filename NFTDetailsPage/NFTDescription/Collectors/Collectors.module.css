@@ -1,5 +1,19 @@
 .Collectors {
     position: relative;
+    padding: 1rem 0;
+    mask-image: linear-gradient(to right,
+
+            /* Fully visible after 20% */
+            rgba(0, 0, 0, 1) 80%,
+            /* Fully visible until 80% */
+            transparent
+            /* Fully transparent at the end */
+        );
+    -webkit-mask-image: linear-gradient(to right,
+
+            rgba(0, 0, 0, 1) 80%,
+            transparent);
+
 }
 
 .Collectors_displayOnHover {

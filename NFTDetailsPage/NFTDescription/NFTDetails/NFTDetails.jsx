@@ -15,6 +15,13 @@ const NFTDetails = ({ nft, scanner }) => {
 
     return (
         <div className={Style.NFTDetails}>
+            <div className={Style.NFTDetails_description}>
+                <div
+                    className="font-small"
+                    dangerouslySetInnerHTML={{ __html: nft.description || "----" }}
+                />
+
+            </div>
             <div className={Style.NFTDetails_box}>
                 <div className={Style.NFTDetails_box_title}>
                     <h4 className="font-small">Released on</h4>
@@ -52,7 +59,7 @@ const NFTDetails = ({ nft, scanner }) => {
                     <h4 className="font-small">price</h4>
                 </div>
                 <div className={Style.NFTDetails_box_content}>
-                    <p className="font-small">{typeof nft.pricePerToken !== "undefined" ? (nft.pricePerToken == 0 ? "FOR FREE" : nft.pricePerToken) : "----"}</p>
+                    <p className="font-small">{typeof nft.pricePerToken !== "undefined" ? (nft.pricePerToken == 0 ? "FOR FREE" : `${nft.pricePerToken} $`) : "----"}</p>
                 </div>
             </div>
 

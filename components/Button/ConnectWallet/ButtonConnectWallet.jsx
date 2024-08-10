@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
+import CircularProgress from '@mui/material/CircularProgress';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
 import { InfoButton } from '../../componentsIndex';
@@ -83,9 +84,7 @@ const buttonConnectWallet = ({ text }) => {
                             <div>
                                 {user ? (
                                     <InfoButton text="Connected" />
-                                ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                    SIGN IN
-                                </div>)}
+                                ) : (<CircularProgress size={20} variant="indeterminate" color="inherit" />)}
                             </div>
                         )}</div>
                 )

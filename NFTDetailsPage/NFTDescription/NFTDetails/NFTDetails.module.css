@@ -1,7 +1,12 @@
 .NFTDetails {
-    border-top: 1px solid var(--background-grey);
     border-left: 1px solid var(--background-grey);
     border-right: 1px solid var(--background-grey);
+}
+
+.NFTDetails_description {
+    padding: 0.9rem 0.7rem;
+    background-color: var(--background-grey2);
+    border-bottom: 1px solid var(--background-grey);
 }
 
 .NFTDetails_box {
@@ -20,12 +25,12 @@
 }
 
 .NFTDetails_box_title {
-    padding: 0.5rem 0.5rem;
+    padding: 0.45rem 0.7rem;
     text-transform: uppercase;
 }
 
 .NFTDetails_box_title2 {
-    padding: 0.5rem 0.5rem;
+    padding: 0.45rem 0.7rem;
     text-transform: uppercase;
     display: flex;
     gap: 10px;
