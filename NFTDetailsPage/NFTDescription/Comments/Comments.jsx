@@ -37,11 +37,11 @@ function timeAgo(date) {
 
 const Comments = ({ nft }) => {
 
-    const [visibleComments, setVisibleComments] = useState(5); // Number of comments to show initially
+    const [visibleComments, setVisibleComments] = useState(4); // Number of comments to show initially
     const [showMore, setShowMore] = useState(true);
 
     const handleShowMore = () => {
-        setVisibleComments(visibleComments + 5); // Load 5 more comments
+        setVisibleComments(visibleComments + 4); // Load 5 more comments
     };
 
     const commentsToShow = nft.comments?.slice().reverse().slice(0, visibleComments);
@@ -51,7 +51,7 @@ const Comments = ({ nft }) => {
         <div>
             {nft.comments?.length !== 0 ? (<div>
                 <div className={`${Style.Comments_count} font-normal`}>
-                    {nft.comments?.length} comments
+                    {nft.comments?.length} {nft.comments?.length == 1 ? "comment" : "comments"}
                 </div>
                 <div className={`${Style.Comments_overlay} ${nft.comments?.length > visibleComments && Style.dissoveBottom} `}>
                     {commentsToShow?.map((el, index) => (
@@ -73,7 +73,11 @@ const Comments = ({ nft }) => {
                         Show More <IoIosArrowDown />
                     </button>
                 )}
-            </div>) : (<div>No comments to display</div>)}
+            </div>) : (
+                <div className={`${Style.NoComments} font-normal`}>
+                    <div>Seems a little quite over here</div>
+                    <div style={{ color: "var(--background-grey3)" }}>Be the first to comment on this track</div>
+                </div>)}
 
         </div>
     )

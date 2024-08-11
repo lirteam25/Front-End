@@ -1,34 +1,21 @@
-.LastRelease {
-    border-style: solid;
-    border-width: 1px;
-    border-left: 0;
-    border-right: 0;
-    border-image: linear-gradient(to right, transparent, var(--main-color), transparent) 10;
-}
-
-.LastRelease_box {
-    width: 95%;
-    margin: 1rem auto 4rem auto;
-}
-
-.LastRelease_box_title {
-    display: flex;
-    justify-content: space-between;
-    color: var(--background-grey);
-    text-transform: uppercase;
-}
-
-.LastRelease_box_title h2 {
-    padding: 0;
-    margin: 0;
-}
-
 .LastRelease_box_card {
     padding: 1rem 0;
 }
 
 .LastRelease_box_swiper {
     cursor: grab;
+}
+
+.right_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, transparent);
+}
+
+.no_dissolve {
+    mask-image: none;
+    -webkit-mask-image: none;
 }
 
 @media screen and (max-width: 480px) {

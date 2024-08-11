@@ -7,7 +7,7 @@
     display: grid;
     grid-template-columns: 41.67% 8.33% 41.67% 8.33%;
     align-items: top;
-    margin-bottom: 1rem;
+    margin-bottom: 4rem;
 }
 
 .NFTDescription_grid_comment {
@@ -65,6 +65,17 @@
     border: none;
 }
 
+.Other_title {
+    border-bottom: 1px solid white;
+    padding: 0.3rem 2.5%;
+    margin-bottom: 2rem;
+}
+
+.Other_content {
+    width: 95%;
+    margin: 0 auto;
+}
+
 @media screen and (max-width: 480px) {
     .NFTDescription {
         width: 90%;
@@ -73,10 +84,11 @@
 
     .NFTDescription_grid {
         grid-template-columns: 100%;
+        margin-bottom: 0rem;
     }
 
     .NFTDescription_grid_comment {
-        margin-top: 1rem;
+        margin-top: 1.5rem;
         grid-column: unset;
     }
 }

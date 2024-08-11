@@ -9,8 +9,9 @@ import NFTDetails from "./NFTDetails/NFTDetails";
 import Comments from "./Comments/Comments";
 import Collectors from "./Collectors/Collectors";
 import images from "../../img/index";
+import { LastRelease } from "../../indexPage/indexIndex";
 
-const NFTDescription = ({ nft, user, supporters, setNft }) => {
+const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
 
 
     const scanner = "https://polygonscan.com";
@@ -36,43 +37,51 @@ const NFTDescription = ({ nft, user, supporters, setNft }) => {
     }
 
     return (
-        <div className={Style.NFTDescription}>
-            <div className={Style.NFTDescription_grid}>
-                <div className={Style.NFTDescription_grid_box}>
-                    <div className={`${Style.NFTDescription_grid_box_title} font-normal`} onClick={() => setTokenDetails(!tokenDetails)}>
-                        <div className={Style.NFTDescription_grid_box_title_arrow}>
-                            {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                        </div>
-                        <div className={Style.NFTDescription_grid_box_title_text}>Track details</div>
-                    </div>
-                    {tokenDetails &&
-
-                        <NFTDetails nft={nft} scanner={scanner} />
-                    }
-                </div>
-                <div className={Style.NFTDescription_grid_comment}>
-                    <div className={Style.NFTDescription_grid_comment_action}>
-                        {user ?
-                            <div className={Style.NFTDescription_grid_comment_action_comment}>
-                                <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} />
-                                <div className={Style.NFTDescription_grid_comment_action_comment_input}>
-                                    <input
-                                        type="name"
-                                        placeholder={"Write a comment..."}
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                        onKeyDown={handleKeyPress}
-                                    />
-                                    <ActionButton text="post" action={sendComment} />
-                                </div>
+        <div>
+            <div className={Style.NFTDescription}>
+                <div className={Style.NFTDescription_grid}>
+                    <div className={Style.NFTDescription_grid_box}>
+                        <div className={`${Style.NFTDescription_grid_box_title} font-normal`} onClick={() => setTokenDetails(!tokenDetails)}>
+                            <div className={Style.NFTDescription_grid_box_title_arrow}>
+                                {tokenDetails ? <IoIosArrowUp /> : <IoIosArrowDown />}
                             </div>
-                            : <ButtonConnectWallet text={"SIGN IN TO COMMENT"} />}
+                            <div className={Style.NFTDescription_grid_box_title_text}>Track details</div>
+                        </div>
+                        {tokenDetails &&
+
+                            <NFTDetails nft={nft} scanner={scanner} />
+                        }
                     </div>
-                    <div className="font-normal">
-                        Collected by
+                    <div className={Style.NFTDescription_grid_comment}>
+                        <div className={Style.NFTDescription_grid_comment_action}>
+                            {user ?
+                                <div className={Style.NFTDescription_grid_comment_action_comment}>
+                                    <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} />
+                                    <div className={Style.NFTDescription_grid_comment_action_comment_input}>
+                                        <input
+                                            type="name"
+                                            placeholder={"Write a comment..."}
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                            onKeyDown={handleKeyPress}
+                                        />
+                                        <ActionButton text="post" action={sendComment} />
+                                    </div>
+                                </div>
+                                : <ButtonConnectWallet text={"SIGN IN TO COMMENT"} />}
+                        </div>
+                        <div className="font-normal">
+                            Collected by
+                        </div>
+                        <Collectors supporters={supporters} />
+                        <Comments nft={nft} />
                     </div>
-                    <Collectors supporters={supporters} />
-                    <Comments nft={nft} />
+                </div>
+            </div>
+            <div className={Style.Other}>
+                <div className={`${Style.Other_title} font-normal`}>You may also like</div>
+                <div className={Style.Other_content}>
+                    <LastRelease tokenInfoData={discoverMore} />
                 </div>
             </div>
         </div>

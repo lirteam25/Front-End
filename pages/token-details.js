@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { NextSeo } from 'next-seo';
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
 
 //INTERNAL IMPORT
 import { NFTDescription, NFTDetailsImg } from "../NFTDetailsPage/NFTDetailsPageIndex";
@@ -11,7 +12,7 @@ import Style from "../styles/tokenDetails.module.css";
 import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
 
 const NFTDetails = () => {
-    const { fetchNFTOwner, fetchNFTOwners, fetchSupporters, user } = useContext(NFTMarketplaceContext);
+    const { fetchNFTOwner, fetchNFTOwners, fetchSupporters, fetchDiscoverNFTs, user } = useContext(NFTMarketplaceContext);
 
     const [nft, setNft] = useState([]);
 
@@ -54,6 +55,14 @@ const NFTDetails = () => {
         }
     }, [user])
 
+    const { data } = useQuery({
+        queryKey: ["tokenInfo"],
+        queryFn: fetchDiscoverNFTs
+    }
+    );
+
+    const filteredNFts = nft ? data?.filter((el) => el._id !== nft._id) : data;
+
     const title = nft.length == 0 ? ("Track Details | LIR") : (`${nft.song} | ${nft.artist}`);
     const description = nft.length == 0 ? ("") : (`${nft.song} is an unreleased track by ${nft.artist}. ${nft.description}`)
 
@@ -63,7 +72,7 @@ const NFTDetails = () => {
             <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} uid={uid} />
-                <NFTDescription nft={nft} user={user} supporters={supporters} setNft={setNft} />
+                <NFTDescription nft={nft} user={user} supporters={supporters} discoverMore={filteredNFts} setNft={setNft} />
             </div>
         </>
     );
