@@ -1,19 +1,32 @@
 .Collectors {
-    position: relative;
     padding: 1rem 0;
-    mask-image: linear-gradient(to right,
+}
 
-            /* Fully visible after 20% */
-            rgba(0, 0, 0, 1) 80%,
-            /* Fully visible until 80% */
-            transparent
-            /* Fully transparent at the end */
-        );
-    -webkit-mask-image: linear-gradient(to right,
 
-            rgba(0, 0, 0, 1) 80%,
-            transparent);
+.right_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 85%, transparent);
+}
 
+.left_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 85%, transparent);
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 85%, transparent);
+}
+
+.both_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, transparent);
+}
+
+.no_dissolve {
+    mask-image: none;
+    -webkit-mask-image: none;
 }
 
 .Collectors_displayOnHover {

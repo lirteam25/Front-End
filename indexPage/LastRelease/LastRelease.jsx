@@ -48,13 +48,19 @@ const LastRelease = ({ tokenInfoData }) => {
 
     const handleSlideChange = (swiper) => {
         setCurrentSlideIndex(swiper.activeIndex);
-        console.log(tokenInfoData?.length - currentSlidesPerView + 1)
     };
+
+    const x = tokenInfoData?.length - currentSlidesPerView
 
 
     return (
 
-        <div className={`${Style.LastRelease_box_swiper} ${tokenInfoData?.length > currentSlidesPerView ? (`${currentSlideIndex < tokenInfoData?.length - currentSlidesPerView ? Style.right_dissolve : Style.no_dissolve}`) : Style.no_dissolve}`}>
+        <div className={`${Style.LastRelease_box_swiper} 
+        ${tokenInfoData?.length > currentSlidesPerView ?
+                (currentSlideIndex === 0 ? Style.right_dissolve :
+                    (currentSlideIndex > 0 && currentSlideIndex < x ? Style.both_dissolve : Style.left_dissolve)) : Style.no_dissolve}`}
+
+        >
             <Swiper slidesPerView={1}
                 spaceBetween="1rem"
                 grabCursor={true}
