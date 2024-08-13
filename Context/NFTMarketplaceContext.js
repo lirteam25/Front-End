@@ -8,6 +8,7 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendAndConfirmTransaction } from "thirdweb";
 import { useActiveAccount, useActiveWallet, useDisconnect, useConnectModal } from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
+import { getUserEmail } from "thirdweb/wallets/in-app";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing, getActiveClaimCondition } from "thirdweb/extensions/erc1155";
@@ -22,7 +23,6 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 const FormData = require('form-data');
 //Internal Imports
 import { editionDropABI, MarketplaceOwner } from "./Constants";
-import { FaPowerOff } from "react-icons/fa";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -121,7 +121,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const { disconnect } = useDisconnect();
     const address = account?.address ? ethers.utils.getAddress(account?.address) : account?.address;
 
-    const { connect, isConnecting } = useConnectModal();
+    const { connect } = useConnectModal();
 
     const wallets = [
         inAppWallet()
@@ -1124,7 +1124,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return signatureResult
     }
     async function signInOrUp(signatureResult) {
-        const data = JSON.stringify({ "payload": signatureResult });
+        const email = await getUserEmail({ client });
+        console.log(email);
+        const data = JSON.stringify({ "payload": signatureResult, "email": email });
         const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
         console.log(response);
         const authFirebase = getAuth();
