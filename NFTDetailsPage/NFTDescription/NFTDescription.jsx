@@ -86,7 +86,7 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
                                 </div>
                             </div>
                         </div>
-                        <Comments nft={nft} />
+                        <Comments nft={nft} setNft={setNft} />
                     </div>
                 </div>
             </div>

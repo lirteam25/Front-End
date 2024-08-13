@@ -1050,6 +1050,24 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return updatedNft;
     }
 
+    const deleteComment = async (id, nft) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const response = await deleteOnDB(`${DBUrl}/api/v1/nfts/deleteComment/${id}`, accessToken
+        ).then((response) => { return response });
+        console.log("Comment deleted", response);
+        if (response.status == "success") {
+            setToast("Comment deleted");
+            setOpenToast(true);
+
+            const uid = nft.author_address.length == 1 ? nft.author_address : nft.author_address[0]
+            const updatedNft = fetchNFTOwner(nft.token_id, nft.token_address, uid);
+            return updatedNft;
+        } else {
+            setToast("An error occurred");
+            setOpenToast(true);
+        }
+    }
+
     const renderString = (inputString, maxLength) => {
         if (inputString.length <= maxLength) {
             return inputString;
@@ -1246,6 +1264,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 sendUserActivity,
                 downloadSong,
                 addComment,
+                deleteComment,
                 completeLogin,
                 handleLoginWithThirdweb
             }}

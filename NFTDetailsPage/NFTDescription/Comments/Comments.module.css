@@ -25,9 +25,28 @@
 
 }
 
+.Comments_box_text {
+    width: 100%;
+}
+
 .Comments_box_text p {
     padding: 0;
     margin: 0;
+}
+
+.trashIcon {
+    transition: 0.3s color;
+    cursor: pointer;
+}
+
+.trashIcon:hover {
+    color: var(--main-color);
+}
+
+.Comments_box_text_up {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .ShowMoreButton {
@@ -39,6 +58,14 @@
 }
 
 .NoComments {
-
     text-align: center;
+}
+
+.delete {
+    transition: 0.3s color;
+    cursor: pointer;
+}
+
+.delete:hover {
+    color: var(--main-color);
 }
