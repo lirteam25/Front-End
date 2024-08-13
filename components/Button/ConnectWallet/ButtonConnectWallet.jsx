@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
-import CircularProgress from '@mui/material/CircularProgress';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
 import { InfoButton } from '../../componentsIndex';
@@ -65,7 +65,12 @@ const buttonConnectWallet = ({ text }) => {
                             <div>
                                 {user ? (
                                     <InfoButton text="Connected" />
-                                ) : (<CircularProgress size={20} variant="indeterminate" color="inherit" />)}
+                                ) : (<Player
+                                    autoplay
+                                    loop
+                                    style={{ height: '20px', width: '20px', textAlign: "center" }}
+                                    src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
+                                />)}
                             </div>
                         )}</div>
                 )

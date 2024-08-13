@@ -550,7 +550,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             logEvent(analytics, 'create');
 
             setOpenLoading(false);
-            setToast("Tokens successfully created");
+            setToast("Track successfully created");
             setOpenToast(true);
 
             router.push("/collection");
@@ -621,7 +621,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             setOpenLoading(false);
 
-            setToast("Token successfully listed");
+            setToast("Track successfully listed");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -748,7 +748,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             console.log(response);
 
             setOpenLoading(false);
-            setToast("Token successfully purchased");
+            setToast("Track successfully collected");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -917,7 +917,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             setOpenLoading(false);
 
-            setToast("Tokens successfully delisted");
+            setToast("Track successfully delisted");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -1096,6 +1096,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const [user, setUser] = useState(null);
+    const [userLoaded, setUserLoaded] = useState(false);
 
     const [openAccountSetting, setOpenAccountSetting] = useState(false);
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
@@ -1169,11 +1170,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 })
             }
         })
+        console.log("here");
+        setUserLoaded(true);
+        console.log(userLoaded);
     }
 
     useEffect(() => {
+        setUserLoaded(false)
         if (address) {
             setUserLogged();
+        } else {
+            setUserLoaded(true);
         };
     }, [address])
 
@@ -1203,7 +1210,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setCurrentIndex,
                 stopFooter,
                 setStopFooter,
+
                 user,
+                userLoaded,
+
                 stopAudioPlayer,
                 setStopAudioPlayer,
 

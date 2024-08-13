@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Image from "next/image";
 import { ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
+import { isMobile } from "react-device-detect";
 //Internal Imports
 import Style from "./NFTDescription.module.css";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
@@ -16,7 +17,7 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
 
     const scanner = "https://polygonscan.com";
 
-    const [tokenDetails, setTokenDetails] = useState(true);
+    const [tokenDetails, setTokenDetails] = useState(isMobile ? false : true);
     const [comment, setComment] = useState(null);
 
     const { handleLoginWithThirdweb, addComment, setToast, setOpenToast } = useContext(NFTMarketplaceContext);

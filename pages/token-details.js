@@ -61,7 +61,7 @@ const NFTDetails = () => {
     }
     );
 
-    const filteredNFts = nft ? data?.filter((el) => el._id !== nft._id) : data;
+    const filteredNFts = nft && data ? data?.filter((el) => el._id !== nft._id) : [];
 
     const title = nft.length == 0 ? ("Track Details | LIR") : (`${nft.song} | ${nft.artist}`);
     const description = nft.length == 0 ? ("") : (`${nft.song} is an unreleased track by ${nft.artist}. ${nft.description}`)
