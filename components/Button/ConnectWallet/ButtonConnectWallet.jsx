@@ -14,13 +14,9 @@ const wallets = [
     inAppWallet()
 ];
 
-const recommendedWallets = [
-    inAppWallet()
-]
-
 const buttonConnectWallet = ({ text }) => {
 
-    const { user, completeLogin } = useContext(NFTMarketplaceContext);
+    const { user } = useContext(NFTMarketplaceContext);
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -33,17 +29,11 @@ const buttonConnectWallet = ({ text }) => {
 
     const switchChain = useSwitchActiveWalletChain();
 
-
-    const auth = createAuth({
-        domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
-    });
-
     return (
         <ConnectButton
             wallets={wallets}
             client={client}
             chain={chain}
-            recommendedWallets={recommendedWallets}
             connectButton={{
                 label: `${text}`,
                 style: {
@@ -62,15 +52,6 @@ const buttonConnectWallet = ({ text }) => {
             connectModal={{
                 termsOfServiceUrl: "https://www.iubenda.com/terms-and-conditions/94474485",
                 privacyPolicyUrl: "https://www.iubenda.com/privacy-policy/94474485",
-                welcomeScreen: {
-                    title: "LIR Music",
-                    subtitle: "Connect your wallet to LIR Music",
-                    img: {
-                        src: "https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg",
-                        width: 100,
-                        height: 100,
-                    },
-                }
             }}
 
             detailsButton={{

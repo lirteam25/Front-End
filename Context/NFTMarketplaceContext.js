@@ -6,7 +6,8 @@ import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
 import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendAndConfirmTransaction } from "thirdweb";
-import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
+import { useActiveAccount, useActiveWallet, useDisconnect, useConnectModal } from "thirdweb/react";
+import { inAppWallet } from "thirdweb/wallets";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing, getActiveClaimCondition } from "thirdweb/extensions/erc1155";
@@ -120,6 +121,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const { disconnect } = useDisconnect();
     const address = account?.address ? ethers.utils.getAddress(account?.address) : account?.address;
 
+    const { connect, isConnecting } = useConnectModal();
+
+    const wallets = [
+        inAppWallet()
+    ];
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -1084,6 +1090,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [notificationTitle, setNotificationTitle] = useState(null);
     const [notificationText, setNotificationText] = useState(null);
 
+    const termsOfServiceUrl = "https://www.iubenda.com/terms-and-conditions/94474485";
+    const privacyPolicyUrl = "https://www.iubenda.com/privacy-policy/94474485";
+
+    async function handleLoginWithThirdweb() {
+        await connect({
+            client, wallets, chain, termsOfServiceUrl, privacyPolicyUrl
+        });
+    }
+
     async function createPayload() {
         const payload = await auth.generatePayload({ address: address, chainId: chain });
         const signatureResult = await signLoginPayload({ account, payload });
@@ -1138,7 +1153,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     useEffect(() => {
         if (address) {
-            console.log(address);
             setUserLogged();
         };
     }, [address])
@@ -1232,7 +1246,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 sendUserActivity,
                 downloadSong,
                 addComment,
-                completeLogin
+                completeLogin,
+                handleLoginWithThirdweb
             }}
         >
             {children}

@@ -201,7 +201,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <ActionButton action={freelyRetriveToken} text="redeem the track for free" />
+                                                        <ActionButton action={freelyRetriveToken} text="Collect the track for free" />
                                                     )
                                                     }
                                                 </div>)
@@ -218,7 +218,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                 </div>
                             )}
                         </div>
-                    ) : (<ButtonConnectWallet text="SIGN IN TO COLLECT" />)}
+                    ) : (<ButtonConnectWallet text="Collect Track" />)}
                     </div>)}
                 </div>
             </div>

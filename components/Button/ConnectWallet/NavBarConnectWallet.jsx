@@ -17,10 +17,6 @@ const wallets = [
     inAppWallet()
 ];
 
-const recommendedWallets = [
-    inAppWallet()
-]
-
 
 const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTab, address }) => {
 
@@ -42,7 +38,6 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
             wallets={wallets}
             client={client}
             chain={chain}
-            recommendedWallets={recommendedWallets}
             connectButton={{
                 label: "SIGN IN",
                 style: {
@@ -62,15 +57,6 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
             connectModal={{
                 termsOfServiceUrl: "https://www.iubenda.com/terms-and-conditions/94474485",
                 privacyPolicyUrl: "https://www.iubenda.com/privacy-policy/94474485",
-                welcomeScreen: {
-                    title: "LIR Music",
-                    subtitle: "Connect your wallet to LIR Music",
-                    img: {
-                        src: "https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg",
-                        width: 100,
-                        height: 100,
-                    },
-                }
             }}
 
             detailsButton={{

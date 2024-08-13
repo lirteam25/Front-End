@@ -19,7 +19,7 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
     const [tokenDetails, setTokenDetails] = useState(true);
     const [comment, setComment] = useState(null);
 
-    const { addComment } = useContext(NFTMarketplaceContext);
+    const { handleLoginWithThirdweb, addComment, setToast, setOpenToast } = useContext(NFTMarketplaceContext);
 
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter' && comment) {
@@ -27,12 +27,24 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
         }
     };
 
-    const sendComment = async () => {
+    const sendCommentToDb = async () => {
         if (comment) {
             const newNftWithComment = await addComment(nft, comment);
             console.log(newNftWithComment)
             setNft(newNftWithComment);
             setComment("")
+        }
+    }
+
+    const sendComment = async () => {
+        if (comment) {
+            if (user) {
+                sendCommentToDb()
+            } else {
+                await handleLoginWithThirdweb();
+                setToast("Now you can comment");
+                setOpenToast(true);
+            }
         }
     }
 
@@ -53,27 +65,27 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
                         }
                     </div>
                     <div className={Style.NFTDescription_grid_comment}>
+                        <div className={Style.NFTDescription_grid_comment_collectedBy}>
+                            <div className="font-normal">
+                                Collected by
+                            </div>
+                            <Collectors supporters={supporters} />
+                        </div>
                         <div className={Style.NFTDescription_grid_comment_action}>
-                            {user ?
-                                <div className={Style.NFTDescription_grid_comment_action_comment}>
-                                    <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} />
-                                    <div className={Style.NFTDescription_grid_comment_action_comment_input}>
-                                        <input
-                                            type="name"
-                                            placeholder={"Write a comment..."}
-                                            value={comment}
-                                            onChange={(e) => setComment(e.target.value)}
-                                            onKeyDown={handleKeyPress}
-                                        />
-                                        <ActionButton text="post" action={sendComment} />
-                                    </div>
+                            <div className={Style.NFTDescription_grid_comment_action_comment}>
+                                <Image src={images[`utente_${user ? user.picture : "1"}`]} alt="profile user" width={30.5} height={30.5} />
+                                <div className={Style.NFTDescription_grid_comment_action_comment_input}>
+                                    <input
+                                        type="name"
+                                        placeholder={"Write a comment..."}
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        onKeyDown={handleKeyPress}
+                                    />
+                                    <ActionButton text="post" action={sendComment} />
                                 </div>
-                                : <ButtonConnectWallet text={"SIGN IN TO COMMENT"} />}
+                            </div>
                         </div>
-                        <div className="font-normal">
-                            Collected by
-                        </div>
-                        <Collectors supporters={supporters} />
                         <Comments nft={nft} />
                     </div>
                 </div>
