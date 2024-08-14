@@ -17,7 +17,7 @@ const NFTDescription = ({ nft, user, collectors, discoverMore, setNft }) => {
 
     const scanner = "https://polygonscan.com";
 
-    const [tokenDetails, setTokenDetails] = useState(isMobile ? false : true);
+    const [tokenDetails, setTokenDetails] = useState(true);
     const [comment, setComment] = useState(null);
 
     const { handleLoginWithThirdweb, addComment, setToast, setOpenToast } = useContext(NFTMarketplaceContext);
@@ -79,7 +79,7 @@ const NFTDescription = ({ nft, user, collectors, discoverMore, setNft }) => {
                                     <input
                                         type="name"
                                         placeholder={"Write a comment..."}
-                                        value={comment}
+                                        value={comment ? comment : ""}
                                         onChange={(e) => setComment(e.target.value)}
                                         onKeyDown={handleKeyPress}
                                     />

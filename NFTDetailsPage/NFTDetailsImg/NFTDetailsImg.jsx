@@ -25,10 +25,11 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
     const [ready, setIsReady] = useState(false);
 
     useEffect(() => {
-        if (userLoaded && userOwn) {
+        if (userLoaded && userOwn && shownNft.length !== 0) {
+            console.log(userLoaded, userOwn, shownNft)
             setIsReady(true)
         }
-    }, [userLoaded, userOwn])
+    }, [userLoaded, userOwn, shownNft])
 
     useEffect(() => {
         const launchDate = new Date(shownNft.launch_date).getTime();
