@@ -126,14 +126,14 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                     <div className={Style.NFTDetailsImg_description_info_title}>
                         <div className={Style.NFTDetailsImg_description_info_title_play}>
                             {ready ?
-                                <div> {(userOwn || !user) && <> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
+                                <> {(userOwn || !user) && <> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
                                     <Image src={img.pause} alt="pause icon" className={Style.pause} onClick={() => { setStopFooter(true) }} /> :
                                     <Image src={img.play} alt="play icon" className={Style.play}
                                         onClick={() => { playSong() }} />
-                                }</>}</div> : <Player
+                                }</>}</> : <Player
                                     autoplay
                                     loop
-                                    style={{ height: '35px', width: '30px' }}
+                                    style={{ height: '30px', width: '30px' }}
                                     src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
                                 />}
                         </div>
