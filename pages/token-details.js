@@ -39,7 +39,9 @@ const NFTDetails = () => {
     }, [router]);
 
     useEffect(() => {
+        console.log("Calculation NFT owned")
         if (!router.isReady) return;
+        console.log("Router ready?")
         const { token_id = "", token_address = "", } = router.query;
         if (user?.uid) {
             fetchNFTOwners(token_id, token_address).then((items) => {
@@ -53,7 +55,7 @@ const NFTDetails = () => {
         } else {
             setUserOwn([])
         }
-    }, [user])
+    }, [user, router])
 
     const { data } = useQuery({
         queryKey: ["tokenInfo"],
