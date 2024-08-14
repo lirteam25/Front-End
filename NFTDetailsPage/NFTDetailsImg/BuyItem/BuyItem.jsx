@@ -64,7 +64,6 @@ const BuyItem = ({ nft, setOpenBuy }) => {
                             console.log(event.type, event);
                         }}
                         successCallbackURL={`${process.env.NEXT_PUBLIC_DOMAIN}/success`}
-                        environment={process.env.ACTIVE_CHAIN == "polygon" ? "production " : "staging"}
                     /* successCallbackURL={`http://localhost:3000/success`} */
                     /> : <InfoButton text="Credit Card Payment Soon Available" />}
                 </div>
