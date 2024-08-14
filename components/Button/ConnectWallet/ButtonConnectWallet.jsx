@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
+import { Player } from '@lottiefiles/react-lottie-player';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
 import { InfoButton } from '../../componentsIndex';
@@ -13,13 +14,9 @@ const wallets = [
     inAppWallet()
 ];
 
-const recommendedWallets = [
-    inAppWallet()
-]
-
 const buttonConnectWallet = ({ text }) => {
 
-    const { user, completeLogin } = useContext(NFTMarketplaceContext);
+    const { user } = useContext(NFTMarketplaceContext);
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -32,17 +29,11 @@ const buttonConnectWallet = ({ text }) => {
 
     const switchChain = useSwitchActiveWalletChain();
 
-
-    const auth = createAuth({
-        domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
-    });
-
     return (
         <ConnectButton
             wallets={wallets}
             client={client}
             chain={chain}
-            recommendedWallets={recommendedWallets}
             connectButton={{
                 label: `${text}`,
                 style: {
@@ -61,15 +52,6 @@ const buttonConnectWallet = ({ text }) => {
             connectModal={{
                 termsOfServiceUrl: "https://www.iubenda.com/terms-and-conditions/94474485",
                 privacyPolicyUrl: "https://www.iubenda.com/privacy-policy/94474485",
-                welcomeScreen: {
-                    title: "LIR Music",
-                    subtitle: "Connect your wallet to LIR Music",
-                    img: {
-                        src: "https://res.cloudinary.com/dihlirr2b/image/upload/v1709722333/ylkh3d0bektjreqd1hxt.jpg",
-                        width: 100,
-                        height: 100,
-                    },
-                }
             }}
 
             detailsButton={{
@@ -83,9 +65,12 @@ const buttonConnectWallet = ({ text }) => {
                             <div>
                                 {user ? (
                                     <InfoButton text="Connected" />
-                                ) : (<div className={`${Style.login_Button} font-normal`} onClick={(e) => { e.stopPropagation(); completeLogin() }}>
-                                    SIGN IN
-                                </div>)}
+                                ) : (<Player
+                                    autoplay
+                                    loop
+                                    style={{ height: '20px', width: '20px', textAlign: "center" }}
+                                    src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
+                                />)}
                             </div>
                         )}</div>
                 )

@@ -4,6 +4,7 @@ import { useActiveWalletChain } from "thirdweb/react";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createThirdwebClient, getContract } from "thirdweb";
 import Link from "next/link";
+import { Player } from '@lottiefiles/react-lottie-player';
 
 //INTERNAL IMPORT
 import Style from "./NFTDetailsImg.module.css";
@@ -15,13 +16,20 @@ import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 
 const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
-    const { nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, freeNFTTransfer, sendUserActivity, address } = useContext(NFTMarketplaceContext);
+    const { nft, setCurrentIndex, setOpenFooterAudio, setNft, setStopFooter, stopFooter, freeNFTTransfer, sendUserActivity, address, userLoaded } = useContext(NFTMarketplaceContext);
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
     });
 
     const [timeRemaining, setTimeRemaining] = useState(null);
+    const [ready, setIsReady] = useState(false);
+
+    useEffect(() => {
+        if (userLoaded && userOwn) {
+            setIsReady(true)
+        }
+    }, [userLoaded, userOwn])
 
     useEffect(() => {
         const launchDate = new Date(shownNft.launch_date).getTime();
@@ -116,31 +124,34 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
             <div className={Style.NFTDetailsImg_description}>
                 <div className={Style.NFTDetailsImg_description_info}>
                     <div className={Style.NFTDetailsImg_description_info_title}>
-                        <div className={Style.NFTDetailsImg_description_info_title_songAndartist}>
-                            <h1 className="font-medium">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
-                            <h2 className="font-medium">
-                                {shownNft.artist?.map((art, i) => (
+                        <div className={Style.NFTDetailsImg_description_info_title_play}>
+                            {ready ?
+                                <> {(userOwn || !user) && <> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
+                                    <Image src={img.pause} alt="pause icon" className={Style.pause} onClick={() => { setStopFooter(true) }} /> :
+                                    <Image src={img.play} alt="play icon" className={Style.play}
+                                        onClick={() => { playSong() }} />
+                                }</>}</> : <Player
+                                    autoplay
+                                    loop
+                                    style={{ height: '30px', width: '30px' }}
+                                    src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
+                                />}
+                        </div>
+                        <div className={Style.NFTDetailsImg_description_info_title_title}>
+                            <h1 className="font-normal">{shownNft.song ? `${shownNft.song}` : "----"}</h1>
+                            <h2 className="font-normal">
+                                {shownNft.artist ? (shownNft.artist.map((art, i) => (
                                     <span key={i}>
                                         <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${shownNft.author_address[i]}` }}>
                                             {art}
                                         </Link>
                                         {i < shownNft.artist.length - 1 && ', '}
-                                    </span>
-                                ))}
+                                    </span>)
+                                )) : "----"}
                             </h2>
                         </div>
-                        <div className={Style.NFTDetailsImg_description_info_title_play}>
-                            {shownNft?.token_id && shownNft?.token_id && <div>
-                                {(userOwn || !user) && <div> {(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
-                                    <Image src={img.pause} alt="pause icon" width={25} height={25} onClick={() => { setStopFooter(true) }} /> :
-                                    <Image src={img.play} alt="play icon" width={25} height={25}
-                                        onClick={() => { playSong() }} />
-                                }</div>}
-                            </div>
-                            }
-                        </div>
                     </div>
-                    <div className={`${Style.NFTDetailsImg_description_info_bottom} font-normal`}>
+                    <div className={`${Style.NFTDetailsImg_description_info_bottom} font-small`}>
                         <div>
                             <div>PRICE</div>
                             <div>{typeof shownNft.pricePerToken !== 'undefined' ? (shownNft.sellingQuantity == 0 ? <span style={{ color: "var(--main-color)" }}>NOT LISTED</span> : (shownNft.pricePerToken == 0 ? (<span style={{ color: "var(--main-color)" }}>FOR FREE</span>) : (`${shownNft.pricePerToken} $`))) : <span style={{ color: "var(--main-color)", fontFamily: "Space Grotesk" }}>Not listed</span>}</div>
@@ -155,6 +166,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                         </div>
                     </div>
                 </div>
+                <p className={`${Style.NFTDetailsImg_description_middle} font-small`}>Includes unlimited streaming via Lir Music, plus high-quality download and the ability to resell it.</p>
 
                 <div className={Style.NFTDetailsImg_description_info_actions}>
                     {shownNft.pricePerToken == 'undefined' ? (
@@ -202,7 +214,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <ActionButton action={freelyRetriveToken} text="redeem the track for free" />
+                                                        <ActionButton action={freelyRetriveToken} text="Collect the track for free" />
                                                     )
                                                     }
                                                 </div>)
@@ -219,7 +231,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                 </div>
                             )}
                         </div>
-                    ) : (<ButtonConnectWallet text="SIGN IN TO COLLECT" />)}
+                    ) : (<ButtonConnectWallet text="Collect Track" />)}
                     </div>)}
                 </div>
             </div>
@@ -234,10 +246,9 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                             priority
                         />
                         <div className={Style.play_button_overlay}>
-                            {(userOwn || !user) && <div>{(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
-                                <Image src={img.pause} alt="pause icon" width={40} height={40} onClick={() => { setStopFooter(true) }} /> :
-                                <Image src={img.play} alt="play icon" width={40} height={40}
-                                    onClick={() => { playSong() }} />
+                            {ready && (userOwn || !user) && <div>{(JSON.stringify(nft) === JSON.stringify([shownNft]) || JSON.stringify(nft) === JSON.stringify([userOwn])) && !stopFooter ?
+                                <Image src={img.pause} alt="pause icon" width={40} height={40} style={{ cursor: "pointer" }} onClick={() => { setStopFooter(true) }} /> :
+                                <Image src={img.play} alt="play icon" width={40} height={40} style={{ cursor: "pointer" }} onClick={() => { playSong() }} />
                             }</div>}
                         </div>
                     </div>

@@ -24,7 +24,14 @@ const Home = () => {
     <div className={Style.index}>
       <HeroSection />
       <Value />
-      <LastRelease tokenInfoData={sellingNFT} />
+      <div className={Style.LastRelease}>
+        <div className={Style.LastRelease_box}>
+          <div className={`${Style.LastRelease_box_title} font-huge`}>
+            <h2 className='font-huge'>Latest Releases</h2>
+          </div>
+          <LastRelease tokenInfoData={sellingNFT} />
+        </div>
+      </div>
       <TopCollectors collectors={topCollectorsData} />
       <JoinLir />
     </div>

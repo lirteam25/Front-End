@@ -37,6 +37,9 @@ const SideBar = ({ setOpenSideBar, user }) => {
                         <ButtonConnectWallet text="SIGN IN" />
                     </div>
                 )}
+                {account && user && <Link onClick={() => setOpenSideBar(false)} href={{ pathname: "/my-profile" }}>
+                    <div className={Style.sidebar_center_element}>MY PROFILE</div>
+                </Link>}
                 <Link href={"./collection"} onClick={() => setOpenSideBar(false)}>
                     <div className={Style.sidebar_center_element}>COLLECTION</div>
                 </Link>

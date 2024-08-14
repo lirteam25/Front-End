@@ -8,7 +8,7 @@ import { NFTMarketplaceContext } from '../../Context/NFTMarketplaceContext';
 import { ActionButton, InfoButton, ButtonConnectWallet } from "../../components/componentsIndex";
 import CreateSmartContract from './CreateSmartContract/CreateSmartContract';
 
-const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs, address }) => {
+const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myNFTs }) => {
 
     const [openRelease, setOpenRelease] = useState(true);
     const [openAbout, setOpenAbout] = useState(false);
@@ -23,7 +23,7 @@ const ArtistInformation = ({ tokenInfos, artistDescription, myArtistProfile, myN
         setOpenCreateSmartContract(false);
     }
 
-    const { user, setOpenCreateItem, renderString } = useContext(NFTMarketplaceContext);
+    const { address, user, setOpenCreateItem } = useContext(NFTMarketplaceContext);
 
     const openCrtItem = () => {
         setOpenCreateItem(true);

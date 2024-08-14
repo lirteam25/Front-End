@@ -6,7 +6,9 @@ import axios from "axios";
 import { getAnalytics, logEvent } from "firebase/analytics";
 
 import { prepareContractCall, createThirdwebClient, resolveMethod, encode, NATIVE_TOKEN_ADDRESS, getContract, sendAndConfirmTransaction } from "thirdweb";
-import { useActiveAccount, useActiveWallet, useDisconnect } from "thirdweb/react";
+import { useActiveAccount, useActiveWallet, useDisconnect, useConnectModal } from "thirdweb/react";
+import { inAppWallet } from "thirdweb/wallets";
+import { getUserEmail } from "thirdweb/wallets/in-app";
 import { createAuth, signLoginPayload } from 'thirdweb/auth';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { nextTokenIdToMint, setClaimConditions, lazyMint, uri, claimTo, cancelListing, getActiveClaimCondition } from "thirdweb/extensions/erc1155";
@@ -21,7 +23,6 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 const FormData = require('form-data');
 //Internal Imports
 import { editionDropABI, MarketplaceOwner } from "./Constants";
-import { FaPowerOff } from "react-icons/fa";
 
 //The following two are repetitive functionalities.
 //Fetch contrant find the contract.
@@ -120,6 +121,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const { disconnect } = useDisconnect();
     const address = account?.address ? ethers.utils.getAddress(account?.address) : account?.address;
 
+    const { connect } = useConnectModal();
+
+    const wallets = [
+        inAppWallet()
+    ];
 
     const client = createThirdwebClient({
         clientId: process.env.THIRDWEB_PROJECT_ID,
@@ -544,7 +550,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             logEvent(analytics, 'create');
 
             setOpenLoading(false);
-            setToast("Tokens successfully created");
+            setToast("Track successfully created");
             setOpenToast(true);
 
             router.push("/collection");
@@ -615,7 +621,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             setOpenLoading(false);
 
-            setToast("Token successfully listed");
+            setToast("Track successfully listed");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -742,7 +748,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
             console.log(response);
 
             setOpenLoading(false);
-            setToast("Token successfully purchased");
+            setToast("Track successfully collected");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -911,7 +917,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             setOpenLoading(false);
 
-            setToast("Tokens successfully delisted");
+            setToast("Track successfully delisted");
             setOpenToast(true);
             router.push("/my-profile");
         } catch (error) {
@@ -1030,6 +1036,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return response?.data?.events;
     }
 
+    const addComment = async (nft, comment) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const data = JSON.stringify({ comment });
+        const response = await patchOnDB(`${DBUrl}/api/v1/nfts/addComment/${nft._id}`, data, accessToken
+        ).then((response) => { return response });
+        console.log("New Comment", response);
+        setToast("Comment created");
+        setOpenToast(true);
+
+        const uid = nft.author_address.length == 1 ? nft.author_address : nft.author_address[0]
+        const updatedNft = fetchNFTOwner(nft.token_id, nft.token_address, uid)
+        return updatedNft;
+    }
+
+    const deleteComment = async (id, nft) => {
+        const accessToken = (await fetchUserInformation()).accessToken;
+        const response = await deleteOnDB(`${DBUrl}/api/v1/nfts/deleteComment/${id}`, accessToken
+        ).then((response) => { return response });
+        console.log("Comment deleted", response);
+        if (response.status == "success") {
+            setToast("Comment deleted");
+            setOpenToast(true);
+
+            const uid = nft.author_address.length == 1 ? nft.author_address : nft.author_address[0]
+            const updatedNft = fetchNFTOwner(nft.token_id, nft.token_address, uid);
+            return updatedNft;
+        } else {
+            setToast("An error occurred");
+            setOpenToast(true);
+        }
+    }
+
     const renderString = (inputString, maxLength) => {
         if (inputString.length <= maxLength) {
             return inputString;
@@ -1058,6 +1096,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
 
     const [user, setUser] = useState(null);
+    const [userLoaded, setUserLoaded] = useState(false);
 
     const [openAccountSetting, setOpenAccountSetting] = useState(false);
     const [openArtistSettings, setOpenArtistSettings] = useState(false);
@@ -1070,6 +1109,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
     const [notificationTitle, setNotificationTitle] = useState(null);
     const [notificationText, setNotificationText] = useState(null);
 
+    const termsOfServiceUrl = "https://www.iubenda.com/terms-and-conditions/94474485";
+    const privacyPolicyUrl = "https://www.iubenda.com/privacy-policy/94474485";
+
+    async function handleLoginWithThirdweb() {
+        await connect({
+            client, wallets, chain, termsOfServiceUrl, privacyPolicyUrl
+        });
+    }
+
     async function createPayload() {
         const payload = await auth.generatePayload({ address: address, chainId: chain });
         const signatureResult = await signLoginPayload({ account, payload });
@@ -1077,7 +1125,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return signatureResult
     }
     async function signInOrUp(signatureResult) {
-        const data = JSON.stringify({ "payload": signatureResult });
+        const email = await getUserEmail({ client });
+        console.log(email);
+        const data = JSON.stringify({ "payload": signatureResult, "email": email });
         const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data);
         console.log(response);
         const authFirebase = getAuth();
@@ -1120,12 +1170,17 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 })
             }
         })
+        console.log("here");
+        setUserLoaded(true);
+        console.log(userLoaded);
     }
 
     useEffect(() => {
+        setUserLoaded(false)
         if (address) {
-            console.log(address);
             setUserLogged();
+        } else {
+            setUserLoaded(true);
         };
     }, [address])
 
@@ -1155,7 +1210,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 setCurrentIndex,
                 stopFooter,
                 setStopFooter,
+
                 user,
+                userLoaded,
+
                 stopAudioPlayer,
                 setStopAudioPlayer,
 
@@ -1217,7 +1275,10 @@ export const NFTMarketplaceProvider = ({ children }) => {
                 renderString,
                 sendUserActivity,
                 downloadSong,
-                completeLogin
+                addComment,
+                deleteComment,
+                completeLogin,
+                handleLoginWithThirdweb
             }}
         >
             {children}

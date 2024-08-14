@@ -1,0 +1,71 @@
+.Comments_count {
+    margin-bottom: 0.5rem;
+}
+
+.Comments_box {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: top;
+    gap: 20px;
+}
+
+.dissoveBottom {
+    position: relative;
+    mask-image: linear-gradient(to bottom
+            /* Fully visible after 20% */
+            rgba(0, 0, 0, 1) 80%,
+            /* Fully visible until 80% */
+            transparent
+            /* Fully transparent at the end */
+        );
+    -webkit-mask-image: linear-gradient(to bottom,
+
+            rgba(0, 0, 0, 1) 80%,
+            transparent);
+
+}
+
+.Comments_box_text {
+    width: 100%;
+}
+
+.Comments_box_text p {
+    padding: 0;
+    margin: 0;
+}
+
+.trashIcon {
+    transition: 0.3s color;
+    cursor: pointer;
+}
+
+.trashIcon:hover {
+    color: var(--main-color);
+}
+
+.Comments_box_text_up {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ShowMoreButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 2.9rem;
+    cursor: pointer;
+}
+
+.NoComments {
+    text-align: center;
+}
+
+.delete {
+    transition: 0.3s color;
+    cursor: pointer;
+}
+
+.delete:hover {
+    color: var(--main-color);
+}
