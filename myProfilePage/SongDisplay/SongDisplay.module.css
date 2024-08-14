@@ -9,6 +9,10 @@
     border-bottom: 1px solid var(--background-grey2);
 }
 
+.Loading {
+    padding: 2rem 0;
+}
+
 .display_title_download {
     padding: 0.8rem;
     display: grid;

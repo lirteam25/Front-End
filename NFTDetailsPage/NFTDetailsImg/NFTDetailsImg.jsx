@@ -4,12 +4,11 @@ import { useActiveWalletChain } from "thirdweb/react";
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createThirdwebClient, getContract } from "thirdweb";
 import Link from "next/link";
-import { Player } from '@lottiefiles/react-lottie-player';
 
 //INTERNAL IMPORT
 import Style from "./NFTDetailsImg.module.css";
 import img from "./../../img/index";
-import { InfoButton, ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
+import { InfoButton, ActionButton, ButtonConnectWallet, LoadingModule } from "../../components/componentsIndex";
 import ChangePrice from "./ChangePrice/ChangePrice";
 import BuyItem from "./BuyItem/BuyItem";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
@@ -130,12 +129,7 @@ const NFTDetailsImg = ({ shownNft, user, userOwn, uid }) => {
                                     <Image src={img.pause} alt="pause icon" className={Style.pause} onClick={() => { setStopFooter(true) }} /> :
                                     <Image src={img.play} alt="play icon" className={Style.play}
                                         onClick={() => { playSong() }} />
-                                }</>}</> : <Player
-                                    autoplay
-                                    loop
-                                    style={{ height: '30px', width: '30px' }}
-                                    src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
-                                />}
+                                }</>}</> : <LoadingModule height="30px" width="30px" />}
                         </div>
                         <div className={Style.NFTDetailsImg_description_info_title_title}>
                             <h1 className="font-normal">{shownNft.song ? `${shownNft.song}` : "----"}</h1>

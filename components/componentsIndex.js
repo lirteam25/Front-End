@@ -2,6 +2,7 @@ import NavBar from "./NavBar/NavBar";
 import Footer from "./Footer/Footer";
 import Error from "./Error/Error";
 import Loading from "./Loading/Loading";
+import LoadingModule from "./Loading/LoadingModule";
 import FooterAudioPlayer from "./FooterAudioPlayer/FooterAudioPlayer";
 import LinkButton from "./Button/LinkButton/LinkButton";
 import ActionButton from "./Button/ActionButton/ActionButton";
@@ -19,6 +20,7 @@ export {
     Footer,
     Error,
     Loading,
+    LoadingModule,
     FooterAudioPlayer,
     LinkButton,
     ActionButton,

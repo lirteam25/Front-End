@@ -21,36 +21,6 @@
     padding: 2rem 1rem;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    15% {
-        transform: rotate(15deg);
-    }
-
-    35% {
-        transform: rotate(165deg);
-    }
-
-    50% {
-        transform: rotate(180deg);
-    }
-
-    65% {
-        transform: rotate(195deg);
-    }
-
-    85% {
-        transform: rotate(345deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
 .image {
     margin-bottom: 2rem;
     animation: spin 3s linear infinite;
