@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import { ConnectButton, useActiveWalletChain, useSwitchActiveWalletChain } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { createThirdwebClient } from "thirdweb";
-import { Player } from '@lottiefiles/react-lottie-player';
 import { polygon, polygonAmoy } from "thirdweb/chains";
 import { createAuth } from 'thirdweb/auth';
-import { InfoButton } from '../../componentsIndex';
-import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 
 import Style from "./Wallet.module.css";
+import { InfoButton, LoadingModule } from '../../componentsIndex';
+import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
+
 
 const wallets = [
     inAppWallet()
@@ -65,12 +65,7 @@ const buttonConnectWallet = ({ text }) => {
                             <div>
                                 {user ? (
                                     <InfoButton text="Connected" />
-                                ) : (<Player
-                                    autoplay
-                                    loop
-                                    style={{ height: '20px', width: '20px', textAlign: "center" }}
-                                    src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
-                                />)}
+                                ) : (<LoadingModule height="20px" width="20px" />)}
                             </div>
                         )}</div>
                 )

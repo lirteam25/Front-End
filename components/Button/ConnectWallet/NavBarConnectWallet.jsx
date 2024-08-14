@@ -7,11 +7,11 @@ import { GoDotFill } from "react-icons/go";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
 import images from "../../../img/index";
 import Image from 'next/image';
-import { Player } from '@lottiefiles/react-lottie-player';
 import Link from 'next/link';
 
 
 import Style from "./Wallet.module.css";
+import { LoadingModule } from '../../componentsIndex';
 
 const wallets = [
     inAppWallet()
@@ -78,12 +78,7 @@ const NavBarConnectWallet = ({ openProfileTab, setOpenProfileTab, closeProfileTa
                                         </div>
                                         <div className={Style.rightNetwork_right} onClick={(e) => { e.stopPropagation() }}>
                                             {user ? <Image src={images[`utente_${user.picture}`]} alt="profile user" width={30.5} height={30.5} onClick={() => { setOpenProfileTab(true); }}
-                                            /> : <Player
-                                                autoplay
-                                                loop
-                                                style={{ height: '20px', width: '20px', textAlign: "center" }}
-                                                src='https://lottie.host/fc0e3d65-2f19-4f85-b046-46c7dd115b6c/UaGlqmGCc7.json'
-                                            />}
+                                            /> : <LoadingModule height="20px" width="20px" />}
                                             {openProfileTab &&
                                                 <div className={`${Style.overlay_transparent} font-small`} onMouseDown={() => closeProfileTab()}>
                                                     <div className={Style.profile_tab} onMouseDown={(e) => e.stopPropagation()}>

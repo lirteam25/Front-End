@@ -3,21 +3,19 @@ import Link from 'next/link';
 import Image from "next/image";
 import { AiOutlineDownload } from "react-icons/ai";
 import CircularProgress from '@mui/material/CircularProgress';
-import { isMobile } from 'react-device-detect';
 
 
 //Internal Imports
 import Style from "./SongDisplay.module.css";
 import img from "./../../img/index";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
+import { LoadingModule } from '../../components/componentsIndex';
 
 const SongDisplay = ({ myNFTs, artist }) => {
     const { setToast, setOpenToast, user, downloadSong, setOpenFooterAudio, setNft, currentIndex, setCurrentIndex, nft, stopFooter, setStopFooter, openFooterAudio, sendUserActivity } = useContext(NFTMarketplaceContext);
 
     const [isDownloading, setIsDownloading] = useState(false);
     const [indexDownload, setIndexDownload] = useState();
-
-    const fake = [{ _id: 0 }, { _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }, { _id: 5 }, { _id: 6 }, { _id: 7 }, { _id: 8 }, { _id: 9 }];
 
     const playOrStopSong = (i) => {
         if (!artist) {
@@ -181,202 +179,134 @@ const SongDisplay = ({ myNFTs, artist }) => {
                                                 {el.pricePerToken} <span className={Style.display_song_price_symbol}>$</span>
                                             </div>
                                         </div>))
-                                )}</div>) : (fake.map((el, i) => (
-                                    <div className={Style.display_song_box} key={el._id}>
-                                        <div className={`${Style.display_song_num} ${Style.hide}`}>
-                                            <div className={`${Style.display_song_num_num}`}>
-                                                -
-                                            </div>
-                                        </div>
-                                        <div className={Style.display_song_title}>
-                                            <div className={Style.display_song_title_img}>
-
-                                            </div>
-                                            <div className={Style.display_song_title_info}>
-                                                <div className={Style.display_song_title_info_name}>
-                                                    ----
-                                                </div>
-                                                <div>
-                                                    <div className={Style.display_song_title_info_artist} >
-                                                        ----
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={`${Style.display_song_owned} ${Style.hide}`}>
-                                            -:--
-                                        </div>
-                                        <div className={`${Style.display_song_owned} ${Style.hide}`}>
-                                            --
-                                        </div>
-                                        <div className={Style.display_song_supply}>
-                                            --
-                                        </div>
-                                        <div className={Style.display_song_price}>
-                                            --
-                                        </div>
-                                    </div>)))}
+                                )}</div>) : (<div className={Style.Loading}>
+                                    <LoadingModule height="30px" width="30px" />
+                                </div>)}
                     </div>
-                </div>) :
-                (
-                    <div>
-                        <div className={`${Style.display_title_download} font-small`}>
-                            <div className={`${Style.display_title_item_num} ${Style.hide}`}>
-                                #
-                            </div>
-                            <div className={Style.display_title_item_title}>
-                                TITLE
-                            </div>
-                            <Image alt="clock" src={img.schedule} height={13} width={13} className={Style.hide} />
-                            <div className={Style.display_title_item_owned}>
-                                OWNED
-                            </div>
-                            <div className={Style.display_title_item_owned}>
-                                LISTED
-                            </div>
-                            <div className={`${Style.display_title_item} ${Style.hide}`}>
-                                FLOOR PRICE
-                            </div>
+                </div>
+            ) : (
+                <div>
+                    <div className={`${Style.display_title_download} font-small`}>
+                        <div className={`${Style.display_title_item_num} ${Style.hide}`}>
+                            #
                         </div>
-                        <div className={Style.display_song}>
-                            {myNFTs ? (
-                                <div>
-                                    {myNFTs.length == 0 ? (
-                                        <div className={`${Style.display_song_noSong} font-normal`}>
-                                            No track collected.<br />Visit <Link href={"./collection"} className={Style.display_song_noSong_discover}>collection</Link> and start collecting.
-                                        </div>) : (
-                                        myNFTs.map((el, i) => (
-                                            <div className={`${Style.display_song_box_download} ${currentIndex == i && nft == myNFTs && !stopFooter && Style.background_grey}`}
-                                                key={el._id}
-                                                onClick={() => {
-                                                    if (window.innerWidth <= 1024) {
-                                                        window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}`;
-                                                    }
-                                                }}
-                                                onDoubleClick={() => {
-                                                    if (window.innerWidth > 1024) {
-                                                        playOrStopSong(i);
-                                                    }
-                                                }}
-                                            >
-                                                <div className={`${Style.display_song_num} ${Style.hide}`}>
-                                                    <div className={`${Style.display_song_num_num} font-small`}>
-                                                        {i + 1}
-                                                    </div>
-                                                    <div className={Style.display_song_num_play}>
-                                                        <div>
-                                                            {currentIndex == i && nft == myNFTs && !stopFooter ?
-                                                                <Image src={img.pause} alt="pause icon" width={14} height={14} onClick={() => { setStopFooter(true) }} /> :
-                                                                <Image src={img.play} alt="play icon" width={14} height={14}
-                                                                    onClick={() => {
-                                                                        playOrStopSong(i);
-                                                                    }} />
-                                                            }
-                                                        </div>
-                                                    </div>
-
+                        <div className={Style.display_title_item_title}>
+                            TITLE
+                        </div>
+                        <Image alt="clock" src={img.schedule} height={13} width={13} className={Style.hide} />
+                        <div className={Style.display_title_item_owned}>
+                            OWNED
+                        </div>
+                        <div className={Style.display_title_item_owned}>
+                            LISTED
+                        </div>
+                        <div className={`${Style.display_title_item} ${Style.hide}`}>
+                            FLOOR PRICE
+                        </div>
+                    </div>
+                    <div className={Style.display_song}>
+                        {myNFTs ? (
+                            <div>
+                                {myNFTs.length == 0 ? (
+                                    <div className={`${Style.display_song_noSong} font-normal`}>
+                                        No track collected.<br />Visit <Link href={"./collection"} className={Style.display_song_noSong_discover}>collection</Link> and start collecting.
+                                    </div>) : (
+                                    myNFTs.map((el, i) => (
+                                        <div className={`${Style.display_song_box_download} ${currentIndex == i && nft == myNFTs && !stopFooter && Style.background_grey}`}
+                                            key={el._id}
+                                            onClick={() => {
+                                                if (window.innerWidth <= 1024) {
+                                                    window.location.href = `/token-details?token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}`;
+                                                }
+                                            }}
+                                            onDoubleClick={() => {
+                                                if (window.innerWidth > 1024) {
+                                                    playOrStopSong(i);
+                                                }
+                                            }}
+                                        >
+                                            <div className={`${Style.display_song_num} ${Style.hide}`}>
+                                                <div className={`${Style.display_song_num_num} font-small`}>
+                                                    {i + 1}
                                                 </div>
-                                                <div className={Style.display_song_title}>
-                                                    <div className={Style.display_song_title_img}>
-                                                        <Image
-                                                            src={el.imageSongCloudinary}
-                                                            alt="NFT"
-                                                            fill
-                                                            sizes={100}
-                                                            className={Style.NFTCardTwo_box_img_img}
-                                                        />
+                                                <div className={Style.display_song_num_play}>
+                                                    <div>
+                                                        {currentIndex == i && nft == myNFTs && !stopFooter ?
+                                                            <Image src={img.pause} alt="pause icon" width={14} height={14} onClick={() => { setStopFooter(true) }} /> :
+                                                            <Image src={img.play} alt="play icon" width={14} height={14}
+                                                                onClick={() => {
+                                                                    playOrStopSong(i);
+                                                                }} />
+                                                        }
                                                     </div>
-                                                    <div className={`${Style.display_song_title_info} font-normal ${Style.mobile}`}>
-                                                        <div className={`${Style.display_song_title_info_name}`}>
-                                                            {el.song}
+                                                </div>
+
+                                            </div>
+                                            <div className={Style.display_song_title}>
+                                                <div className={Style.display_song_title_img}>
+                                                    <Image
+                                                        src={el.imageSongCloudinary}
+                                                        alt="NFT"
+                                                        fill
+                                                        sizes={100}
+                                                        className={Style.NFTCardTwo_box_img_img}
+                                                    />
+                                                </div>
+                                                <div className={`${Style.display_song_title_info} font-normal ${Style.mobile}`}>
+                                                    <div className={`${Style.display_song_title_info_name}`}>
+                                                        {el.song}
+                                                    </div>
+                                                    {el.artist?.map((art, i) => (
+                                                        <div key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                            <span className={Style.underline}>
+                                                                {art}
+                                                            </span>
+                                                            {i < el.artist.length - 1 && ', '}
                                                         </div>
+                                                    ))}
+                                                </div>
+                                                <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
+                                                    <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
+                                                        {el.song}
+                                                    </Link>
+                                                    <div key={i} className={`${Style.display_song_title_info_artist}`}>
                                                         {el.artist?.map((art, i) => (
-                                                            <div key={i} className={`${Style.display_song_title_info_artist}`}>
-                                                                <span className={Style.underline}>
+                                                            <span key={i} className={`${Style.display_song_title_info_artist}`}>
+                                                                <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
                                                                     {art}
-                                                                </span>
+                                                                </Link>
                                                                 {i < el.artist.length - 1 && ', '}
-                                                            </div>
+                                                            </span>
                                                         ))}
                                                     </div>
-                                                    <div className={`${Style.display_song_title_info} font-normal ${Style.pc}`}>
-                                                        <Link href={{ pathname: "/token-details", query: `token_id=${el.token_id}&token_address=${el.token_address}&uid=${user.uid}` }} className={`${Style.display_song_title_info_name}`}>
-                                                            {el.song}
-                                                        </Link>
-                                                        <div key={i} className={`${Style.display_song_title_info_artist}`}>
-                                                            {el.artist?.map((art, i) => (
-                                                                <span key={i} className={`${Style.display_song_title_info_artist}`}>
-                                                                    <Link className={Style.underline} href={{ pathname: "/artist", query: `uid=${el.author_address[i]}` }}>
-                                                                        {art}
-                                                                    </Link>
-                                                                    {i < el.artist.length - 1 && ', '}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-
                                                 </div>
-
-                                                <div className={`${Style.display_song_owned} ${Style.hide} font-small`}> {el.audioDuration}</div>
-
-                                                <div className={`${Style.display_song_owned} font-small`}>
-                                                    {el.amount}
-                                                </div>
-
-                                                <div className={`${Style.display_song_owned} font-small`}>
-                                                    {el.sellingQuantity}
-                                                </div>
-
-                                                <div className={`${Style.display_song_owned} ${Style.hide} font-small`}>
-                                                    {el.pricePerToken} <span className={Style.display_song_price_symbol}>$</span>
-                                                </div>
-
-                                                <div className={`${Style.display_song_download} ${Style.hide} font-small`}>
-                                                    {(isDownloading && indexDownload == i) ? <div style={{ color: "var(--main-color)" }}><CircularProgress color="inherit" size={21} /></div> : <div onClick={() => sendEventDownload(el, i)}><AiOutlineDownload fontSize={21} className={Style.icon} /></div>}
-                                                </div>
-
-                                            </div>)
-                                        ))}
-                                </div>) : (fake.map((el, i) => (
-                                    <div className={Style.display_song_box_download} key={el._id}>
-                                        <div className={`${Style.display_song_num} ${Style.hide}`}>
-                                            <div className={`${Style.display_song_num_num}`}>
-                                                -
-                                            </div>
-                                        </div>
-                                        <div className={Style.display_song_title}>
-                                            <div className={Style.display_song_title_img}>
 
                                             </div>
-                                            <div className={Style.display_song_title_info}>
-                                                <div className={Style.display_song_title_info_name}>
-                                                    ----
-                                                </div>
-                                                <div>
-                                                    <div className={Style.display_song_title_info_artist} >
-                                                        ----
-                                                    </div>
-                                                </div>
+
+                                            <div className={`${Style.display_song_owned} ${Style.hide} font-small`}> {el.audioDuration}</div>
+
+                                            <div className={`${Style.display_song_owned} font-small`}>
+                                                {el.amount}
                                             </div>
-                                        </div>
-                                        <div className={`${Style.display_song_owned} ${Style.hide}`}>
-                                            -:--
-                                        </div>
-                                        <div className={`${Style.display_song_owned} ${Style.hide}`}>
-                                            --
-                                        </div>
-                                        <div className={Style.display_song_supply}>
-                                            --
-                                        </div>
-                                        <div className={Style.display_song_price}>
-                                            --
-                                        </div>
-                                        <div className={`{Style.display_song_price} ${Style.hide}`}>
-                                            --
-                                        </div>
-                                    </div>)))}
-                        </div>
-                    </div>)}
+
+                                            <div className={`${Style.display_song_owned} font-small`}>
+                                                {el.sellingQuantity}
+                                            </div>
+
+                                            <div className={`${Style.display_song_owned} ${Style.hide} font-small`}>
+                                                {el.pricePerToken} <span className={Style.display_song_price_symbol}>$</span>
+                                            </div>
+
+                                            <div className={`${Style.display_song_download} ${Style.hide} font-small`}>
+                                                {(isDownloading && indexDownload == i) ? <div style={{ color: "var(--main-color)" }}><LoadingModule height="20px" width="20px" /></div> : <div onClick={() => sendEventDownload(el, i)}><AiOutlineDownload fontSize={21} className={Style.icon} /></div>}
+                                            </div>
+
+                                        </div>)
+                                    ))}
+                            </div>) : (<div className={Style.Loading}> <LoadingModule height="30px" width="30px" />
+                            </div>)}
+                    </div>
+                </div>)}
         </div>
     )
 }

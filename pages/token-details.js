@@ -19,7 +19,7 @@ const NFTDetails = () => {
     const router = useRouter();
     const [uid, setUid] = useState(null);
 
-    const [supporters, setSupporters] = useState([])
+    const [collectors, setCollectors] = useState([])
 
     const [userOwn, setUserOwn] = useState(false);
 
@@ -34,7 +34,7 @@ const NFTDetails = () => {
         });
         fetchSupporters(token_id, token_address).then((item) => {
             console.log("supporters", item);
-            setSupporters(item);
+            setCollectors(item);
         });
     }, [router]);
 
@@ -72,7 +72,7 @@ const NFTDetails = () => {
             <NextSeo title={title} description={description} />
             <div className={Style.NFTDetailsPage}>
                 <NFTDetailsImg shownNft={nft} user={user} userOwn={userOwn} uid={uid} />
-                <NFTDescription nft={nft} user={user} supporters={supporters} discoverMore={filteredNFts} setNft={setNft} />
+                <NFTDescription nft={nft} user={user} collectors={collectors} discoverMore={filteredNFts} setNft={setNft} />
             </div>
         </>
     );

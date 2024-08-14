@@ -5,7 +5,6 @@ import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 
 import Style from "./BuyItem.module.css";
 import { NFTMarketplaceContext } from '../../../Context/NFTMarketplaceContext';
-import { NFTMarketplaceAddress } from '../../../Context/Constants';
 import { InfoButton, SmartContractButton } from '../../../components/componentsIndex';
 
 const BuyItem = ({ nft, setOpenBuy }) => {

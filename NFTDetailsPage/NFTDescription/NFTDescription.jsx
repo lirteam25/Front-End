@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Image from "next/image";
-import { ActionButton, ButtonConnectWallet } from "../../components/componentsIndex";
+import { ActionButton } from "../../components/componentsIndex";
 import { isMobile } from "react-device-detect";
 //Internal Imports
 import Style from "./NFTDescription.module.css";
@@ -12,7 +12,7 @@ import Collectors from "./Collectors/Collectors";
 import images from "../../img/index";
 import { LastRelease } from "../../indexPage/indexIndex";
 
-const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
+const NFTDescription = ({ nft, user, collectors, discoverMore, setNft }) => {
 
 
     const scanner = "https://polygonscan.com";
@@ -70,7 +70,7 @@ const NFTDescription = ({ nft, user, supporters, discoverMore, setNft }) => {
                             <div className="font-normal">
                                 Collected by
                             </div>
-                            <Collectors supporters={supporters} />
+                            <Collectors collectors={collectors} />
                         </div>
                         <div className={Style.NFTDescription_grid_comment_action}>
                             <div className={Style.NFTDescription_grid_comment_action_comment}>
