@@ -8,17 +8,42 @@
 }
 
 .discover_filter {
-    height: 60px;
-    display: flex;
-    gap: 15px;
-    padding: 0 2.5%;
-    align-items: center;
+    padding: 15px 2.5%;
 }
+
+
+.right_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, transparent);
+}
+
+.left_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 80%, transparent);
+}
+
+.both_dissolve {
+    /* Your existing dissolve effect styles */
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1)80%, transparent);
+}
+
+.no_dissolve {
+    mask-image: none;
+    -webkit-mask-image: none;
+}
+
 
 .discover_filter_element {
     border: 1px solid var(--background-grey);
     background-color: var(--background-grey2);
     padding: 0.1rem 0.6rem;
+    text-align: center;
     text-transform: uppercase;
     cursor: pointer;
 }
@@ -28,33 +53,9 @@
     width: 95%;
 }
 
-.mobile_discover_filter {
-    display: none;
-    height: unset;
-    align-content: center;
-    padding: 15px 5%;
-}
-
-.mobile_discover_filter_element {
-    border: 1px solid var(--background-grey);
-    background-color: var(--background-grey2);
-    padding: 0.1rem 0;
-    text-align: center;
-    text-transform: uppercase;
-    cursor: pointer;
-    width: 95px;
-    margin-bottom: 10px;
-}
-
 .active {
     border: 1px solid white;
     background-color: var(--main-color);
-}
-
-.mobile_discover_filter_bottom {
-    display: flex;
-    gap: 10px;
-    align-items: center;
 }
 
 @media screen and (max-width: 480px) {
@@ -63,11 +64,7 @@
     }
 
     .discover_filter {
-        display: none;
-    }
-
-    .mobile_discover_filter {
-        display: block;
+        padding: 15px 5%;
     }
 
     .discover_items {
@@ -77,7 +74,7 @@
 
 @media screen and (min-width:481px) and (max-width: 1024px) {
     .discover_filter {
-        padding: 0 2.5%;
+        padding: 15px 2.5%;
     }
 
     .discover_items {
