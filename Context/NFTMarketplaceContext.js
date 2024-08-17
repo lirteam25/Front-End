@@ -1175,8 +1175,37 @@ export const NFTMarketplaceProvider = ({ children }) => {
         console.log(userLoaded);
     }
 
+    async function createTokenForMobile() {
+        try {
+            const signatureResult = await createPayload(); // Wait for createPayload to resolve
+            const email = await getUserEmail({ client }); // Wait for getUserEmail to resolve
+            console.log(email);
+
+            const data = JSON.stringify({ "payload": signatureResult, "email": email });
+            const response = await postOnDB(`${DBUrl}/api/v1/authToken`, data); // Wait for postOnDB to resolve
+
+            const token = response.token; // Extract the token from the response
+            console.log(token);
+
+            // Now pass the token as a query parameter
+            router.push(`successLogin?token=${encodeURIComponent(token)}`);
+        } catch (error) {
+            console.error('Error during token creation:', error);
+        }
+    }
+
     useEffect(() => {
-        setUserLoaded(false)
+        setUserLoaded(false);
+
+        // Prevent the useEffect from running on the mobileLogin page
+        if (router?.pathname === '/mobileLogin') {
+            console.log("Stopped");
+            if (address) {
+                createTokenForMobile();
+            }
+            return;
+        }
+
         if (address) {
             setUserLogged();
         } else {
