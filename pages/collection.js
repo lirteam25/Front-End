@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { NextSeo } from 'next-seo';
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { useQuery } from "@tanstack/react-query";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
@@ -65,17 +66,20 @@ const Discover = () => {
         setCurrentSlideIndex(swiper.activeIndex);
     };
 
-    const x = genres.length - currentSlidesPerView
+    const x = genres.length - currentSlidesPerView;
 
     return (
         <div className={Style.vh_discover}>
             <NextSeo title="Collection | LIR" description="Discover unreleased limited-edition tracks. Start exploring now." />
             <div className={Style.discover}>
+                {genres.length > currentSlidesPerView && currentSlideIndex > 0 && <IoIosArrowBack className={Style.arrow_left} />}
                 <div className={
                     `${Style.discover_filter} 
                 ${genres.length > currentSlidesPerView ?
                         (currentSlideIndex === 0 ? Style.right_dissolve :
                             (currentSlideIndex > 0 && currentSlideIndex < x ? Style.both_dissolve : Style.left_dissolve)) : Style.no_dissolve}`}>
+
+
                     <Swiper slidesPerView={2}
                         spaceBetween={10}
                         modules={[Pagination]}
@@ -126,7 +130,9 @@ const Discover = () => {
                             </SwiperSlide>
                         ))}
                     </Swiper>
+
                 </div>
+                {genres.length > currentSlidesPerView && currentSlideIndex < x && <IoIosArrowForward className={Style.arrow_right} />}
                 <div className={Style.discover_items}>
                     <NFTCardTwo sellingNFTs={filter ? filteredNFts : data} />
                 </div>
