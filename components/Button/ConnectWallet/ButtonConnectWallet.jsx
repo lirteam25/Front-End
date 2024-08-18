@@ -41,7 +41,7 @@ const buttonConnectWallet = ({ text }) => {
                     borderRadius: "0px",
                     backgroundColor: "var(--main-color)",
                     color: "white",
-                    padding: 0,
+                    minHeight: "unset",
                     padding: "0.3rem 0rem",
                     textTransform: "uppercase",
                     margin: 0,
