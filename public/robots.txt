@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://front-end-development-f5b8.up.railway.app
+
+# Sitemaps
+Sitemap: https://front-end-development-f5b8.up.railway.app/sitemap.xml
