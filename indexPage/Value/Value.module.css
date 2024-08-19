@@ -4,9 +4,10 @@
 }
 
 .Value input {
-    border: 1px solid white;
+    border: none;
     background-color: white;
     color: black;
+    border-radius: 0;
 }
 
 .Value input::placeholder {
@@ -37,6 +38,7 @@
 .Value_grid {
     display: grid;
     grid-template-columns: 1fr 11fr;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
@@ -88,6 +90,7 @@
 .Value_bottomGrid_artist_bottom_active {
     display: grid;
     grid-template-columns: 1fr 200px;
+    height: 33px;
 }
 
 .Value_learnMore {

@@ -39,11 +39,14 @@
 .heroSection_colums_text_button_flex {
     display: grid;
     grid-template-columns: 1fr 200px;
+    align-items: center;
 }
 
 .heroSection_colums_text_button input {
-    border: 1px solid white;
+    height: 33px;
     background-color: white;
+    border: none;
+    border-radius: 0;
     color: black;
 }
 

@@ -5,9 +5,11 @@
 }
 
 .JoinLir input {
-    border: 1px solid white;
+    border: none;
+    border-radius: 0;
     background-color: white;
     color: black;
+    height: 33px;
 }
 
 .JoinLir input::placeholder {
@@ -48,7 +50,7 @@
 .JoinLir_buttons_button_flex {
     display: grid;
     grid-template-columns: 1fr 200px;
-    justify-content: center;
+    align-items: center;
 }
 
 
