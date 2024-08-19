@@ -42,8 +42,8 @@
 }
 
 .heroSection_colums_text_button input {
-    border: 1px solid white;
     background-color: white;
+    border: none;
     color: black;
 }
 
