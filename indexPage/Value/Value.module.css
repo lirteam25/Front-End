@@ -7,6 +7,7 @@
     border: none;
     background-color: white;
     color: black;
+    border-radius: 0;
 }
 
 .Value input::placeholder {
@@ -37,6 +38,7 @@
 .Value_grid {
     display: grid;
     grid-template-columns: 1fr 11fr;
+    align-items: center;
     margin-bottom: 2rem;
 }
 

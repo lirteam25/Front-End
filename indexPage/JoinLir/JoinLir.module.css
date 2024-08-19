@@ -6,6 +6,7 @@
 
 .JoinLir input {
     border: none;
+    border-radius: 0;
     background-color: white;
     color: black;
 }
@@ -49,6 +50,7 @@
     display: grid;
     grid-template-columns: 1fr 200px;
     justify-content: center;
+    align-items: center;
 }
 
 

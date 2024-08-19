@@ -39,6 +39,7 @@
 .heroSection_colums_text_button_flex {
     display: grid;
     grid-template-columns: 1fr 200px;
+    align-items: center;
 }
 
 .heroSection_colums_text_button input {
