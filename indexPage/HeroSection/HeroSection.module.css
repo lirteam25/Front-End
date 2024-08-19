@@ -43,6 +43,7 @@
 }
 
 .heroSection_colums_text_button input {
+    height: 33px;
     background-color: white;
     border: none;
     border-radius: 0;
