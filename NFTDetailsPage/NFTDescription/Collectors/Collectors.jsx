@@ -11,7 +11,7 @@ import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import Style from "./Collectors.module.css";
 
-const Collectors = ({ supporters }) => {
+const Collectors = ({ collectors }) => {
 
     const [currentSlidesPerView, setCurrentSlidesPerView] = useState(5);
 
@@ -45,13 +45,13 @@ const Collectors = ({ supporters }) => {
         setCurrentSlideIndex(swiper.activeIndex);
     };
 
-    const x = supporters?.length - currentSlidesPerView
+    const x = collectors?.length - currentSlidesPerView
 
     return (
         <div>
             <div className=
                 {`${Style.Collectors} 
-            ${supporters?.length > currentSlidesPerView ?
+            ${collectors?.length > currentSlidesPerView ?
                         (currentSlideIndex === 0 ? Style.right_dissolve :
                             (currentSlideIndex > 0 && currentSlideIndex < x ? Style.both_dissolve : Style.left_dissolve)) : Style.no_dissolve}`}>
                 <Swiper slidesPerView={5}
@@ -73,8 +73,8 @@ const Collectors = ({ supporters }) => {
                     }}
                     onSlideChange={handleSlideChange}
                 >
-                    {supporters &&
-                        supporters.map((el, index) => (
+                    {collectors &&
+                        collectors.map((el, index) => (
                             <SwiperSlide key={index}>
                                 <div className={Style.Collectors_box}>
                                     <Image src={img[`utente_${el.picture}`]} alt="profile user" />
